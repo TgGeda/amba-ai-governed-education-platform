@@ -58,6 +58,18 @@ from amba_ai.services.job_service import JobService
 from amba_ai.services.job_governance import JobGovernanceCoordinator
 from amba_ai.services.model_service import ModelService
 
+from amba_ai.rag.policy_query import PolicyQueryAdapter
+from amba_ai.services.policy_kb_service import PolicyKBService
+from amba_ai.standards.ml_intent import (
+    MLIntent,
+    load_ml_intent,
+)
+from amba_ai.standards.y3172_registry import (
+    Y3172Registry,
+)
+from amba_ai.standards.y3172_trace_coordinator import (
+    Y3172TraceCoordinator,
+)
 
 GOVERNANCE_MIGRATION_FILES = (
     "002_governance_records.sql",
@@ -95,6 +107,11 @@ LAZY_PROVIDER_NAMES = (
     "content_delivery_service",
     "job_governance_coordinator",
     "job_service",
+    "y3172_registry",
+    "ml_intent",
+    "y3172_trace_coordinator",
+    "policy_query_adapter",
+    "policy_kb_service",
 )
 
 REQUIRED_PROVIDER_NAMES = (
@@ -212,6 +229,82 @@ def _build_evaluator_registry(
 
     evaluator_registry.validate_operations(operations)
     return evaluator_registry
+
+def _build_y3172_registry(
+    settings: ApplicationSettings,
+) -> Y3172Registry:
+    mapping_path = _required_file(
+        (
+            settings.knowledge_base_root
+            / "mappings"
+            / "y3172_mapping.yaml"
+        ),
+        "Y.3172 mapping",
+    )
+
+    return Y3172Registry.load_from_yaml(
+        mapping_path,
+        allowed_root=settings.knowledge_base_root,
+    )
+
+
+def _build_ml_intent(
+    settings: ApplicationSettings,
+) -> MLIntent:
+    intent_path = _required_file(
+        settings.configuration_root
+        / "ml_intent.yaml",
+        "ML intent configuration",
+    )
+
+    return load_ml_intent(
+        intent_path,
+        allowed_root=settings.configuration_root,
+    )
+
+
+def _build_y3172_trace_coordinator(
+    registry: ProviderRegistry,
+) -> Y3172TraceCoordinator:
+    return Y3172TraceCoordinator(
+        registry=registry.get(
+            "y3172_registry",
+            Y3172Registry,
+        ),
+        identifier_provider=registry.get(
+            "identifier_provider",
+            UUIDIdentifierProvider,
+        ),
+        clock=registry.get(
+            "clock",
+            SystemClock,
+        ),
+    )
+
+
+def _build_policy_query_adapter(
+    registry: ProviderRegistry,
+) -> PolicyQueryAdapter:
+    return PolicyQueryAdapter(
+        registry.get(
+            "policy_record_registry",
+            PolicyRecordRegistry,
+        )
+    )
+
+
+def _build_policy_kb_service(
+    registry: ProviderRegistry,
+) -> PolicyKBService:
+    return PolicyKBService(
+        search_engine=registry.get(
+            "rag_engine",
+        ),
+        query_adapter=registry.get(
+            "policy_query_adapter",
+            PolicyQueryAdapter,
+        ),
+    )
 
 
 def _resolve_mandatory_providers(registry: ProviderRegistry) -> None:
@@ -405,6 +498,35 @@ def install_application_providers(
             kb_dir=settings.knowledge_base_root,
         ),
     )
+    providers.register(
+    "y3172_registry",
+    lambda _registry: _build_y3172_registry(
+        settings
+        ),
+    )
+
+    providers.register(
+        "ml_intent",
+        lambda _registry: _build_ml_intent(
+            settings
+        ),
+    )
+
+    providers.register(
+        "y3172_trace_coordinator",
+        _build_y3172_trace_coordinator,
+    )
+
+    providers.register(
+        "policy_query_adapter",
+        _build_policy_query_adapter,
+    )
+
+    providers.register(
+        "policy_kb_service",
+        _build_policy_kb_service,
+    )
+
     providers.register("model_service", lambda _registry: ModelService())
     providers.register(
         "content_delivery_service",
