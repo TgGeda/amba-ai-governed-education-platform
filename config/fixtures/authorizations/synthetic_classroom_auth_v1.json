@@ -1,0 +1,21 @@
+{
+  "basis_id": "SYNTHETIC-CLASSROOM-AUTH-V1",
+  "basis_type": "project_fixture",
+  "subject_category": "synthetic_grade_8_learner",
+  "authority_reference": "AMBA-GOV-SYNTHETIC-SCHOOL",
+  "purposes": [
+    "classroom_exercise_telemetry"
+  ],
+  "data_categories": [
+    "synthetic_exercise_interaction"
+  ],
+  "processing_operations": [
+    "classroom_exercise_telemetry"
+  ],
+  "effective_from": "2026-01-01T00:00:00Z",
+  "expires_at": "2027-01-01T00:00:00Z",
+  "revoked_at": null,
+  "verifier_id": "AMBA-GOV-DEMO-VERIFIER",
+  "synthetic": true,
+  "legal_effect": false
+}

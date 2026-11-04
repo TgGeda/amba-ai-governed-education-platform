@@ -1,0 +1,22 @@
+{
+  "schema_version": "ambaai.summary-workspace.v7.3.1",
+  "files_written": [
+    "src/amba_ai/ui/styles/components/concept_explorer.qss",
+    "src/amba_ai/ui/styles/components/summary.qss",
+    "src/amba_ai/ui/summarizer/data_classes.py",
+    "src/amba_ai/ui/summarizer/summarizer_manager.py",
+    "src/amba_ai/ui/summarizer/ui/summarizer_widget.py",
+    "tests/test_summarizer_v7_3.py"
+  ],
+  "backups": [
+    "F:\\AmbaAI\\amba_ai_project\\src\\amba_ai\\ui\\summarizer\\data_classes.py.before_summary_v7_3_1_20260727_161009.bak",
+    "F:\\AmbaAI\\amba_ai_project\\src\\amba_ai\\ui\\summarizer\\summarizer_manager.py.before_summary_v7_3_1_20260727_161009.bak",
+    "F:\\AmbaAI\\amba_ai_project\\src\\amba_ai\\ui\\summarizer\\ui\\summarizer_widget.py.before_summary_v7_3_1_20260727_161009.bak",
+    "F:\\AmbaAI\\amba_ai_project\\src\\amba_ai\\ui\\styles\\components\\summary.qss.before_summary_v7_3_1_20260727_161009.bak",
+    "F:\\AmbaAI\\amba_ai_project\\src\\amba_ai\\ui\\styles\\components\\concept_explorer.qss.before_summary_v7_3_1_20260727_161009.bak"
+  ],
+  "learning_core_modified": false,
+  "ui_platform_modified": false,
+  "generation_contract_modified": false,
+  "legacy_monkey_patch_added": false
+}

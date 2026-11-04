@@ -1,0 +1,10 @@
+QWidget[learningRoot="true"] { background: {{surface_base}}; color: {{text_primary}}; }
+QFrame#learningHeader, QFrame#learningSectionCard, QFrame#conceptDetailCard { background: {{surface_card}}; border: 1px solid {{border_subtle}}; border-radius: 10px; }
+QFrame#learningSectionCard[reviewed="true"] { border-left: 4px solid {{accent_primary}}; }
+QPushButton#accordionHeader { text-align: left; background: {{surface_muted}}; border: 0; padding: 9px 12px; font-weight: 700; }
+QPushButton#conceptChip { background: {{surface_card}}; border: 1px solid {{accent_primary}}; border-radius: 12px; padding: 6px 10px; }
+QPushButton#conceptChip:checked { background: {{accent_primary}}; color: #FFFFFF; }
+QLabel#sourceChip { color: {{text_secondary}}; padding: 3px 7px; border: 1px solid {{border_subtle}}; border-radius: 8px; }
+QTextBrowser#technicalBlock { background: {{code_surface}}; color: {{code_text}}; border: 1px solid #20344A; border-radius: 8px; padding: 10px; font-family: Consolas, "Courier New", monospace; }
+QLineEdit#learningSearch { background: {{surface_card}}; border: 1px solid {{border_subtle}}; border-radius: 8px; padding: 7px 10px; }
+QWidget[learningRoot="true"] *:focus { border: 2px solid {{focus}}; }

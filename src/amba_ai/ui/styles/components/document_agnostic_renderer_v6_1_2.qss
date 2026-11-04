@@ -1,0 +1,24 @@
+QWidget#boundedLearningColumn { background: transparent; }
+QFrame#learningSectionCard, QFrame#conceptCollectionCard, QFrame#conceptInspector {
+    background-color: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 10px;
+}
+QToolButton#learningAccordionHeader {
+    background-color: #F8F6F0; color: #1A202C; border: none; border-bottom: 1px solid #E2E8F0;
+    padding: 9px 12px; font-size: 14px; font-weight: 700; text-align: left;
+}
+QToolButton#learningAccordionHeader:hover { background-color: #EDF7F6; color: #285E61; }
+QLabel#learningPageTitle { color: #1A202C; font-size: 22px; font-weight: 800; }
+QLabel#learningMeta, QLabel#conceptSource { color: #4A5568; font-size: 12px; }
+QLabel#learningSectionTitle, QLabel#conceptTitle { color: #1A202C; font-size: 17px; font-weight: 800; }
+QLabel#learningProse, QLabel#conceptBody { color: #1A202C; font-size: 14px; padding: 2px; }
+QLabel#learningProse code { color: #FFFFFF; background-color: #0D1B2A; }
+QLabel#learningSourceChip { color: #285E61; background-color: #E6FFFA; border: 1px solid #81E6D9; border-radius: 7px; padding: 4px 8px; }
+QLabel#conceptCategoryBadge { color: #285E61; background-color: #E6FFFA; border: 1px solid #81E6D9; border-radius: 7px; padding: 4px 8px; font-weight: 700; }
+QPushButton#conceptChip { background-color: #FFFFFF; color: #285E61; border: 1px solid #81E6D9; border-radius: 8px; padding: 7px 10px; text-align: left; }
+QPushButton#conceptChip:hover, QPushButton#conceptChip:focus { background-color: #E6FFFA; border: 2px solid #319795; }
+QLineEdit#learningSearch { background-color: #FFFFFF; color: #1A202C; border: 1px solid #CBD5E0; border-radius: 8px; padding: 7px 10px; }
+QTreeWidget#learningOutlineTree { background-color: #F8F6F0; color: #1A202C; border: 1px solid #E2E8F0; border-radius: 9px; outline: none; }
+QTreeWidget#learningOutlineTree::item { padding: 6px 8px; min-height: 26px; }
+QTreeWidget#learningOutlineTree::item:selected { background-color: #C05C46; color: #FFFFFF; }
+QCheckBox#learningUnderstoodToggle { color: #285E61; font-weight: 700; padding: 4px 8px; }
+QLabel#learningEmptyState { color: #4A5568; background-color: #F8FAFC; border: 1px dashed #CBD5E0; border-radius: 8px; padding: 16px; }

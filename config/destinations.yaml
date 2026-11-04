@@ -1,0 +1,44 @@
+schema_version: "1.0.0"
+
+destination_rules:
+  unknown_destination: "configuration_failure"
+  unregistered_destination: "block"
+  operation_not_allowed: "block"
+  empty_destination: "configuration_failure"
+  wildcard_operations_allowed: false
+
+destinations:
+  SYNTHETIC-TEACHER-UI:
+    destination_class: "educational"
+    registered: true
+    synthetic: true
+    allowed_operations:
+      - "classroom_exercise_telemetry"
+      - "classroom_instruction_delivery"
+
+  SYNTHETIC-LEARNER-UI:
+    destination_class: "educational"
+    registered: true
+    synthetic: true
+    allowed_operations:
+      - "classroom_instruction_delivery"
+
+  SYNTHETIC-REVIEW-QUEUE:
+    destination_class: "administrative_review"
+    registered: true
+    synthetic: true
+    allowed_operations:
+      - "commercial_purchase_request"
+
+  SYNTHETIC-VENDOR-REVIEW:
+    destination_class: "administrative_review"
+    registered: true
+    synthetic: true
+    allowed_operations:
+      - "commercial_purchase_request"
+
+  SYNTHETIC-AD-SINK:
+    destination_class: "commercial_advertising"
+    registered: false
+    synthetic: true
+    allowed_operations: []

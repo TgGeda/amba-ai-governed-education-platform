@@ -1,0 +1,88 @@
+schema_version: "1.1.0"
+framework_id: "ITU-AI-READINESS-2.0"
+assessment_subject_id: "AMBA-GOV"
+assessment_method: "targeted_project_mapping"
+numerical_score_required: false
+source_url: "https://www.itu.int/dms_pub/itu-t/opb/ai4g/T-AI4G-AI4GOOD-2025-6-PDF-E.pdf"
+mapping_rules:
+  complete_reference_framework_preserved: true
+  full_assessment_required: false
+  mappings_require_relevance_rationale: true
+  positive_assessment_requires_verified_evidence: true
+  implementation_file_alone_proves_operation: false
+  test_source_file_alone_proves_execution: false
+  executed_test_result_required_for_operational_claim: true
+  not_assessed_converts_to_zero: false
+  missing_artifact_behavior: "not_assessed"
+dimension_mappings:
+  DIM-04:
+    relevance_status: "directly_mapped"
+    relevance_rationale: "Ethiopian education and cybersecurity context is represented through a source hierarchy that preserves legal and policy limitations."
+    candidate_evidence:
+      - {evidence_id: "EVID-SOURCE-MANIFEST", evidence_class: "configuration_artifact", artifact_path: "kb/manifests/sources.yaml", evidence_status: "present_not_execution_evidence"}
+      - {evidence_id: "EVID-SCENARIO-DEFINITION", evidence_class: "configuration_artifact", artifact_path: "config/four_stage_scenario.yaml", evidence_status: "missing"}
+    assessment_status: "not_assessed"
+  DIM-05:
+    relevance_status: "directly_mapped"
+    relevance_rationale: "Governance services and operation resolution are implemented, while JobService and end-to-end integration remain pending."
+    candidate_evidence:
+      - {evidence_id: "EVID-GOVERNANCE-SERVICE", evidence_class: "implementation_artifact", artifact_path: "src/amba_ai/services/governance_service.py", evidence_status: "unit_verified"}
+      - {evidence_id: "EVID-EXECUTION-SERVICE", evidence_class: "implementation_artifact", artifact_path: "src/amba_ai/services/execution_service.py", evidence_status: "unit_verified"}
+      - {evidence_id: "EVID-JOB-SERVICE-INTEGRATION", evidence_class: "executed_test_result", artifact_path: "build/verification/job_service_governance_result.json", evidence_status: "missing"}
+    assessment_status: "not_assessed"
+  DIM-06:
+    relevance_status: "directly_mapped"
+    relevance_rationale: "Typed findings, unresolved questions, receipts, and audit verification exist; governance and readiness interfaces remain pending."
+    candidate_evidence:
+      - {evidence_id: "EVID-GOVERNANCE-RESULT", evidence_class: "implementation_artifact", artifact_path: "src/amba_ai/services/governance_service.py", evidence_status: "unit_verified"}
+      - {evidence_id: "EVID-GOVERNANCE-WIDGET", evidence_class: "implementation_artifact", artifact_path: "src/amba_ai/ui/features/governance/governance_widget.py", evidence_status: "missing"}
+      - {evidence_id: "EVID-READINESS-WIDGET", evidence_class: "implementation_artifact", artifact_path: "src/amba_ai/ui/features/readiness/readiness_widget.py", evidence_status: "missing"}
+    assessment_status: "not_assessed"
+  DIM-07:
+    relevance_status: "directly_mapped"
+    relevance_rationale: "The project maps Ethiopian context, international guidance, Y.3172 architecture, and project controls without treating guidance as Ethiopian binding law."
+    candidate_evidence:
+      - {evidence_id: "EVID-SOURCE-MANIFEST", evidence_class: "configuration_artifact", artifact_path: "kb/manifests/sources.yaml", evidence_status: "present"}
+      - {evidence_id: "EVID-Y3172-MAPPING", evidence_class: "technical_standard_mapping", artifact_path: "kb/mappings/y3172_mapping.yaml", evidence_status: "present"}
+    assessment_status: "not_assessed"
+  DIM-08:
+    relevance_status: "directly_mapped"
+    relevance_rationale: "Mandate-bound approval, typed execution, and audit boundaries are unit verified; institutional coordination remains pending."
+    candidate_evidence:
+      - {evidence_id: "EVID-APPROVAL-SERVICE", evidence_class: "implementation_artifact", artifact_path: "src/amba_ai/services/approval_service.py", evidence_status: "unit_verified"}
+      - {evidence_id: "EVID-AUDIT-SERVICE", evidence_class: "implementation_artifact", artifact_path: "src/amba_ai/services/audit_service.py", evidence_status: "unit_verified"}
+      - {evidence_id: "EVID-STAGE3-SCENARIO", evidence_class: "scenario_result", artifact_path: "build/verification/stage3_scenario_result.json", evidence_status: "missing"}
+    assessment_status: "not_assessed"
+  DIM-09:
+    relevance_status: "indirectly_relevant"
+    relevance_rationale: "Human mandates and approvals affect governance outcomes; broader workforce and organizational impacts are outside current evidence."
+    candidate_evidence:
+      - {evidence_id: "EVID-APPROVAL-TESTS", evidence_class: "test_source", artifact_path: "tests/unit/test_approval_service.py", evidence_status: "source_present_execution_result_not_packaged"}
+    assessment_status: "not_assessed"
+  DIM-10:
+    relevance_status: "directly_mapped"
+    relevance_rationale: "Source hierarchy, evidence quarantine, deterministic policy evaluation, approval, execution, audit, and policy-record persistence are implemented."
+    candidate_evidence:
+      - {evidence_id: "EVID-POLICY-ENGINE", evidence_class: "implementation_artifact", artifact_path: "src/amba_ai/governance/policy_engine.py", evidence_status: "unit_verified"}
+      - {evidence_id: "EVID-POLICY-REPOSITORY", evidence_class: "implementation_artifact", artifact_path: "src/amba_ai/db/policy_record_repository.py", evidence_status: "unit_verified"}
+      - {evidence_id: "EVID-POLICY-GAP-RESULT", evidence_class: "scenario_result", artifact_path: "build/verification/policy_gap_result.json", evidence_status: "missing"}
+    assessment_status: "not_assessed"
+  DIM-11:
+    relevance_status: "directly_mapped"
+    relevance_rationale: "The application is local-first and the evidence hierarchy includes child-centred supporting guidance without converting guidance into binding law."
+    candidate_evidence:
+      - {evidence_id: "EVID-CHILD-GUIDANCE", evidence_class: "international_guidance", artifact_path: "kb/manifests/sources.yaml", evidence_status: "source_registered_non_enforcing"}
+      - {evidence_id: "EVID-LOCAL-CONFIG", evidence_class: "configuration_artifact", artifact_path: "config/application.yaml", evidence_status: "not_verified_here"}
+    assessment_status: "not_assessed"
+  DIM-13:
+    relevance_status: "directly_mapped"
+    relevance_rationale: "SQLite persistence and interpreted Y.3172 mapping are verified in unit scope; packaged offline-runtime evidence remains pending."
+    candidate_evidence:
+      - {evidence_id: "EVID-Y3172-MAPPING", evidence_class: "technical_standard_mapping", artifact_path: "kb/mappings/y3172_mapping.yaml", evidence_status: "present"}
+      - {evidence_id: "EVID-SQLITE-REPOSITORY", evidence_class: "implementation_artifact", artifact_path: "src/amba_ai/db/policy_record_repository.py", evidence_status: "unit_verified"}
+      - {evidence_id: "EVID-OFFLINE-RUNTIME", evidence_class: "executed_test_result", artifact_path: "build/verification/offline_runtime_result.json", evidence_status: "missing"}
+    assessment_status: "not_assessed"
+unmapped_dimensions:
+  default_relevance_status: "not_assessed"
+  default_assessment_status: "not_assessed"
+  reason: "Retained in the complete reference framework but not mapped to current verified Amba-Gov evidence."

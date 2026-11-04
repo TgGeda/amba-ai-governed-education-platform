@@ -1,0 +1,142 @@
+/* ===================================================================
+   AmbaAI Base Global Desktop Theme — Modern Academic Aesthetics
+   =================================================================== */
+
+QMainWindow,
+QWidget {
+    background-color: #FBF7EF;
+    color: #1D3323;
+    font-family: "Atkinson Hyperlegible", "Lexend", "Segoe UI", "Arial", sans-serif;
+    font-size: 12px;
+}
+
+/* Compact Main Window Navigation Bar */
+QTabBar::tab {
+    background-color: #F4E9D7;
+    color: #315343;
+    border: 1px solid #E6D5B8;
+    border-bottom: none;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    padding: 5px 12px;
+    margin-right: 2px;
+    font-size: 12px;
+    font-weight: 750;
+}
+
+QTabBar::tab:hover {
+    background-color: #EAD7B8;
+    color: #1D3323;
+}
+
+QTabBar::tab:selected {
+    background-color: #FFFDF8;
+    color: #C05C46;
+    border-top: 3px solid #C05C46;
+    border-left: 1px solid #E6D5B8;
+    border-right: 1px solid #E6D5B8;
+    font-weight: 900;
+}
+
+QTabWidget::pane {
+    background-color: #FFFDF8;
+    border: 1px solid #E6D5B8;
+    border-radius: 6px;
+    top: -1px;
+}
+
+/* Input Controls */
+QLineEdit,
+QComboBox,
+QSpinBox {
+    background-color: #FFFDF8;
+    color: #1D3323;
+    border: 1px solid #DCC8A9;
+    border-radius: 6px;
+    padding: 4px 8px;
+    min-height: 26px;
+}
+
+QLineEdit:focus,
+QComboBox:focus,
+QSpinBox:focus {
+    border: 2px solid #C05C46;
+}
+
+QComboBox::drop-down {
+    border-left: 1px solid #DCC8A9;
+    width: 20px;
+}
+
+/* General Buttons */
+QPushButton {
+    background-color: #E7B65A;
+    color: #1D3323;
+    border: 1px solid #D29B3F;
+    border-radius: 6px;
+    padding: 4px 12px;
+    font-weight: 800;
+    min-height: 26px;
+}
+
+QPushButton:hover {
+    background-color: #F0C978;
+}
+
+QPushButton:pressed {
+    background-color: #D99D3F;
+}
+
+QPushButton:disabled {
+    background-color: #E9DDC8;
+    color: #8F846E;
+    border-color: #D8C7AA;
+}
+
+/* Scrollbars */
+QScrollBar:vertical {
+    background-color: #F4E9D7;
+    width: 10px;
+    margin: 0;
+    border-radius: 5px;
+}
+
+QScrollBar::handle:vertical {
+    background-color: #CDAF83;
+    border-radius: 5px;
+    min-height: 24px;
+}
+
+QScrollBar::handle:vertical:hover {
+    background-color: #C05C46;
+}
+
+QScrollBar::add-line:vertical,
+QScrollBar::sub-line:vertical {
+    height: 0;
+    background: none;
+}
+
+/* Status Bar */
+QStatusBar {
+    background-color: #F4E9D7;
+    color: #1D3323;
+    border-top: 1px solid #E6D5B8;
+    min-height: 22px;
+    font-size: 11px;
+}
+
+/* Explicitly remove default Qt C++ frame borders from all text views */
+QTextBrowser,
+QTextBrowser#learningRichText,
+QTextBrowser#telegramConceptBody,
+QTextBrowser#telegramConceptRelevance,
+QTextBrowser#sectionLearningText,
+QTextBrowser#executiveSummaryText,
+QTextBrowser#keyTakeawaysText {
+    background-color: transparent;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 0px;
+}

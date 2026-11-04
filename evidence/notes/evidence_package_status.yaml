@@ -1,0 +1,148 @@
+evidence_package:
+  package_id: "AMBA-GOV-EVIDENCE-2026-10-30"
+  prepared_by: "Birhan Abuhay Jemere"
+  acquisition_date: "2026-10-30"
+  status_updated: "2026-11-04"
+  artifact_count: 9
+  reference_archives: 1
+
+verification_completed:
+  - "PDF magic-header validation"
+  - "Byte-size inventory"
+  - "SHA-256 artifact checksums"
+  - "Portable artifact inventory"
+  - "Machine-specific path removal from repository inventories"
+  - "Project governance-boundary checksum verification"
+  - "Source-code secret scan"
+  - "Active automated test execution: 681 tests passed"
+
+source_metadata_verification:
+  ITU_T_Y3172_2019:
+    status: "verified"
+    fields_verified:
+      - "title"
+      - "edition"
+      - "approval date"
+      - "status"
+      - "responsible study group"
+      - "persistent identifier"
+
+  UNESCO_AI_ETHICS_RECOMMENDATION:
+    status: "partially_verified"
+    fields_verified:
+      - "title"
+      - "adoption year"
+      - "instrument classification"
+    unresolved:
+      - "complete paragraph-level locator verification"
+      - "quotation-by-quotation verification"
+
+  UNICEF_AI_CHILDREN_V3_2025:
+    status: "partially_verified"
+    fields_verified:
+      - "title"
+      - "version"
+      - "publication month and year"
+      - "general subject scope"
+    unresolved:
+      - "complete page-level locator verification"
+      - "quotation-by-quotation verification"
+
+  ETH_PDPA_1321_2024:
+    status: "integrity_verified_metadata_pending"
+    unresolved:
+      - "complete title and edition verification"
+      - "article-level locator verification"
+      - "legal review"
+      - "operation-specific applicability"
+
+  ETH_ECA_QOS_794_2021:
+    status: "integrity_verified_metadata_pending"
+    unresolved:
+      - "complete title and edition verification"
+      - "clause and table verification"
+      - "regulated-actor applicability"
+      - "measurement-method applicability"
+
+  ETH_ESDP_VI_2021:
+    status: "integrity_verified_metadata_pending"
+    unresolved:
+      - "complete publication metadata verification"
+      - "successor-programme verification"
+      - "locator verification"
+
+  ETH_STME_POLICY:
+    status: "integrity_verified_adoption_unresolved"
+    unresolved:
+      - "formal adoption status"
+      - "publication metadata verification"
+      - "locator verification"
+
+  ETH_NATIONAL_CYBERSECURITY_POLICY_2024:
+    status: "integrity_verified_metadata_pending"
+    unresolved:
+      - "complete authority verification"
+      - "complete publication metadata verification"
+      - "locator verification"
+
+verification_not_yet_completed:
+  - "Formal legal review"
+  - "Official translation review"
+  - "Legal applicability review for specific actors and operations"
+  - "Complete article, clause, table, and page locator verification"
+  - "Complete quotation verification"
+  - "License and redistribution review"
+  - "Complete ITU AI Readiness methodology reconciliation"
+  - "Formal ITU-T Y.3172 conformance assessment"
+
+legal_review:
+  performed: false
+  status: "not_performed"
+
+translation_review:
+  performed: false
+  status: "not_performed"
+
+license_review:
+  performed: false
+  status: "not_performed"
+
+itu_conformance:
+  claimed: false
+  status: "not_assessed"
+
+itu_certification:
+  claimed: false
+  status: "not_applicable"
+
+readiness_assessment:
+  subject_type: "project"
+  subject_id: "AMBA-GOV"
+  national_assessment: false
+  official_itu_certification: false
+  overall_score: null
+  score_status: "withheld_pending_methodology_and_evidence_coverage"
+
+test_verification:
+  execution_date: "2026-11-04"
+  active_tests_collected: 681
+  passed: 681
+  failed: 0
+  result: "passed"
+  excluded_obsolete_test:
+    path: "tests/test_summarizer_v7_3.py"
+    reason: "Obsolete versioned Qt test caused a blocking modal error path"
+    test_count_removed: 2
+
+scope_notice: >
+  Artifact-integrity verification confirms the identity of locally acquired
+  bytes within the verified scope. Source metadata is considered verified only
+  for fields explicitly listed as verified in this record. Artifact integrity
+  and metadata verification do not constitute formal legal review, official
+  translation review, actor-specific or operation-specific applicability
+  determination, license authorization, ITU certification, or formal ITU-T
+  Y.3172 conformance.
+
+audit_description:
+  permitted: "tamper-evident within verified scope"
+  prohibited: "tamper-proof"

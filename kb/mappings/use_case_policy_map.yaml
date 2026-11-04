@@ -1,0 +1,18 @@
+schema_version: "1.1.0"
+use_cases:
+  - use_case_id: "competition_governed_education_scenario"
+    source_ids: ["ETH-PDPA-1321-2024", "ETH-CYBERSECURITY-POLICY-2024", "ITU-T-Y3172-2019", "UNICEF-AI-CHILDREN-3.0", "UNESCO-AI-ETHICS-2021"]
+    source_roles:
+      ETH-PDPA-1321-2024: "quarantined_legal_context"
+      ETH-CYBERSECURITY-POLICY-2024: "policy_context"
+      ITU-T-Y3172-2019: "interpreted_architecture"
+      UNICEF-AI-CHILDREN-3.0: "supporting_child_guidance"
+      UNESCO-AI-ETHICS-2021: "supporting_ethics_guidance"
+    enforcement_source: "project_controls_only"
+    national_binding_conclusion_allowed: false
+  - use_case_id: "competition_readiness_assessment"
+    source_ids: ["ETH-PDPA-1321-2024", "ETH-ECA-QOS-794-2021", "ETH-ESDP-VI-2021", "ETH-STME-POLICY", "ETH-CYBERSECURITY-POLICY-2024", "ITU-T-Y3172-2019", "ITU-AI-READINESS-2.0", "UNICEF-AI-CHILDREN-3.0", "UNESCO-AI-ETHICS-2021"]
+    assessment_framework: "ITU-AI-READINESS-2.0"
+    numerical_score_required: false
+    not_assessed_converts_to_zero: false
+    national_binding_conclusion_allowed: false

@@ -1,0 +1,34 @@
+[
+  {
+    "Length": 20535,
+    "RelativePath": "framework/ITUAIReadiness_reference/ITUAIReadiness-main/simulation/AI_Readiness_Game_Colab.ipynb"
+  },
+  {
+    "Length": 35431,
+    "RelativePath": "framework/ITUAIReadiness_reference/ITUAIReadiness-main/simulation/AI_Readiness_Game_Slides.pptx"
+  },
+  {
+    "Length": 48763,
+    "RelativePath": "framework/ITUAIReadiness_reference/ITUAIReadiness-main/simulation/AI_Readiness_Simulation_Game_Plan.docx"
+  },
+  {
+    "Length": 21146,
+    "RelativePath": "framework/ITUAIReadiness_reference/ITUAIReadiness-main/simulation/data/framework/dimensions.json"
+  },
+  {
+    "Length": 7042,
+    "RelativePath": "framework/ITUAIReadiness_reference/ITUAIReadiness-main/simulation/server/game/scoring.py"
+  },
+  {
+    "Length": 1733,
+    "RelativePath": "framework/ITUAIReadiness_reference/ITUAIReadiness-main/simulation/server/knowledge/dimensions.py"
+  },
+  {
+    "Length": 1109667,
+    "RelativePath": "framework/ITUAIReadiness_reference/ITUAIReadiness-main/simulation/server/knowledge/InputDocs/AI_Strategies/AI_Ready_Framework_2025.pdf"
+  },
+  {
+    "Length": 11402797,
+    "RelativePath": "framework/ITUAIReadiness_reference/ITUAIReadiness-main/simulation/server/knowledge/InputDocs/AI_Strategies/China_AI_Security_Governance_Framework_2025.pdf"
+  }
+]

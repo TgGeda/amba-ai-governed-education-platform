@@ -1,0 +1,9 @@
+
+QWidget[learningRole="studyRoot"] { background-color: #F8F6F0; color: #1A202C; }
+QFrame[learningRole="studyCard"] { background-color: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; }
+QLabel[learningRole="studyMeta"] { color: #4A5568; font-size: 12px; }
+QPushButton[learningAction="primary"] { background-color: #319795; color: #FFFFFF; border-radius: 7px; padding: 7px 13px; font-weight: 700; }
+QPushButton[mastery="again"] { background-color: #FFF1F2; color: #9F1239; border: 1px solid #FDA4AF; }
+QPushButton[mastery="hard"] { background-color: #FFFBEB; color: #92400E; border: 1px solid #FCD34D; }
+QPushButton[mastery="good"] { background-color: #EFF6FF; color: #1D4ED8; border: 1px solid #93C5FD; }
+QPushButton[mastery="easy"] { background-color: #ECFDF5; color: #065F46; border: 1px solid #6EE7B7; }

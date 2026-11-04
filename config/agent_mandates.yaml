@@ -1,0 +1,40 @@
+schema_version: "1.0.0"
+
+mandates:
+  SCHOOL-ADMIN-COMMERCIAL-REVIEW-V1:
+    principal_id: "SYNTHETIC-SCHOOL-ADMIN-01"
+    role: "school_administrator"
+
+    permitted_operations:
+      - "commercial_purchase_request"
+
+    permitted_decisions:
+      - "approve_review_queue"
+      - "deny_commercial_purchase"
+      - "approve_synthetic_mitigation"
+
+    synthetic: true
+    legal_effect: false
+
+    active_from: "2026-01-01T00:00:00Z"
+    expires_at: "2027-01-01T00:00:00Z"
+
+  COMPLIANCE-POLICY-GAP-REVIEW-V1:
+    principal_id: "SYNTHETIC-COMPLIANCE-OFFICER-01"
+    role: "compliance_officer"
+
+    permitted_operations:
+      - "commercial_purchase_request"
+      - "targeted_ad_dispatch"
+      - "policy_exploration_search"
+
+    permitted_decisions:
+      - "approve_review_queue"
+      - "register_policy_gap"
+      - "approve_synthetic_mitigation"
+
+    synthetic: true
+    legal_effect: false
+
+    active_from: "2026-01-01T00:00:00Z"
+    expires_at: "2027-01-01T00:00:00Z"

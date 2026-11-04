@@ -1,0 +1,565 @@
+#AmbaNotesWidgetUI {
+    background-color: #070B14;
+    color: #F8FAFC;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    font-size: 10pt;
+}
+
+#AmbaNotesWidgetUI QFrame#controlCard {
+    background-color: #0B1324;
+    border: 1px solid #1E293B;
+    border-radius: 12px;
+}
+
+#AmbaNotesWidgetUI QLabel#controlRibbonLabel {
+    color: #94A3B8;
+    font-size: 9pt;
+    font-weight: 600;
+}
+
+#AmbaNotesWidgetUI QFrame#sidebarFrame {
+    background-color: #0B1324;
+    border: 1px solid #1E293B;
+    border-radius: 10px;
+}
+
+#AmbaNotesWidgetUI QLabel#sidebarSectionTitle {
+    color: #2DD4BF;
+    font-size: 10pt;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+QSplitter#mainSplitter::handle {
+    background-color: #111A2C;
+    width: 2px;
+}
+
+#AmbaNotesWidgetUI QTreeWidget#outlineTree {
+    background-color: transparent;
+    border: none;
+    color: #CBD5E1;
+    font-size: 9.5pt;
+    padding: 2px;
+}
+
+#AmbaNotesWidgetUI QTreeWidget#outlineTree::item {
+    padding: 7px 8px;
+    border-radius: 6px;
+    margin-bottom: 2px;
+}
+
+#AmbaNotesWidgetUI QTreeWidget#outlineTree::item:hover {
+    background-color: #16243D;
+    color: #38BDF8;
+}
+
+#AmbaNotesWidgetUI QTreeWidget#outlineTree::item:selected {
+    background-color: #113E42;
+    color: #5EEAD4;
+    font-weight: 700;
+}
+
+#AmbaNotesWidgetUI QFrame#notesMasteryProgressCard {
+    background-color: #07101E;
+    border: 1px solid #1A2844;
+    border-radius: 8px;
+}
+
+#AmbaNotesWidgetUI QLabel#masteryCardTitle {
+    color: #38BDF8;
+    font-size: 8.5pt;
+    font-weight: 700;
+}
+
+#AmbaNotesWidgetUI QLineEdit#notesSearchInput {
+    background-color: #050912;
+    border: 1px solid #233554;
+    border-radius: 6px;
+    color: #F8FAFC;
+    padding: 6px 12px;
+    font-size: 9.5pt;
+}
+
+#AmbaNotesWidgetUI QLineEdit#notesSearchInput:focus {
+    border: 1px solid #38BDF8;
+    background-color: #0A1224;
+}
+
+#AmbaNotesWidgetUI QComboBox {
+    background-color: #111C33;
+    color: #F8FAFC;
+    border: 1px solid #223455;
+    border-radius: 6px;
+    padding: 6px 12px;
+    min-height: 26px;
+    min-width: 140px;
+}
+
+#AmbaNotesWidgetUI QComboBox:hover {
+    border-color: #38BDF8;
+    background-color: #14223E;
+}
+
+#AmbaNotesWidgetUI QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 20px;
+    border-left: none;
+}
+
+#AmbaNotesWidgetUI QCheckBox {
+    color: #CBD5E1;
+    font-weight: 500;
+    spacing: 8px;
+}
+
+#AmbaNotesWidgetUI QCheckBox::indicator {
+    width: 18px;
+    height: 18px;
+    border: 1px solid #334155;
+    border-radius: 4px;
+    background-color: #0F172A;
+}
+
+#AmbaNotesWidgetUI QCheckBox::indicator:hover {
+    border-color: #38BDF8;
+}
+
+#AmbaNotesWidgetUI QCheckBox::indicator:checked {
+    background-color: #0D9488;
+    border-color: #2DD4BF;
+}
+
+#AmbaNotesWidgetUI QPushButton {
+    background-color: #131E35;
+    border: 1px solid #233554;
+    border-radius: 6px;
+    padding: 7px 14px;
+    color: #E2E8F0;
+    font-weight: 600;
+    min-height: 26px;
+}
+
+#AmbaNotesWidgetUI QPushButton:hover {
+    background-color: #1C2D4F;
+    border-color: #38BDF8;
+    color: #FFFFFF;
+}
+
+#AmbaNotesWidgetUI QPushButton:disabled {
+    background-color: #0F172A;
+    border-color: #1E293B;
+    color: #475569;
+}
+
+#AmbaNotesWidgetUI QPushButton[priority="primary"],
+#AmbaNotesWidgetUI QPushButton#generateNotesButton {
+    background-color: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #0D9488, stop:1 #14B8A6);
+    border: 1px solid #2DD4BF;
+    color: #031018;
+    font-weight: 700;
+    padding: 7px 18px;
+}
+
+#AmbaNotesWidgetUI QPushButton[priority="primary"]:hover,
+#AmbaNotesWidgetUI QPushButton#generateNotesButton:hover {
+    background-color: #14B8A6;
+    color: #000000;
+}
+
+#AmbaNotesWidgetUI QPushButton[variant="secondary"],
+#AmbaNotesWidgetUI QPushButton#exportNotesButton {
+    background-color: #1E293B;
+    border: 1px solid #334155;
+    color: #F8FAFC;
+}
+
+#AmbaNotesWidgetUI QPushButton#learningCompactAction {
+    background-color: #111A2E;
+    border: 1px solid #1E293B;
+    color: #94A3B8;
+    padding: 5px 12px;
+    font-size: 9pt;
+}
+
+#AmbaNotesWidgetUI QPushButton#learningCompactAction:hover {
+    background-color: #182846;
+    color: #F8FAFC;
+    border-color: #38BDF8;
+}
+
+#AmbaNotesWidgetUI QTabWidget::pane {
+    border: 1px solid #1E293B;
+    border-radius: 10px;
+    background-color: #090E1B;
+}
+
+#AmbaNotesWidgetUI QTabBar::tab {
+    background-color: #0E1626;
+    color: #94A3B8;
+    border: 1px solid #1E293B;
+    border-bottom: none;
+    padding: 9px 20px;
+    margin-right: 4px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    font-weight: 600;
+}
+
+#AmbaNotesWidgetUI QTabBar::tab:hover {
+    background-color: #15223A;
+    color: #F8FAFC;
+}
+
+#AmbaNotesWidgetUI QTabBar::tab:selected {
+    background-color: #090E1B;
+    color: #2DD4BF;
+    border-color: #0D9488;
+    border-bottom: 3px solid #2DD4BF;
+}
+
+#AmbaNotesWidgetUI QFrame#notesExecutiveOverviewCard {
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #101B33, stop:1 #0A1224);
+    border: 1px solid #1E3156;
+    border-left: 4px solid #2DD4BF;
+    border-radius: 10px;
+}
+
+#AmbaNotesWidgetUI QLabel#notesTagPill {
+    background-color: #0D9488;
+    color: #04141A;
+    font-size: 8.5pt;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+}
+
+#AmbaNotesWidgetUI QLabel#notesSourcePagePill {
+    background-color: #1E293B;
+    color: #94A3B8;
+    border: 1px solid #334155;
+    font-size: 8.5pt;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+}
+
+#AmbaNotesWidgetUI QLabel#notesOverviewTitle {
+    color: #F8FAFC;
+    font-size: 13pt;
+    font-weight: 700;
+}
+
+#AmbaNotesWidgetUI QLabel#notesOverviewBody {
+    color: #E2E8F0;
+    font-size: 11pt;
+    line-height: 1.6;
+}
+
+#AmbaNotesWidgetUI QFrame#interactiveCornellCard {
+    background-color: #0D1527;
+    border: 1px solid #1A2844;
+    border-radius: 10px;
+}
+
+#AmbaNotesWidgetUI QFrame#interactiveCornellCard:hover {
+    border-color: #2D4370;
+}
+
+#AmbaNotesWidgetUI QFrame#interactiveCornellCard[activeTarget="true"] {
+    border: 2px solid #2DD4BF;
+    background-color: #111E33;
+}
+
+#AmbaNotesWidgetUI QFrame#interactiveCornellCard[completed="true"] {
+    border-color: #059669;
+    background-color: #061A19;
+}
+
+#AmbaNotesWidgetUI QToolButton#cornellToggleBtn {
+    background: transparent;
+    border: none;
+    color: #94A3B8;
+    font-size: 11pt;
+}
+
+#AmbaNotesWidgetUI QToolButton#cornellToggleBtn:hover {
+    color: #2DD4BF;
+}
+
+#AmbaNotesWidgetUI QLabel#cornellIndexBadge {
+    background-color: #13273D;
+    color: #2DD4BF;
+    border: 1px solid #1C3D5A;
+    border-radius: 12px;
+    font-size: 8pt;
+    font-weight: 800;
+    padding: 2px 8px;
+}
+
+#AmbaNotesWidgetUI QLabel#cornellTitleText {
+    color: #F8FAFC;
+    font-size: 12pt;
+    font-weight: 700;
+}
+
+#AmbaNotesWidgetUI QLabel#cornellTagBadge {
+    background-color: #101F3B;
+    color: #7DD3FC;
+    border: 1px solid #19315D;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 8pt;
+    font-weight: 600;
+}
+
+#AmbaNotesWidgetUI QPushButton#cornellMarginBtn {
+    background-color: #142036;
+    border: 1px solid #233452;
+    border-radius: 5px;
+    color: #CBD5E1;
+    font-size: 8.5pt;
+    font-weight: 600;
+    padding: 3px 8px;
+}
+
+#AmbaNotesWidgetUI QPushButton#cornellMarginBtn:hover {
+    background-color: #1A2E4E;
+    color: #38BDF8;
+    border-color: #38BDF8;
+}
+
+#AmbaNotesWidgetUI QCheckBox#cornellMasteredCheck {
+    color: #94A3B8;
+    font-weight: 600;
+    font-size: 9pt;
+}
+
+#AmbaNotesWidgetUI QCheckBox#cornellMasteredCheck:checked {
+    color: #34D399;
+}
+
+#AmbaNotesWidgetUI QToolButton#cornellActionsBtn {
+    background-color: #142038;
+    border: 1px solid #233457;
+    border-radius: 6px;
+    color: #94A3B8;
+    padding: 2px 8px;
+    font-weight: bold;
+}
+
+#AmbaNotesWidgetUI QToolButton#cornellActionsBtn:hover {
+    background-color: #1B2B4A;
+    color: #F8FAFC;
+    border-color: #38BDF8;
+}
+
+#AmbaNotesWidgetUI QFrame#cornellCueBox {
+    background-color: #0B1E29;
+    border: 1px solid #114254;
+    border-left: 3px solid #0EA5E9;
+    border-radius: 6px;
+}
+
+#AmbaNotesWidgetUI QLabel#cornellCueIcon {
+    color: #38BDF8;
+    font-size: 8.5pt;
+    font-weight: 800;
+}
+
+#AmbaNotesWidgetUI QLabel#cornellCueText {
+    color: #E0F2FE;
+    font-size: 10pt;
+    font-weight: 600;
+}
+
+#AmbaNotesWidgetUI QLabel#cornellNotesContent {
+    color: #CBD5E1;
+    font-size: 10.5pt;
+    line-height: 1.5;
+}
+
+#AmbaNotesWidgetUI QFrame#cornellTakeawayBox {
+    background-color: #0A101E;
+    border: 1px solid #16243D;
+    border-radius: 6px;
+}
+
+#AmbaNotesWidgetUI QLabel#takeawayBullet {
+    color: #F59E0B;
+    font-size: 9pt;
+}
+
+#AmbaNotesWidgetUI QLabel#takeawayPoint {
+    color: #E2E8F0;
+    font-size: 10pt;
+}
+
+#AmbaNotesWidgetUI QFrame#interactiveTerminalBlock {
+    background-color: #050811;
+    border: 1px solid #1B2944;
+    border-radius: 8px;
+}
+
+#AmbaNotesWidgetUI QFrame#terminalHeader {
+    background-color: #0D1628;
+    border-top-left-radius: 7px;
+    border-top-right-radius: 7px;
+    border-bottom: 1px solid #1B2944;
+}
+
+#AmbaNotesWidgetUI QLabel#terminalTitle {
+    color: #94A3B8;
+    font-size: 8.5pt;
+    font-weight: 600;
+}
+
+#AmbaNotesWidgetUI QLabel#terminalLangBadge {
+    background-color: #1E293B;
+    color: #2DD4BF;
+    border: 1px solid #334155;
+    border-radius: 3px;
+    padding: 1px 6px;
+    font-size: 7.5pt;
+    font-weight: 800;
+}
+
+#AmbaNotesWidgetUI QPushButton#terminalCopyBtn {
+    background-color: #16243D;
+    border: 1px solid #243B66;
+    border-radius: 4px;
+    color: #E2E8F0;
+    font-size: 8pt;
+    font-weight: 600;
+    padding: 2px 10px;
+    min-height: 18px;
+}
+
+#AmbaNotesWidgetUI QPushButton#terminalCopyBtn:hover {
+    background-color: #0D9488;
+    color: #FFFFFF;
+    border-color: #2DD4BF;
+}
+
+#AmbaNotesWidgetUI QTextBrowser#terminalCodeViewer {
+    background-color: #050811;
+    border: none;
+    border-bottom-left-radius: 7px;
+    border-bottom-right-radius: 7px;
+}
+
+#AmbaNotesWidgetUI QFrame#cornellBottomLineBox {
+    background-color: #071E20;
+    border: 1px solid #0D9488;
+    border-radius: 6px;
+}
+
+#AmbaNotesWidgetUI QLabel#cornellBottomLineIcon {
+    color: #2DD4BF;
+    font-size: 8.5pt;
+    font-weight: 800;
+}
+
+#AmbaNotesWidgetUI QLabel#cornellBottomLineText {
+    color: #5EEAD4;
+    font-size: 10pt;
+    font-weight: 600;
+}
+
+#AmbaNotesWidgetUI QFrame#cornellScratchpadFrame {
+    background-color: #131A29;
+    border: 1px dashed #2A3C5E;
+    border-radius: 6px;
+}
+
+#AmbaNotesWidgetUI QLabel#scratchpadHeaderLabel {
+    color: #F59E0B;
+    font-size: 8.5pt;
+    font-weight: 700;
+}
+
+#AmbaNotesWidgetUI QTextEdit#scratchpadTextEdit {
+    background-color: #0A0F1D;
+    border: 1px solid #1E2D48;
+    border-radius: 4px;
+    color: #F8FAFC;
+    font-family: inherit;
+    font-size: 9.5pt;
+    padding: 6px;
+}
+
+#AmbaNotesWidgetUI QFrame#notesNavigationToolbar {
+    background-color: #0B1324;
+    border: 1px solid #1E293B;
+    border-radius: 10px;
+}
+
+#AmbaNotesWidgetUI QLabel#notesToolbarLabel {
+    color: #94A3B8;
+    font-weight: 700;
+    font-size: 9.5pt;
+}
+
+#AmbaNotesWidgetUI QPushButton#notesPathwayBtn {
+    background-color: #121D33;
+    border: 1px solid #233758;
+    color: #2DD4BF;
+    border-radius: 6px;
+    padding: 7px 14px;
+    font-weight: 600;
+}
+
+#AmbaNotesWidgetUI QPushButton#notesPathwayBtn:hover {
+    background-color: #0D9488;
+    color: #000000;
+    border-color: #2DD4BF;
+}
+
+#AmbaNotesWidgetUI QTextEdit#rawNoteEditor {
+    background-color: #050811;
+    border: 1px solid #1E293B;
+    border-radius: 8px;
+    padding: 12px;
+    color: #38BDF8;
+}
+
+#AmbaNotesWidgetUI QTextBrowser#notesOperationLog {
+    background-color: #050811;
+    color: #93C5FD;
+    border: 1px solid #1E293B;
+    border-radius: 6px;
+    padding: 10px;
+}
+
+#AmbaNotesWidgetUI QLabel#notesStatusLabel {
+    background-color: #081B2B;
+    border: 1px solid #0284C7;
+    border-radius: 6px;
+    padding: 8px 12px;
+    color: #38BDF8;
+    font-weight: 700;
+}
+
+#AmbaNotesWidgetUI QLabel#notesEmptyPlaceholder {
+    color: #64748B;
+    font-size: 11pt;
+    padding: 40px;
+}
+
+#AmbaNotesWidgetUI QLabel#footerStatusLabel {
+    color: #64748B;
+    font-size: 9pt;
+}
+
+#AmbaNotesWidgetUI QProgressBar {
+    background-color: #0F172A;
+    border: none;
+    border-radius: 6px;
+}
+
+#AmbaNotesWidgetUI QProgressBar::chunk {
+    background-color: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #0D9488, stop:1 #2DD4BF);
+    border-radius: 6px;
+}

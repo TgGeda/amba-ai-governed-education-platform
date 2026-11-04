@@ -1,0 +1,37 @@
+schema_version: "1.0.0"
+
+principal_provisioning:
+  mode: "runtime_environment"
+  synthetic_only: true
+  legal_effect: false
+
+principals:
+  SYNTHETIC-SCHOOL-ADMIN-01:
+    role: "school_administrator"
+
+    synthetic: true
+    legal_effect: false
+
+    credential_source: "runtime_secret"
+    credential_environment_variable: "AMBA_GOV_DEMO_SCHOOL_ADMIN_SECRET"
+
+    active_from: "2026-01-01T00:00:00Z"
+    expires_at: "2027-01-01T00:00:00Z"
+
+    mandate_ids:
+      - "SCHOOL-ADMIN-COMMERCIAL-REVIEW-V1"
+
+  SYNTHETIC-COMPLIANCE-OFFICER-01:
+    role: "compliance_officer"
+
+    synthetic: true
+    legal_effect: false
+
+    credential_source: "runtime_secret"
+    credential_environment_variable: "AMBA_GOV_DEMO_COMPLIANCE_SECRET"
+
+    active_from: "2026-01-01T00:00:00Z"
+    expires_at: "2027-01-01T00:00:00Z"
+
+    mandate_ids:
+      - "COMPLIANCE-POLICY-GAP-REVIEW-V1"

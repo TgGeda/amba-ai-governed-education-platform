@@ -1,0 +1,140 @@
+from __future__ import annotations
+
+from typing import Any
+
+from PySide6.QtCore import QObject, QThreadPool, Signal, Slot
+
+from amba_ai.logger import logger
+from amba_ai.models.schemas import SummaryResult
+from amba_ai.services.job_service import JobService
+from .data_classes import NotesGenerationRequest, NotesViewModel
+from amba_ai.ui.workers import FunctionWorker, unwrap_worker_result
+
+
+class NotesManager(QObject):
+    notesStarted = Signal(str)
+    notesFinished = Signal(dict)
+    notesFailed = Signal(dict)
+    notesGenerated = Signal(int)
+    statusMessage = Signal(str, str)
+    operationStarted = Signal(str)
+    operationFinished = Signal(str)
+
+    def __init__(self, job_service: JobService, parent: QObject | None = None) -> None:
+        super().__init__(parent)
+        self.jobs = job_service
+        self.thread_pool = QThreadPool.globalInstance()
+        self._is_operation_active = False
+        self._equity_profile: dict[str, Any] = {}
+
+    @Slot(dict)
+    def apply_equity_profile(self, profile: dict[str, Any]) -> None:
+        self._equity_profile = dict(profile or {})
+        self.statusMessage.emit("Notes cognitive profile synchronized with Equity Switch.", "INFO")
+
+    @Slot(dict)
+    def generate_notes(self, request_payload: dict[str, Any]) -> None:
+        if self._is_operation_active:
+            self.statusMessage.emit("Notes generation already in progress.", "WARNING")
+            return
+
+        request = NotesGenerationRequest.from_dict(request_payload)
+
+        if request.document_id <= 0:
+            context = {
+                "task_name": "Generate Notes",
+                "error_type": "InvalidDocument",
+                "error_message": "A valid document must be selected before generating study notes.",
+            }
+            self.notesFailed.emit(context)
+            self.statusMessage.emit(context["error_message"], "ERROR")
+            return
+
+        self._is_operation_active = True
+        self.notesStarted.emit(request.note_style)
+        self.operationStarted.emit("Synthesizing active study notes & interactive curriculum...")
+
+        worker = FunctionWorker(
+            self._run_notes,
+            request,
+            task_name="Generate Notes",
+            max_retries=0,
+        )
+        worker.signals.finished.connect(self._on_notes_finished)
+        worker.signals.error.connect(self._on_worker_error)
+        worker.signals.status.connect(self._on_worker_status)
+
+        self.thread_pool.start(worker)
+
+    def _run_notes(self, request: NotesGenerationRequest) -> NotesViewModel:
+        try:
+            result = self.jobs.generate_notes(
+                request.document_id,
+                force=request.force,
+                model_name=request.preferred_model,
+            )
+        except TypeError:
+            result = self.jobs.generate_notes(
+                request.document_id,
+                force=request.force,
+            )
+
+        if not isinstance(result, SummaryResult):
+            raise TypeError("Notes backend returned an invalid result.")
+
+        return NotesViewModel.from_result(result, note_style=request.note_style)
+
+    @Slot(dict)
+    def _on_worker_status(self, payload: dict[str, Any]) -> None:
+        message = str(payload.get("message") or payload.get("stage") or "Processing note synthesis...")
+        self.statusMessage.emit(message, "INFO")
+
+    @Slot(dict)
+    def _on_worker_error(self, error_context: dict[str, Any]) -> None:
+        self._is_operation_active = False
+        logger.warning("Notes worker emitted error", extra={"context": error_context})
+        message = str(error_context.get("error_message") or "Notes synthesis failure.")
+        self.notesFailed.emit(error_context)
+        self.statusMessage.emit(message, "ERROR")
+        self.operationFinished.emit("Notes generation failed.")
+
+    @Slot(object)
+    def _on_notes_finished(self, raw_result: Any) -> None:
+        self._is_operation_active = False
+        result = unwrap_worker_result(raw_result, default_task_name="Generate Notes")
+
+        if not result.success:
+            context = {
+                "task_name": result.task_name,
+                "error_message": result.error_message or "Notes generation failed.",
+                **(result.metadata or {}),
+            }
+            self.notesFailed.emit(context)
+            self.statusMessage.emit(context["error_message"], "ERROR")
+            self.operationFinished.emit("Notes generation failed.")
+            return
+
+        if not isinstance(result.result, NotesViewModel):
+            context = {
+                "task_name": result.task_name,
+                "error_type": "InvalidResult",
+                "error_message": "Notes generation returned an invalid result.",
+            }
+            self.notesFailed.emit(context)
+            self.statusMessage.emit(context["error_message"], "ERROR")
+            self.operationFinished.emit("Notes generation failed.")
+            return
+
+        payload = result.result.to_dict()
+        document_id = int(payload.get("document_id") or 0)
+
+        self.notesFinished.emit(payload)
+        if document_id > 0:
+            self.notesGenerated.emit(document_id)
+
+        self.statusMessage.emit("Interactive study notes generated.", "INFO")
+        self.operationFinished.emit("Notes generated.")
+
+    def cleanup_before_close(self) -> None:
+        self._equity_profile = {}
+        self.statusMessage.emit("Notes state cleared before close.", "INFO")

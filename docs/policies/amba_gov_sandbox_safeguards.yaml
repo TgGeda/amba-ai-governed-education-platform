@@ -1,0 +1,56 @@
+schema_version: "1.0.0"
+
+policy_id: "AMBA-GOV-SANDBOX-SAFEGUARDS"
+policy_version: "1.0.0"
+authority: "Amba-Gov project"
+scope: "synthetic education-governance sandbox"
+binding_level: "project_control"
+national_binding_status: false
+synthetic_only: true
+legal_effect: false
+
+controls:
+  educational_processing:
+    locator: "/controls/educational_processing"
+    rule: >-
+      Classroom data may be processed only for declared synthetic educational
+      purposes and approved project destinations.
+
+  commercial_purchases:
+    locator: "/controls/commercial_purchases"
+    rule: >-
+      Commercial SDKs, in-app purchases, payment capture, and learner-facing
+      purchase interfaces are disabled in the synthetic learner environment.
+
+  targeted_advertising:
+    locator: "/controls/targeted_advertising"
+    rule: >-
+      Synthetic learner-support signals must not be exported or used for
+      targeted advertising.
+
+  human_review:
+    locator: "/controls/human_review"
+    rule: >-
+      Protected operations with insufficient evidence or unresolved
+      applicability must be held for human review.
+
+  restricted_destinations:
+    locator: "/controls/restricted_destinations"
+    rule: >-
+      Protected outputs may be delivered only to registered synthetic sinks.
+
+  evidence_integrity:
+    locator: "/controls/evidence_integrity"
+    rule: >-
+      Binding findings require active and verified PolicyRecords.
+
+  readiness_separation:
+    locator: "/controls/readiness_separation"
+    rule: >-
+      Readiness scores and statuses cannot authorize or block runtime actions.
+
+  synthetic_scope:
+    locator: "/controls/synthetic_scope"
+    rule: >-
+      All learner, payment, advertising, inference, and network facts in the
+      demonstration are synthetic.

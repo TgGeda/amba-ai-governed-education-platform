@@ -1,0 +1,57 @@
+schema_version: "1.0.0"
+
+logging:
+  audit_description: "tamper-evident within verified scope"
+
+  prohibited_content:
+    - "hidden_reasoning"
+    - "chain_of_thought"
+    - "system_prompts"
+    - "raw_learner_content"
+    - "credentials"
+    - "credential_hashes"
+    - "authorization_secrets"
+    - "private_absolute_paths"
+
+  required_runtime_fields:
+    - "run_id"
+    - "scenario_id"
+    - "stage_id"
+    - "event_id"
+    - "operation_id"
+    - "source_node"
+    - "destination_id"
+    - "synthetic_flag"
+
+  governance_fields:
+    - "policy_record_ids"
+    - "finding_codes"
+    - "recommendation_id"
+    - "recommended_action"
+    - "approval_request_id"
+    - "approval_decision_id"
+    - "execution_request_id"
+    - "execution_receipt_id"
+    - "review_queue_receipt_id"
+    - "distribution_acknowledgment_id"
+    - "policy_gap_ids"
+
+  audit_fields:
+    - "audit_schema_version"
+    - "block_index"
+    - "previous_hash"
+    - "payload_hash"
+    - "block_hash"
+
+  redaction:
+    enabled: true
+    replacement: "[REDACTED]"
+    redact_unknown_sensitive_fields: true
+
+  canonical_json:
+    sort_keys: true
+    separators:
+      - ","
+      - ":"
+    ensure_ascii: false
+    allow_nan: false

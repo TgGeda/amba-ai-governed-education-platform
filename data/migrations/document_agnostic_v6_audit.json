@@ -1,0 +1,505 @@
+{
+  "schema_version": "ambaai.learning-content.v1",
+  "installer_version": "6.0.0",
+  "lesson_specific_findings": [
+    {
+      "file": "src/amba_ai/core/content_delivery_v2.py",
+      "line": 75,
+      "text": "return f'''Create a polished {kind} for students using only the supplied source. Detect a meaningful topic title; do not use a filename-like title. Synthesize rather than copy. Exclude greetings and boilerplate. Preserve"
+    },
+    {
+      "file": "src/amba_ai/core/content_delivery_v2.py",
+      "line": 183,
+      "text": "markdown=re.sub(r\"(?im)^#\\s*(?:Detected Topic\\s*:\\s*)?QUIC\\s*\\([^\\n)]*\\)\\s*$\", \"# QUIC and HTTP/3\", markdown)"
+    },
+    {
+      "file": "src/amba_ai/core/content_delivery_v2.py",
+      "line": 184,
+      "text": "markdown=re.sub(r\"(?i)QUIC\\s*\\(Quick UDP Internet Connections\\)\", \"QUIC\", markdown)"
+    },
+    {
+      "file": "src/amba_ai/core/content_delivery_v2.py",
+      "line": 185,
+      "text": "markdown=re.sub(r\"(?i)\\beffectively replaced the TCP\\+TLS combination\\b\", \"provides an alternative to the TCP plus TLS combination for HTTP/3 traffic\", markdown)"
+    },
+    {
+      "file": "src/amba_ai/core/content_delivery_v2.py",
+      "line": 197,
+      "text": "if in_sources and (not stripped or stripped.startswith(\"-\") or re.search(r\"https?://|tools\\.ietf|wireshark\\.org\", stripped, re.I)):"
+    },
+    {
+      "file": "src/amba_ai/core/content_delivery_v2.py",
+      "line": 199,
+      "text": "if re.search(r\"https?://|tools\\.ietf|wireshark\\.org\", line, re.I):"
+    },
+    {
+      "file": "src/amba_ai/core/content_delivery_v3.py",
+      "line": 32,
+      "text": "\"what does quic eliminate in traditional tcp\":('What transport problem does QUIC reduce across unrelated streams?','QUIC reduces cross-stream head-of-line blocking. Loss in one stream does not require unrelated streams t"
+    },
+    {
+      "file": "src/amba_ai/core/content_delivery_v3.py",
+      "line": 33,
+      "text": "\"what is quic s handshake process\":('How do standard 1-RTT setup and resumed 0-RTT differ in QUIC?','A normal connection uses 1-RTT setup. An eligible resumed session may use 0-RTT when prior session state is available.'"
+    },
+    {
+      "file": "src/amba_ai/core/content_delivery_v3.py",
+      "line": 34,
+      "text": "\"how do you check for http 3 support using curl\":('Which curl command tests whether a server can use HTTP/3?','Run `curl --http3 -I https://example.com`. If HTTP/3 is not negotiated, another supported HTTP version may be"
+    },
+    {
+      "file": "src/amba_ai/core/content_delivery_v3.py",
+      "line": 35,
+      "text": "\"how do you diagnose quic support on a host\":('Which host-level commands can inspect UDP port 443 usage?','Use `ss -u -a | grep 443`, `netstat -uapn | grep 443`, or `lsof -i UDP:443`.'),"
+    },
+    {
+      "file": "src/amba_ai/core/content_delivery_v3.py",
+      "line": 36,
+      "text": "\"what is the importance of quic s removal of tcp level observability\":('Why does QUIC require different diagnostic techniques than TCP?','Much of QUIC transport metadata is encrypted, so diagnosis relies more on latency,"
+    },
+    {
+      "file": "src/amba_ai/core/content_delivery_v3.py",
+      "line": 37,
+      "text": "\"where is quic already widely used\":('Which deployment examples does the source associate with QUIC and HTTP/3?','The source mentions Google, YouTube, Cloudflare, and mobile traffic as deployment examples.'),"
+    },
+    {
+      "file": "src/amba_ai/core/content_delivery_v3.py",
+      "line": 38,
+      "text": "\"what does wireshark show about quic\":('Which Wireshark display filters can help identify QUIC traffic?','Useful filters include `udp.port == 443`, `quic`, and `tls && udp`.'),"
+    },
+    {
+      "file": "src/amba_ai/core/content_delivery_v3.py",
+      "line": 39,
+      "text": "\"what does the presence of h3 indicate in tls alpn\":('What does the ALPN identifier `h3` represent?','The `h3` identifier represents HTTP/3, which runs over QUIC.'),"
+    },
+    {
+      "file": "src/amba_ai/core/content_delivery_v3.py",
+      "line": 54,
+      "text": "('Which underlying transport does QUIC use?','QUIC uses UDP as its substrate while implementing secure, reliable, multiplexed transport behavior.','udp'),"
+    },
+    {
+      "file": "src/amba_ai/core/content_delivery_v3.py",
+      "line": 55,
+      "text": "('Which security protocol is integrated into QUIC?','QUIC integrates TLS 1.3 into the transport protocol.','tls 1.3'),"
+    },
+    {
+      "file": "src/amba_ai/core/content_delivery_v3.py",
+      "line": 56,
+      "text": "('What application-layer protocol commonly runs over QUIC?','HTTP/3 runs over QUIC.','http/3'),"
+    },
+    {
+      "file": "src/amba_ai/core/content_delivery_v3.py",
+      "line": 57,
+      "text": "('Which UDP port commonly carries QUIC web traffic?','QUIC web traffic commonly uses UDP port 443.','443'),"
+    },
+    {
+      "file": "src/amba_ai/core/content_delivery_v3.py",
+      "line": 58,
+      "text": "('What happens to unrelated streams when one QUIC stream loses a packet?','Unrelated streams can continue while the affected stream performs loss recovery.','independent stream'),"
+    },
+    {
+      "file": "src/amba_ai/core/content_delivery_v3.py",
+      "line": 59,
+      "text": "('Which curl command tests whether a server can use HTTP/3?','Run `curl --http3 -I https://example.com`. If HTTP/3 is not negotiated, another supported HTTP version may be used.','curl'),"
+    },
+    {
+      "file": "src/amba_ai/core/content_delivery_v3.py",
+      "line": 60,
+      "text": "('Which Wireshark display filters can help identify QUIC traffic?','Useful filters include `udp.port == 443`, `quic`, and `tls && udp`.','udp.port == 443'),"
+    },
+    {
+      "file": "src/amba_ai/core/content_delivery_v3.py",
+      "line": 61,
+      "text": "('How do standard 1-RTT setup and resumed 0-RTT differ in QUIC?','A normal connection uses 1-RTT setup. An eligible resumed session may use 0-RTT when prior session state is available.','0-rtt'),"
+    },
+    {
+      "file": "src/amba_ai/core/content_delivery_v3.py",
+      "line": 62,
+      "text": "('Why does QUIC require different diagnostic techniques than TCP?','Much of QUIC transport metadata is encrypted, so diagnosis relies more on latency, loss, jitter, flow behavior, endpoint telemetry, and logs.','observab"
+    },
+    {
+      "file": "src/amba_ai/core/professional_learning_pack_v4.py",
+      "line": 335,
+      "text": "filters = (\"udp.port\", \"tcp.port\", \"tls &&\", \"quic &&\", \"http3\")"
+    },
+    {
+      "file": "src/amba_ai/core/professional_learning_pack_v4.py",
+      "line": 706,
+      "text": "\"wireshark\" if any(\"udp.port\" in line or \"tls &&\" in line for line in pending_code) else \"bash\""
+    },
+    {
+      "file": "src/amba_ai/core/professional_learning_pack_v4.py",
+      "line": 1013,
+      "text": "\"wireshark\" if any(\"udp.port\" in line or \"tls &&\" in line for line in pending_commands) else \"bash\""
+    },
+    {
+      "file": "src/amba_ai/core/professional_learning_pack_v4.py",
+      "line": 1095,
+      "text": "if \"quic\" not in title.casefold():"
+    },
+    {
+      "file": "src/amba_ai/core/professional_learning_pack_v4.py",
+      "line": 1100,
+      "text": "\"curl --http3 -I https://google.com\","
+    },
+    {
+      "file": "src/amba_ai/core/professional_learning_pack_v4.py",
+      "line": 1105,
+      "text": "[Paragraph(\"0-RTT\", styles[\"minor\"]), Paragraph(\"Eligible resumed client -> Immediately Encrypted Request\", styles[\"body\"])],"
+    },
+    {
+      "file": "src/amba_ai/core/professional_learning_pack_v4.py",
+      "line": 1120,
+      "text": "Paragraph(\"Source-grounded commands for capture, protocol negotiation, HTTP/3 testing, and host inspection.\", styles[\"body\"]),"
+    },
+    {
+      "file": "src/amba_ai/core/professional_learning_pack_v4.py",
+      "line": 1409,
+      "text": "if 'tcp' in c:return 'QUIC web traffic uses UDP rather than TCP, commonly on port 443.'"
+    },
+    {
+      "file": "src/amba_ai/core/professional_learning_pack_v4.py",
+      "line": 1410,
+      "text": "if '80' in c:return 'Port 80 is normally associated with unencrypted HTTP, not standard QUIC web traffic.'"
+    },
+    {
+      "file": "src/amba_ai/core/professional_learning_pack_v4.py",
+      "line": 1411,
+      "text": "if '53' in c:return 'Port 53 is primarily associated with DNS, not HTTP/3 over QUIC.'"
+    },
+    {
+      "file": "src/amba_ai/core/professional_learning_pack_v4.py",
+      "line": 1412,
+      "text": "return 'This is not the source-supported common port for QUIC web traffic.'"
+    },
+    {
+      "file": "src/amba_ai/core/professional_learning_pack_v4.py",
+      "line": 1414,
+      "text": "if 'ssh' in c:return 'SSH is a separate secure remote-access protocol, not QUIC transport security.'"
+    },
+    {
+      "file": "src/amba_ai/core/professional_learning_pack_v4.py",
+      "line": 1415,
+      "text": "if 'dnssec' in c:return 'DNSSEC protects DNS authenticity; it is not integrated into QUIC transport.'"
+    },
+    {
+      "file": "src/amba_ai/core/professional_learning_pack_v4.py",
+      "line": 1416,
+      "text": "if '1.2' in c:return 'The source identifies TLS 1.3, not TLS 1.2, as integrated into QUIC.'"
+    },
+    {
+      "file": "src/amba_ai/core/professional_learning_pack_v4.py",
+      "line": 1418,
+      "text": "if 'congestion' in c:return 'QUIC still uses congestion control; the tested benefit is isolating stream loss recovery.'"
+    },
+    {
+      "file": "src/amba_ai/core/professional_learning_pack_v4.py",
+      "line": 1422,
+      "text": "if 'udp port 443' in c:return 'UDP 443 is a deployment convention, not the transport problem QUIC solves.'"
+    },
+    {
+      "file": "src/amba_ai/core/professional_learning_pack_v4.py",
+      "line": 1426,
+      "text": "if 'permanently' in c:return 'Fallback does not permanently disable UDP; it means HTTP/3 was not negotiated for that request.'"
+    },
+    {
+      "file": "src/amba_ai/core/professional_learning_pack_v4.py",
+      "line": 1427,
+      "text": "if 'http/3 instead' in c:return 'Fallback means another HTTP version was used, not HTTP/3.'"
+    },
+    {
+      "file": "src/amba_ai/core/professional_learning_pack_v4.py",
+      "line": 1429,
+      "text": "if any(x in q for x in ('reconnection','0-rtt')):"
+    },
+    {
+      "file": "src/amba_ai/core/professional_learning_pack_v4.py",
+      "line": 1431,
+      "text": "if 'separate tls' in c:return 'QUIC integrates TLS 1.3 instead of using a separate TLS-over-TCP handshake.'"
+    },
+    {
+      "file": "src/amba_ai/core/professional_learning_pack_v4.py",
+      "line": 1432,
+      "text": "if any(x in q for x in ('verify','supports quic','alpn')):"
+    },
+    {
+      "file": "src/amba_ai/core/professional_learning_pack_v4.py",
+      "line": 1433,
+      "text": "if 'ss ' in c or 'grep' in c:return 'Socket inspection shows UDP activity but does not directly confirm negotiated HTTP/3.'"
+    },
+    {
+      "file": "src/amba_ai/core/professional_learning_pack_v4.py",
+      "line": 1434,
+      "text": "if 'metadata' in c:return 'Encrypted metadata alone does not directly confirm HTTP/3 negotiation.'"
+    },
+    {
+      "file": "src/amba_ai/core/professional_learning_pack_v4.py",
+      "line": 1520,
+      "text": "return \"This inspects local UDP sockets or processes; it does not verify that HTTP/3 was negotiated with the server.\""
+    },
+    {
+      "file": "src/amba_ai/core/professional_learning_pack_v4.py",
+      "line": 1524,
+      "text": "return \"QUIC encrypts much transport metadata, so passive metadata alone cannot establish HTTP/3 protocol support.\""
+    },
+    {
+      "file": "src/amba_ai/core/professional_learning_pack_v4.py",
+      "line": 1526,
+      "text": "return \"A curl HTTP/3 request is a useful client test, but the question asks for the explicit ALPN negotiation identifier h3.\""
+    },
+    {
+      "file": "src/amba_ai/core/professional_learning_pack_v4.py",
+      "line": 1530,
+      "text": "return \"Reduced TCP-style observability is a QUIC trade-off, not the mechanism that prevents one stream loss from blocking others.\""
+    },
+    {
+      "file": "src/amba_ai/core/professional_learning_pack_v4.py",
+      "line": 1532,
+      "text": "return \"Integrated TLS 1.3 reduces setup overhead, but independent streams address cross-stream blocking during packet loss.\""
+    },
+    {
+      "file": "src/amba_ai/core/professional_learning_pack_v4.py",
+      "line": 1536,
+      "text": "return \"QUIC still performs congestion control; independent stream recovery is the relevant feature here.\""
+    },
+    {
+      "file": "src/amba_ai/core/professional_learning_pack_v4.py",
+      "line": 1542,
+      "text": "return \"QUIC web traffic is carried over UDP rather than TCP, commonly using port 443.\""
+    },
+    {
+      "file": "src/amba_ai/core/professional_learning_pack_v4.py",
+      "line": 1544,
+      "text": "return \"Port 80 is normally associated with unencrypted HTTP, not standard HTTP/3 over QUIC.\""
+    },
+    {
+      "file": "src/amba_ai/core/professional_learning_pack_v4.py",
+      "line": 1546,
+      "text": "return \"Port 53 is primarily associated with DNS, not HTTP/3 traffic.\""
+    },
+    {
+      "file": "src/amba_ai/core/professional_learning_pack_v4.py",
+      "line": 1547,
+      "text": "return \"This is not the source-supported common service port for QUIC web traffic.\""
+    },
+    {
+      "file": "src/amba_ai/core/professional_learning_pack_v4.py",
+      "line": 1550,
+      "text": "return \"SSH is a separate secure remote-access protocol and is not QUIC's integrated transport security.\""
+    },
+    {
+      "file": "src/amba_ai/core/professional_learning_pack_v4.py",
+      "line": 1552,
+      "text": "return \"DNSSEC protects DNS authenticity; it is unrelated to QUIC transport encryption.\""
+    },
+    {
+      "file": "src/amba_ai/core/professional_learning_pack_v4.py",
+      "line": 1554,
+      "text": "return \"The source identifies TLS 1.3, not TLS 1.2, as integrated into QUIC.\""
+    },
+    {
+      "file": "src/amba_ai/core/professional_learning_pack_v4.py",
+      "line": 1555,
+      "text": "return \"This is not the security protocol integrated into QUIC transport.\""
+    },
+    {
+      "file": "src/amba_ai/core/professional_learning_pack_v4.py",
+      "line": 1558,
+      "text": "return \"Fallback is request-specific negotiation behavior; it does not permanently disable UDP or QUIC.\""
+    },
+    {
+      "file": "src/amba_ai/core/professional_learning_pack_v4.py",
+      "line": 1559,
+      "text": "if \"http/3\" in c and \"instead\" in c:"
+    },
+    {
+      "file": "src/amba_ai/core/professional_learning_pack_v4.py",
+      "line": 1560,
+      "text": "return \"Fallback means another HTTP version was used because HTTP/3 was not negotiated.\""
+    },
+    {
+      "file": "src/amba_ai/core/professional_learning_pack_v4.py",
+      "line": 1564,
+      "text": "if any(term in q for term in (\"0-rtt\", \"resumed\", \"reconnection\")):"
+    },
+    {
+      "file": "src/amba_ai/core/professional_learning_pack_v4.py",
+      "line": 1568,
+      "text": "return \"QUIC integrates TLS 1.3 instead of performing a separate TLS-over-TCP handshake.\""
+    },
+    {
+      "file": "src/amba_ai/ui/common/learning_content_parser_v5.py",
+      "line": 177,
+      "text": "if not codes and re.search(r\"(?:tcpdump|curl\\s|openssl\\s|ss\\s|netstat\\s|lsof\\s|udp\\.port|tls\\s*&&|^quic$)\", plain, re.I):"
+    },
+    {
+      "file": "src/amba_ai/ui/common/learning_delivery_v5_2.py",
+      "line": 111,
+      "text": "for term in (\"QUIC\", \"UDP\", \"TLS 1.3\", \"HTTP/3\", \"Independent Streams\", \"Head-of-Line Blocking\", \"1-RTT\", \"0-RTT\", \"ALPN h3\", \"Observability\"):"
+    },
+    {
+      "file": "src/amba_ai/ui/common/learning_delivery_v5_3.py",
+      "line": 217,
+      "text": "(\"QUIC\", \"Protocol\", r\"\\bquic\\b\"),"
+    },
+    {
+      "file": "src/amba_ai/ui/common/learning_delivery_v5_3.py",
+      "line": 218,
+      "text": "(\"HTTP/3\", \"Application protocol\", r\"\\bhttp/?3\\b\"),"
+    },
+    {
+      "file": "src/amba_ai/ui/common/learning_delivery_v5_3.py",
+      "line": 220,
+      "text": "(\"TLS 1.3\", \"Security\", r\"\\btls\\s*1\\.3\\b\"),"
+    },
+    {
+      "file": "src/amba_ai/ui/common/learning_delivery_v5_3.py",
+      "line": 224,
+      "text": "(\"0-RTT\", \"Session resumption\", r\"\\b0[- ]?rtt\\b\"),"
+    },
+    {
+      "file": "src/amba_ai/ui/study/interactive_study_v4.py",
+      "line": 378,
+      "text": "((\"tls\", \"security\"), \"Integrated TLS 1.3\"),"
+    },
+    {
+      "file": "src/amba_ai/ui/study/interactive_study_v4.py",
+      "line": 379,
+      "text": "((\"0-rtt\", \"1-rtt\", \"handshake\", \"resumed\"), \"Connection setup\"),"
+    },
+    {
+      "file": "src/amba_ai/ui/study/interactive_study_v4.py",
+      "line": 380,
+      "text": "((\"http/3\", \"h3\", \"curl\"), \"HTTP/3\"),"
+    },
+    {
+      "file": "src/amba_ai/ui/study/interactive_study_v4.py",
+      "line": 381,
+      "text": "((\"wireshark\", \"diagnostic\", \"observability\"), \"Diagnostics\"),"
+    }
+  ],
+  "inline_style_findings": [
+    {
+      "file": "src/amba_ai/ui/ambient_overlay.py",
+      "line": 87
+    },
+    {
+      "file": "src/amba_ai/ui/main_window.py",
+      "line": 1170
+    },
+    {
+      "file": "src/amba_ai/ui/main_window.py",
+      "line": 1200
+    },
+    {
+      "file": "src/amba_ai/ui/common/document_agnostic_learning_v6.py",
+      "line": 33
+    },
+    {
+      "file": "src/amba_ai/ui/common/learning_delivery_v5_1.py",
+      "line": 449
+    },
+    {
+      "file": "src/amba_ai/ui/common/learning_delivery_v5_1.py",
+      "line": 466
+    },
+    {
+      "file": "src/amba_ai/ui/common/learning_delivery_v5_2.py",
+      "line": 277
+    },
+    {
+      "file": "src/amba_ai/ui/common/learning_delivery_v5_2.py",
+      "line": 288
+    },
+    {
+      "file": "src/amba_ai/ui/common/learning_delivery_v5_2.py",
+      "line": 305
+    },
+    {
+      "file": "src/amba_ai/ui/common/learning_delivery_v5_3.py",
+      "line": 550
+    },
+    {
+      "file": "src/amba_ai/ui/common/learning_delivery_v5_3.py",
+      "line": 702
+    },
+    {
+      "file": "src/amba_ai/ui/common/qss_utils.py",
+      "line": 31
+    },
+    {
+      "file": "src/amba_ai/ui/common/summary_notes_experience_v5.py",
+      "line": 94
+    },
+    {
+      "file": "src/amba_ai/ui/common/summary_notes_experience_v5.py",
+      "line": 113
+    },
+    {
+      "file": "src/amba_ai/ui/common/summary_notes_experience_v5.py",
+      "line": 124
+    },
+    {
+      "file": "src/amba_ai/ui/study/interactive_study_v4.py",
+      "line": 635
+    },
+    {
+      "file": "src/amba_ai/ui/study/interactive_study_v4.py",
+      "line": 985
+    },
+    {
+      "file": "src/amba_ai/ui/views/view_feedback.py",
+      "line": 86
+    },
+    {
+      "file": "src/amba_ai/ui/views/view_notes.py",
+      "line": 79
+    },
+    {
+      "file": "src/amba_ai/ui/views/view_study.py",
+      "line": 289
+    },
+    {
+      "file": "src/amba_ai/ui/views/view_study.py",
+      "line": 347
+    },
+    {
+      "file": "src/amba_ai/ui/views/view_study.py",
+      "line": 348
+    },
+    {
+      "file": "src/amba_ai/ui/views/view_study.py",
+      "line": 370
+    },
+    {
+      "file": "src/amba_ai/ui/views/view_study.py",
+      "line": 372
+    },
+    {
+      "file": "src/amba_ai/ui/views/view_study.py",
+      "line": 375
+    },
+    {
+      "file": "src/amba_ai/ui/views/library/heatmap_widgets.py",
+      "line": 158
+    },
+    {
+      "file": "src/amba_ai/ui/views/library/heatmap_widgets.py",
+      "line": 172
+    },
+    {
+      "file": "src/amba_ai/ui/views/library/recycle_bin_view.py",
+      "line": 46
+    },
+    {
+      "file": "src/amba_ai/ui/views/library/smart_views.py",
+      "line": 88
+    }
+  ],
+  "policy": {
+    "lesson_specific_application_logic_allowed": false,
+    "test_fixtures_allowed": true,
+    "python_owns_behavior": true,
+    "qss_owns_presentation": true
+  }
+}

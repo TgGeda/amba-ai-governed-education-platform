@@ -1,0 +1,164 @@
+# ============================================================
+# Python environments
+# ============================================================
+.venv/
+venv/
+env/
+ENV/
+
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.pyre/
+.pytype/
+.hypothesis/
+
+# Test and coverage output
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+test-results/
+junit.xml
+
+# Packaging and build output
+build/
+dist/
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+
+# ============================================================
+# Secrets and local configuration
+# ============================================================
+.env
+.env.*
+!.env.example
+!.env.template
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.cer
+secrets/
+credentials/
+credentials.json
+service-account*.json
+
+# Local configuration overrides
+config.local.*
+*.local.ini
+*.local.yaml
+*.local.yml
+*.local.json
+
+# ============================================================
+# Runtime databases and state
+# ============================================================
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+*.sqlite-journal
+*.sqlite-shm
+*.sqlite-wal
+
+data/db/
+data/logs/
+data/temp/
+data/user_uploads/
+data/personal_kb/
+data/sovereign_kb/
+
+# Generated knowledge-base artifacts
+kb/chunks/
+kb/extracted/
+kb/indexes/
+kb/normalized/
+kb/evaluation/
+kb/gaps/
+
+# Vector and model artifacts
+*.faiss
+*.index
+*.ann
+*.bin
+*.safetensors
+*.onnx
+*.pt
+*.pth
+*.ckpt
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*.pid
+*.lock
+~$*
+
+# ============================================================
+# Project backups, archives, and disabled files
+# ============================================================
+backup/
+_debris_archive_*/
+*_validated_backup/
+*.disabled
+
+# ============================================================
+# IDE and operating-system files
+# ============================================================
+.vscode/
+.idea/
+*.code-workspace
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Qt-generated or local runtime files
+.qt_for_python/
+*.qmlc
+*.jsc
+
+# Application crash output
+crash_dumps/
+*.dmp
+# ============================================================
+# Generated learning-pack outputs and runtime manifests
+# ============================================================
+data/manifest.json
+data/document_agnostic_manifest.json
+
+data/*_offline_study_bundle/
+data/*_offline_study_bundle.zip
+data/*_answer_key.pdf
+data/*_flashcards.csv
+data/*_quiz.csv
+data/*_quiz.pdf
+data/*_study_card.png
+data/*_study_guide.md
+data/*_study_guide.pdf
+data/document_*_flashcards.csv
+data/document_*_mcqs.csv
+data/study_packs/
+
+# Temporary numbered exports
+evaluator_numbered.txt
+execution_numbered.txt
+
+agent_input/

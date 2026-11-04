@@ -1,0 +1,48 @@
+schema_version: "1.1.0"
+mapping_rules:
+  findings_require_active_policy_record: true
+  quarantined_sources_cannot_support_binding_findings: true
+  context_only_sources_cannot_authorize_execution: true
+  guidance_cannot_be_presented_as_ethiopian_binding_law: true
+  technical_standards_are_interpreted_architecture: true
+  readiness_framework_is_assessment_evidence_only: true
+  unresolved_applicability_fails_closed: true
+  fabricated_citations_fail: true
+mappings:
+  - mapping_id: "ETH-PDPA-CONTEXT"
+    source_id: "ETH-PDPA-1321-2024"
+    use: "design_and_scenario_context"
+    enforcement_allowed: false
+    binding_finding_allowed: false
+    gate: "quarantined_until_locator_applicability_and_legal_review_complete"
+  - mapping_id: "ETH-QOS-READINESS"
+    source_id: "ETH-ECA-QOS-794-2021"
+    use: "readiness_context"
+    enforcement_allowed: false
+    binding_finding_allowed: false
+    gate: "quarantined_until_relevance_and_legal_review_complete"
+  - mapping_id: "ETH-EDUCATION-CONTEXT"
+    source_ids: ["ETH-ESDP-VI-2021", "ETH-STME-POLICY"]
+    use: "historical_and_policy_context"
+    enforcement_allowed: false
+    binding_finding_allowed: false
+  - mapping_id: "ETH-CYBER-CONTEXT"
+    source_id: "ETH-CYBERSECURITY-POLICY-2024"
+    use: "policy_context_and_scenario"
+    enforcement_allowed: false
+    binding_finding_allowed: false
+  - mapping_id: "ITU-Y3172-ARCHITECTURE"
+    source_id: "ITU-T-Y3172-2019"
+    use: "interpreted_architecture_mapping"
+    enforcement_allowed: false
+    binding_finding_allowed: false
+  - mapping_id: "ITU-READINESS-ASSESSMENT"
+    source_id: "ITU-AI-READINESS-2.0"
+    use: "targeted_project_readiness_mapping"
+    enforcement_allowed: false
+    binding_finding_allowed: false
+  - mapping_id: "INTERNATIONAL-GUIDANCE"
+    source_ids: ["UNICEF-AI-CHILDREN-3.0", "UNESCO-AI-ETHICS-2021"]
+    use: "supporting_guidance"
+    enforcement_allowed: false
+    binding_finding_allowed: false

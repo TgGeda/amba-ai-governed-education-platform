@@ -1,0 +1,4 @@
+
+QWidget[learningRole="tutorRoot"] { background-color: #F8F6F0; color: #1A202C; }
+QTextBrowser[learningRole="tutorAnswer"] { background-color: #FFFFFF; color: #1A202C; border: 1px solid #E2E8F0; border-radius: 12px; padding: 18px; font-size: 15px; }
+QFrame[learningRole="sourceEvidence"] { background-color: #F8FAFC; border-left: 4px solid #319795; border-radius: 8px; }

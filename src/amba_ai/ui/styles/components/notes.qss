@@ -1,0 +1,5 @@
+QTreeWidget#learningOutline { background: {{surface_card}}; border: 1px solid {{border_subtle}}; border-radius: 9px; padding: 5px; }
+QTreeWidget#learningOutline::item { min-height: 30px; padding: 4px; }
+QTreeWidget#learningOutline::item:selected { background: {{accent_secondary}}; color: #FFFFFF; }
+QFrame#annotationDrawer { background: #FFFDF8; border: 1px solid {{border_subtle}}; border-radius: 8px; }
+QPushButton#sectionAction { background: transparent; color: {{accent_primary}}; border: 1px solid {{border_subtle}}; border-radius: 7px; padding: 5px 8px; }

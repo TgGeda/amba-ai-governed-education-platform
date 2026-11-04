@@ -1,0 +1,53 @@
+schema_version: "1.0.0"
+
+ml_intent:
+  intent_id: "AMBA-GOV-ML-INTENT-V1"
+  title: "Synthetic Education Governance Pipeline Intent"
+
+  standard_reference:
+    recommendation: "ITU-T Y.3172"
+    locator: "Clause 7.4"
+    mapping_type: "interpreted"
+    conformance_claimed: false
+
+  objective: >-
+    Provide evidence-grounded educational assistance while ensuring that
+    protected operations are evaluated by deterministic project-governance
+    controls before processing or distribution.
+
+  allowed_model_roles:
+    - "policy_evidence_retrieval"
+    - "educational_explanation"
+    - "document_summary"
+    - "institutional_context_preparation"
+    - "policy_gap_candidate_identification"
+
+  prohibited_model_roles:
+    - "runtime_authorization"
+    - "human_approval_substitution"
+    - "national_legal_determination"
+    - "execution_receipt_fabrication"
+    - "audit_verification_fabrication"
+    - "readiness_score_authorization"
+
+  pipeline:
+    required_nodes:
+      - "SRC"
+      - "C"
+      - "PP"
+      - "M"
+      - "P"
+      - "D"
+      - "SINK"
+
+  governance:
+    deterministic_policy_node_required: true
+    human_approval_required_when_configured: true
+    typed_execution_required: true
+    registered_destination_required: true
+    audit_required: true
+    readiness_runtime_separation_required: true
+
+  synthetic_scope:
+    required: true
+    legal_effect: false

@@ -1,0 +1,286 @@
+schema_version: "1.2.0"
+
+standard:
+  source_id: "ITU-T-Y3172-2019"
+  recommendation: "ITU-T Y.3172"
+  edition: "1.0"
+  approval_date: "2019-06-22"
+  persistent_identifier: "11.1002/1000/13894"
+  official_url: "https://www.itu.int/rec/T-REC-Y.3172-201906-I/en"
+  pipeline_locator: "Clause 8.1"
+  ml_intent_locator: "Clause 7.4"
+  sandbox_definition_locator: "Clause 3.2.6"
+  sandbox_architecture_locators:
+    - "Clause 8.1"
+    - "Clause 8.2"
+  security_locator: "Clause 9"
+  mapping_scope: "Amba-Gov interpreted architectural mapping"
+  formal_conformance_claimed: false
+  certification_claimed: false
+
+verification_rules:
+  implementation_file_alone_proves_operation: false
+  test_source_file_alone_proves_execution: false
+  executed_test_result_required_for_operational_claim: true
+  missing_evidence_behavior: "not_verified"
+  architecture_mapping_is_not_legal_authority: true
+  verified_code_reference_must_exist: true
+  executed_evidence_must_be_reproducible: true
+  planned_components_must_not_be_reported_as_implemented: true
+
+pipeline:
+  - node_id: "SRC"
+    official_locator: "Clause 8.1"
+    official_function: "Source of data used as input to the ML pipeline."
+    mapping_type: "interpreted"
+    amba_component: >-
+      Typed synthetic events produced by scenario and application sources.
+    implementation_status: "planned"
+    intended_code_references:
+      - "src/amba_ai/scenarios/repository.py"
+      - "src/amba_ai/scenarios/runner.py"
+    verified_code_references: []
+    inputs:
+      - "declarative synthetic scenario facts"
+    outputs:
+      - "typed synthetic source event"
+    scenario_stages:
+      - "STAGE-1"
+      - "STAGE-2"
+      - "STAGE-4"
+    executed_evidence: []
+    evidence_artifacts: []
+    limitations:
+      - "Scenario source and runner components are not yet implemented."
+      - "Synthetic application events are not physical telecommunications network probes."
+
+  - node_id: "C"
+    official_locator: "Clause 8.1"
+    official_function: "Collects data from one or more SRC nodes."
+    mapping_type: "interpreted"
+    amba_component: >-
+      PipelineEvent validation, trusted operation resolution, and the
+      governance-service collection boundary.
+    implementation_status: "implemented_unit_verified"
+    intended_code_references: []
+    verified_code_references:
+      - "src/amba_ai/governance/models.py"
+      - "src/amba_ai/governance/operation_registry.py"
+      - "src/amba_ai/services/governance_service.py"
+    inputs:
+      - "typed source event"
+    outputs:
+      - "validated event with trusted operation resolution"
+    scenario_stages:
+      - "STAGE-1"
+      - "STAGE-2"
+      - "STAGE-4"
+    executed_evidence:
+      - "tests/unit/test_governance_service.py"
+      - "tests/unit/test_operation_registry.py"
+    evidence_artifacts: []
+    limitations:
+      - "Application collection boundary, not a telecommunications transport collector."
+      - "Run, scenario, and stage attachment remains dependent on the planned scenario subsystem."
+
+  - node_id: "PP"
+    official_locator: "Clause 8.1"
+    official_function: >-
+      Cleans, aggregates, or otherwise preprocesses data for model
+      consumption.
+    mapping_type: "interpreted"
+    amba_component: >-
+      Typed validation, preprocessing, provenance, retrieval filtering,
+      destination resolution, and sensitive-field controls.
+    implementation_status: "partially_implemented_unit_verified"
+    intended_code_references:
+      - "src/amba_ai/core/preprocessing.py"
+    verified_code_references:
+      - "src/amba_ai/rag/provenance.py"
+      - "src/amba_ai/rag/retrieval_filters.py"
+      - "src/amba_ai/governance/evaluators.py"
+    inputs:
+      - "collected typed event"
+    outputs:
+      - "validated and normalized model or governance input"
+    scenario_stages:
+      - "STAGE-1"
+      - "STAGE-2"
+      - "STAGE-4"
+    executed_evidence:
+      - "tests/unit/test_governance_completion.py"
+    evidence_artifacts: []
+    limitations:
+      - "Dedicated end-to-end preprocessing evidence remains pending."
+      - "Preprocessing detects and structures facts but does not authorize action."
+
+  - node_id: "M"
+    official_locator: "Clause 8.1"
+    official_function: "Machine-learning model used in the pipeline."
+    mapping_type: "interpreted"
+    amba_component: >-
+      Existing AmbaAI RAG, local-model, and optional provider components used
+      for evidence retrieval, educational explanation, and institutional
+      context preparation.
+    implementation_status: "existing_not_operationally_verified_in_this_mapping"
+    intended_code_references: []
+    verified_code_references:
+      - "src/amba_ai/rag"
+      - "src/amba_ai/services/model_service.py"
+      - "src/amba_ai/compute"
+    inputs:
+      - "validated retrieval query or model context"
+    outputs:
+      - "evidence-grounded explanatory output"
+    scenario_stages:
+      - "STAGE-1"
+    executed_evidence: []
+    evidence_artifacts: []
+    limitations:
+      - "Operational model evidence is not packaged in this mapping."
+      - "Model output cannot authorize, approve, block, or execute operations."
+
+  - node_id: "P"
+    official_locator: "Clause 8.1"
+    official_function: "Applies policies to model output."
+    mapping_type: "interpreted"
+    amba_component: >-
+      Deterministic operation resolution, PolicyRecord evaluation,
+      applicability resolution, complete finding aggregation,
+      recommendations, and approval requirements.
+    implementation_status: "implemented_unit_verified"
+    intended_code_references:
+      - "src/amba_ai/institutional/coordination.py"
+    verified_code_references:
+      - "src/amba_ai/governance/policy_engine.py"
+      - "src/amba_ai/governance/evaluators.py"
+      - "src/amba_ai/governance/record_registry.py"
+      - "src/amba_ai/governance/applicability.py"
+      - "src/amba_ai/governance/recommendation.py"
+      - "src/amba_ai/db/policy_record_repository.py"
+    inputs:
+      - "normalized event"
+      - "active PolicyRecords"
+      - "project controls"
+    outputs:
+      - "complete policy findings"
+      - "deterministic recommendation"
+      - "approval requirement"
+      - "unresolved questions when evidence is insufficient"
+    scenario_stages:
+      - "STAGE-1"
+      - "STAGE-2"
+      - "STAGE-3"
+      - "STAGE-4"
+    executed_evidence:
+      - "tests/unit/test_policy_engine.py"
+      - "tests/unit/test_governance_completion.py"
+      - "tests/unit/test_policy_record_repository.py"
+    evidence_artifacts: []
+    limitations:
+      - "Institutional coordination and policy-gap reporting remain pending."
+      - "The P node is not represented as an Ethiopian regulator."
+      - "Ethiopian legal applicability is not inferred from semantic similarity."
+
+  - node_id: "D"
+    official_locator: "Clause 8.1"
+    official_function: "Identifies SINK nodes and distributes model output."
+    mapping_type: "interpreted"
+    amba_component: >-
+      Typed permit, block, review-queue, and synthetic-mitigation execution
+      boundaries with destination validation and receipts.
+    implementation_status: "implemented_unit_verified"
+    intended_code_references:
+      - "src/amba_ai/services/content_delivery_service.py"
+    verified_code_references:
+      - "src/amba_ai/governance/execution.py"
+      - "src/amba_ai/governance/distribution.py"
+      - "src/amba_ai/services/execution_service.py"
+    inputs:
+      - "authorized deterministic recommendation"
+      - "registered destination"
+    outputs:
+      - "execution receipt"
+      - "review-queue receipt"
+      - "distribution acknowledgment when content is actually delivered"
+    scenario_stages:
+      - "STAGE-1"
+      - "STAGE-2"
+      - "STAGE-3"
+      - "STAGE-4"
+    executed_evidence:
+      - "tests/unit/test_execution.py"
+      - "tests/unit/test_execution_service.py"
+      - "tests/unit/test_governance_completion.py"
+    evidence_artifacts: []
+    limitations:
+      - "ContentDeliveryService integration remains pending."
+      - "D applies governance decisions and does not independently make policy."
+
+  - node_id: "SINK"
+    official_locator: "Clause 8.1"
+    official_function: "Target of ML output on which action is taken."
+    mapping_type: "interpreted"
+    amba_component: >-
+      Registered destinations and review queues; acknowledgments are created
+      only after actual simulated delivery.
+    implementation_status: "partially_implemented_unit_verified"
+    intended_code_references:
+      - "config/destinations.yaml"
+    verified_code_references:
+      - "src/amba_ai/governance/operation_registry.py"
+      - "src/amba_ai/governance/execution.py"
+      - "src/amba_ai/governance/distribution.py"
+    inputs:
+      - "permitted output"
+      - "review notice"
+      - "synthetic mitigation request"
+    outputs:
+      - "delivery acknowledgment when content is actually delivered"
+      - "review-queue receipt for review actions"
+    scenario_stages:
+      - "STAGE-1"
+      - "STAGE-2"
+      - "STAGE-3"
+      - "STAGE-4"
+    executed_evidence:
+      - "tests/unit/test_execution.py"
+      - "tests/unit/test_governance_completion.py"
+    evidence_artifacts: []
+    limitations:
+      - "Final destination configuration and application composition remain pending."
+      - "Audit persistence is not distribution acknowledgment."
+      - "NOT_ATTEMPTED creates no distribution acknowledgment."
+
+extensions:
+  - extension_id: "AMBA-GOV-EXT-LEGAL-APPLICABILITY"
+    name: "Ethiopian legal applicability"
+    classification: "amba_gov_extension"
+
+  - extension_id: "AMBA-GOV-EXT-SOURCE-HIERARCHY"
+    name: "Source hierarchy and binding-level separation"
+    classification: "amba_gov_extension"
+
+  - extension_id: "AMBA-GOV-EXT-AUTHORIZATION"
+    name: "Authorization-basis validation"
+    classification: "amba_gov_extension"
+
+  - extension_id: "AMBA-GOV-EXT-INSTITUTIONAL-MANDATES"
+    name: "Institutional mandates and context views"
+    classification: "amba_gov_extension"
+
+  - extension_id: "AMBA-GOV-EXT-HUMAN-APPROVAL"
+    name: "Mandate-bound synthetic human approval"
+    classification: "amba_gov_extension"
+
+  - extension_id: "AMBA-GOV-EXT-POLICY-GAPS"
+    name: "Policy-gap registration and reporting"
+    classification: "amba_gov_extension"
+
+  - extension_id: "AMBA-GOV-EXT-AUDIT"
+    name: "Run-scoped tamper-evident audit"
+    classification: "amba_gov_extension"
+
+  - extension_id: "AMBA-GOV-EXT-READINESS"
+    name: "ITU AI Readiness targeted project mapping"
+    classification: "amba_gov_extension"

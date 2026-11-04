@@ -1,0 +1,215 @@
+schema_version: "1.1.0"
+
+scenario_id: "SCENARIO-ETH-EDU-GOV-001-V1"
+title: "Synthetic Classroom Commercial Drift and Governance Response"
+description: >-
+  A synthetic education-governance scenario showing nominal classroom use,
+  commercial drift, institutional mitigation, targeted-advertising escalation,
+  project-control enforcement, and policy-gap registration where national
+  policy applicability remains unresolved.
+
+synthetic: true
+legal_effect: false
+
+stages:
+  - stage_id: "STAGE-1"
+    title: "Nominal Classroom"
+    timestamp: "2026-01-01T09:00:00Z"
+
+    operation_id: "classroom_exercise_telemetry"
+    source_node: "SRC"
+    destination_id: "SYNTHETIC-TEACHER-UI"
+
+    authorization_basis_fixture:
+      fixture_path: >-
+        config/fixtures/authorizations/
+        synthetic_classroom_auth_v1.json
+      hash_algorithm: "sha256"
+      compute_hash_from_file: true
+
+    facts:
+      learner_reference: "SYNTHETIC-LEARNER-001"
+      learner_age: 14
+      grade: 8
+      educational_purpose_declared: true
+      local_processing: true
+      commercial_sdk_active: false
+      purchase_interface_visible: false
+      targeted_advertising: false
+      clinical_diagnosis: false
+
+    expected_policy_behavior:
+      project_control_action: "proceed"
+      national_legal_conclusion: false
+      policy_gap_expected: false
+
+    y3172_nodes:
+      - "SRC"
+      - "C"
+      - "PP"
+      - "M"
+      - "P"
+      - "D"
+      - "SINK"
+
+  - stage_id: "STAGE-2"
+    title: "Commercial Drift"
+    timestamp: "2026-07-01T09:00:00Z"
+
+    operation_id: "commercial_purchase_request"
+    source_node: "SRC"
+    destination_id: "SYNTHETIC-REVIEW-QUEUE"
+
+    authorization_basis: null
+
+    facts:
+      learner_reference: "SYNTHETIC-LEARNER-001"
+      learner_age: 14
+      commercial_sdk_active: true
+      purchase_interface_visible: true
+      payment_capture_requested: true
+      synthetic_purchase_amount: 35.00
+      commercial_sdk_origin: "SYNTHETIC-VENDOR-SDK"
+      clinical_diagnosis: false
+
+    expected_policy_behavior:
+      project_control_action: "hold_for_review"
+      distribution_attempted: false
+      distribution_acknowledgment_expected: false
+      review_queue_receipt_expected: true
+      national_legal_conclusion: false
+      policy_gap_expected: true
+      expected_gap_types:
+        - "unclear_applicability"
+
+    y3172_nodes:
+      - "SRC"
+      - "C"
+      - "PP"
+      - "P"
+      - "D"
+      - "SINK"
+
+  - stage_id: "STAGE-3"
+    title: "Governance Mitigation"
+    timestamp: "2026-07-01T09:05:00Z"
+
+    operation_id: "commercial_purchase_request"
+    source_node: "P"
+    destination_id: "SYNTHETIC-VENDOR-REVIEW"
+
+    authorization_basis: null
+
+    facts:
+      learner_reference: "SYNTHETIC-LEARNER-001"
+      learner_age: 14
+      commercial_sdk_active: true
+      purchase_interface_visible: true
+      payment_capture_requested: true
+      synthetic_purchase_amount: 35.00
+      clinical_diagnosis: false
+
+    context_views:
+      - context_view_id: "EDUCATION-CONTEXT-VIEW"
+        assessor_id: "EDUCATION-ASSESSOR"
+        visible_fact_keys:
+          - "learner_reference"
+          - "learner_age"
+          - "commercial_sdk_active"
+          - "purchase_interface_visible"
+
+      - context_view_id: "SCHOOL-ADMIN-CONTEXT-VIEW"
+        assessor_id: "SCHOOL-ADMIN-ASSESSOR"
+        visible_fact_keys:
+          - "learner_reference"
+          - "learner_age"
+          - "purchase_interface_visible"
+          - "payment_capture_requested"
+          - "synthetic_purchase_amount"
+
+      - context_view_id: "DATA-PROTECTION-CONTEXT-VIEW"
+        assessor_id: "DATA-PROTECTION-ASSESSOR"
+        visible_fact_keys:
+          - "learner_reference"
+          - "learner_age"
+          - "commercial_sdk_active"
+          - "clinical_diagnosis"
+
+    expected_institutional_positions:
+      EDUCATION-CONTEXT-VIEW:
+        position: "continue educational service without monetization"
+
+      SCHOOL-ADMIN-CONTEXT-VIEW:
+        position: "deny purchase and suspend commercial integration"
+
+      DATA-PROTECTION-CONTEXT-VIEW:
+        position: >-
+          National legal applicability remains unresolved; enforce project
+          controls and register the unresolved applicability gap.
+
+    mitigation_plan:
+      plan_id: "MITIGATION-STAGE-3-COMMERCIAL-DRIFT-V1"
+      requires_separate_approval: true
+      required_approval_role: "school_administrator"
+      required_mandate_id: "SCHOOL-ADMIN-COMMERCIAL-REVIEW-V1"
+      actions:
+        - "disable_commercial_sdk"
+        - "prevent_purchase_ui_delivery"
+        - "queue_vendor_review"
+
+    required_postconditions:
+      commercial_sdk_active_after: false
+      purchase_interface_visible_after: false
+      vendor_review_queued: true
+
+    expected_policy_behavior:
+      commercial_request_action: "hold_for_review"
+      purchase_approval_expected: false
+      mitigation_approval_expected: true
+      mitigation_execution_expected: true
+      national_legal_conclusion: false
+      policy_gap_expected: true
+      expected_gap_types:
+        - "unclear_applicability"
+
+    y3172_nodes:
+      - "P"
+      - "D"
+      - "SINK"
+
+  - stage_id: "STAGE-4"
+    title: "Targeted Advertising Escalation"
+    timestamp: "2026-07-01T09:10:00Z"
+
+    operation_id: "targeted_ad_dispatch"
+    source_node: "SRC"
+    destination_id: "SYNTHETIC-AD-SINK"
+
+    authorization_basis: null
+
+    facts:
+      learner_reference: "SYNTHETIC-LEARNER-001"
+      learner_age: 14
+      commercial_ad_delivery: true
+      targeted_advertising: true
+      simulated_prohibited_inference_signal: "simulated_prohibited_inference_signal_v1"
+      clinical_diagnosis: false
+      advertising_tracking_id: "SYNTHETIC-AD-CAMPAIGN-001"
+
+    expected_policy_behavior:
+      project_control_action: "block"
+      distribution_attempted: true
+      advertisement_distribution_prevented: true
+      distribution_acknowledgment_expected: false
+      national_legal_conclusion: false
+      policy_gap_expected: true
+      expected_gap_types:
+        - "unclear_applicability"
+
+    y3172_nodes:
+      - "SRC"
+      - "C"
+      - "PP"
+      - "P"
+      - "D"
+      - "SINK"

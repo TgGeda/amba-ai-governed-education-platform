@@ -1,0 +1,719 @@
+AMBA-GOV VERIFIED FACTS AND GOVERNANCE BOUNDARIES
+
+Version: 1.0.0
+Prepared by: Birhan Abuhay Jemere
+Prepared date: 2026-10-31
+Status: Project evidence and factual boundary
+
+
+1. PURPOSE
+
+This document records the verified evidence, source classifications, assessment
+boundaries, project safeguards, and scenario assumptions used by Amba-Gov.
+
+Amba-Gov applies a fail-closed approach when required information is unavailable
+or unresolved. Depending on the context, an unresolved record may be classified
+as:
+
+- quarantined;
+- insufficient_evidence;
+- applicability_unresolved;
+- human_review_required;
+- configuration_failure;
+- methodology_unresolved;
+- not_assessed.
+
+Missing information is not replaced with unverified assumptions.
+
+
+2. ARTIFACT INTEGRITY
+
+Nine source PDF artifacts passed PDF magic-header validation using the expected
+"%PDF-" header. SHA-256 checksums were computed locally to establish artifact
+identity.
+
+2.1 Ethiopian Communications Authority directive
+
+Filename:
+ETH_ECA_QOS_794_2021.pdf
+
+SHA-256:
+3c23ba0cfeca1f0fbdf724da211164fb8bbbec75945f16d9740cb112342ea449
+
+2.2 Education Sector Development Programme VI
+
+Filename:
+ETH_ESDP_VI_2021.pdf
+
+SHA-256:
+f77622ff64c29d03d1e090f5c401880e3b8cda6015f6379d2afb707a0a9c7678
+
+2.3 Ethiopian National Cybersecurity Policy
+
+Filename:
+ETH_NATIONAL_CYBERSECURITY_POLICY_2024.pdf
+
+SHA-256:
+624b0db098bff6cd075e92c2fd44e0a082b892a53bb4ea47952fb0850e12c62e
+
+2.4 Ethiopian Personal Data Protection Proclamation
+
+Filename:
+ETH_PDPA_1321_2024.pdf
+
+SHA-256:
+f4e1eb0c4a6948d34accc3a93dbe32010af851f6cfb7f4b17a66ba94e2df0bf6
+
+2.5 Ethiopian STME strategic-policy document
+
+Filename:
+ETH_STME_POLICY_FULL.pdf
+
+SHA-256:
+d5a6fb50ecd5b324d5d0eb1e1cb0eabd1744acd0423ff434127b76b4835e0260
+
+2.6 ITU AI Readiness Report
+
+Filename:
+ITU_AI_READINESS_REPORT.pdf
+
+SHA-256:
+71191768d46b60778c15f8d62b162aff73a319785cfc31ebf76bb944b0c68273
+
+2.7 ITU-T Y.3172
+
+Filename:
+ITU_T_Y3172_2019.pdf
+
+SHA-256:
+e42f9a3be3f951d3e19b9007f876f0b389c81b4693f0d8576e18185a1acfe67b
+
+2.8 UNESCO Recommendation on the Ethics of Artificial Intelligence
+
+Filename:
+UNESCO_AI_ETHICS_RECOMMENDATION.pdf
+
+SHA-256:
+3a93a6006c591bf7600abc55e8beab883b6450b71638fea98148e4b08f005bf7
+
+2.9 UNICEF Guidance on AI and Children 3.0
+
+Filename:
+UNICEF_AI_CHILDREN_V3_2025.pdf
+
+SHA-256:
+1d218b79b894402bda57d97527ef7ea015b0642003ba582d6259b050d0a548ea
+
+2.10 ITU AI Readiness reference archive
+
+Filename:
+ITUAIReadiness_reference.zip
+
+SHA-256:
+c51931b88d0fbe59a42fd52ab7a6691cd234659336c7946c0285a0be9e0e56ab
+
+
+3. VERIFICATION BOUNDARY
+
+The following activities have been completed:
+
+- local acquisition of the listed artifacts;
+- PDF magic-header validation;
+- local artifact identification using SHA-256;
+- extraction and inspection of the reference implementation;
+- preliminary source classification;
+- verification of the ITU facts recorded in this document;
+- source-code secret scanning.
+
+No embedded credentials were confirmed.
+
+Artifact-integrity verification does not establish:
+
+- formal legal review;
+- official translation status;
+- legal applicability to a particular actor;
+- legal applicability to a particular processing operation;
+- legal applicability on a particular date;
+- formal adoption of the STME supporting document;
+- Ethiopia's national AI readiness;
+- ITU certification;
+- formal ITU-T Y.3172 conformance.
+
+Amba-Gov maintains separate states for:
+
+- artifact integrity;
+- metadata verification;
+- locator verification;
+- translation status;
+- legal review;
+- legal applicability;
+- licensing;
+- evidence activation.
+
+Artifact integrity is not presented as legal review.
+
+
+4. SOURCE HIERARCHY
+
+4.1 Personal Data Protection Proclamation No. 1321/2024
+
+Source ID:
+ETH-PDPA-1321-2024
+
+Jurisdiction:
+Ethiopia
+
+Source class:
+primary_legislation
+
+Binding level:
+primary_legislation
+
+Legal review status:
+not_performed
+
+A binding finding requires:
+
+- a verified source artifact and document version;
+- an exact verified locator and excerpt;
+- an applicable regulated actor and operation;
+- an applicable effective date;
+- review of relevant exceptions;
+- a completed applicability evaluation;
+- active binding-evidence status.
+
+Unverified prototype article numbers or paraphrases are not treated as
+authoritative.
+
+4.2 Telecommunications Quality of Service Directive No. 794/2021
+
+Source ID:
+ETH-ECA-QOS-794-2021
+
+Jurisdiction:
+Ethiopia
+
+Source class:
+directive
+
+Binding level:
+directive
+
+A binding technical finding requires the exact provision or table, unit,
+regulated service, regulated actor, applicable measurement method, date, and
+relevant table conditions.
+
+Synthetic technical thresholds are not attributed to the directive without an
+exact supporting provision.
+
+4.3 Education Sector Development Programme VI
+
+Source ID:
+ETH-ESDP-VI-2021
+
+Programme period:
+2020/21 to 2024/25
+
+Source class:
+sector_strategy
+
+Binding level:
+national_policy
+
+Current classification:
+historical_or_completed
+
+The document is used for historical education-sector context, digitization,
+quality and equity analysis, curriculum reform, teacher development,
+infrastructure analysis, and project-level readiness evidence.
+
+It is not presented as the current programme after 2024/25 without an explicit
+historical qualification or a verified successor.
+
+4.4 Strategic Policy for National Science, Technology and Mathematics Education
+
+Source ID:
+ETH-STME-POLICY
+
+Source class:
+strategic_policy_supporting_document
+
+Formal adoption status:
+unverified
+
+Eligible for policy context:
+true
+
+Eligible for binding findings:
+false
+
+The document supports education, curriculum, teacher development, inclusion,
+educational resources, monitoring, evaluation, and stakeholder analysis. It is
+not represented as formally adopted national policy without separate evidence.
+
+4.5 Ethiopian National Cybersecurity Policy
+
+Source ID:
+ETH-CYBERSECURITY-POLICY-2024
+
+Publication date:
+June 2024
+
+Administering authority:
+Information Network Security Administration
+
+Source class:
+national_policy
+
+Eligible for binding legal findings:
+false
+
+Eligible for policy context and readiness evidence:
+true
+
+The policy supports cybersecurity governance, shared responsibility, privacy
+and security analysis, capacity building, institutional coordination,
+resilience, and monitoring.
+
+It is not used independently to establish criminal offences, statutory
+penalties, valid guardian consent, binding technical thresholds, or automatic
+statutory blocks.
+
+4.6 ITU-T Y.3172
+
+Source ID:
+ITU-T-Y3172-2019
+
+Source class:
+technical_standard
+
+Eligible for Ethiopian legal findings:
+false
+
+Eligible for architecture mapping:
+true
+
+ITU-T Y.3172 is used as an architectural reference. It does not create
+Ethiopian legal authority.
+
+4.7 ITU AI Readiness Report 2.0
+
+Source ID:
+ITU-AI-READINESS-2.0
+
+Source class:
+readiness_framework
+
+Eligible for runtime legal findings:
+false
+
+Eligible for project-level readiness assessment:
+true
+
+Official certification mechanism:
+false
+
+The framework supports self-evaluation, evidence mapping, maturity analysis,
+gap analysis, and recommendations. Readiness findings remain separate from
+runtime legal and operational authorization.
+
+4.8 UNICEF Guidance on AI and Children 3.0
+
+Source ID:
+UNICEF-AI-CHILDREN-3.0
+
+Publication date:
+December 2025
+
+Source class:
+international_guidance
+
+National binding status:
+false
+
+Eligible for supporting evidence:
+true
+
+The guidance supports child-centred safeguards, privacy, human oversight,
+protection against commercial exploitation, inclusion, EdTech assessment,
+local operation, and child participation.
+
+It is not used independently to establish an Ethiopian legal violation.
+
+4.9 UNESCO Recommendation on the Ethics of Artificial Intelligence
+
+Source ID:
+UNESCO-AI-ETHICS-2021
+
+Adoption date:
+23 November 2021
+
+Source class:
+international_recommendation
+
+National binding status:
+false
+
+Eligible for supporting evidence:
+true
+
+The recommendation supports proportionality, prevention of harm, safety,
+fairness, privacy, human oversight, transparency, explainability,
+accountability, auditability, impact assessment, data governance, education,
+regulatory sandboxes, and continuous monitoring.
+
+It is not used independently to establish an Ethiopian legal violation.
+
+
+5. ITU-T Y.3172 ARCHITECTURAL REFERENCE
+
+Recommendation:
+ITU-T Y.3172
+
+Edition:
+1.0
+
+Approval date:
+2019-06-22
+
+Study Group:
+13
+
+Title:
+Architectural framework for machine learning in future networks including
+IMT-2020
+
+Persistent identifier:
+11.1002/1000/13894
+
+Relevant locators include:
+
+- Clause 3.2.6: ML sandbox definition;
+- Clause 7.4: declarative ML application specifications and ML intent;
+- Clause 8.1: high-level ML pipeline components;
+- Clauses 8.1 and 8.2: architectural and sandbox components;
+- Clause 9: security considerations.
+
+Reference pipeline:
+
+SRC -> C -> PP -> M -> P -> D -> SINK
+
+Reference functions:
+
+- SRC supplies input data.
+- C collects data from one or more sources.
+- PP cleans, aggregates, or preprocesses collected data.
+- M performs machine-learning processing.
+- P applies policies to model output.
+- D identifies destinations and distributes output.
+- SINK receives the output on which action may be taken.
+
+Amba-Gov interprets this pipeline for its project architecture and extends it
+with:
+
+- Ethiopian legal-applicability handling;
+- source hierarchy;
+- authorization and guardian controls;
+- institutional mandates;
+- human approval;
+- governance conflict resolution;
+- project safeguards;
+- tamper-evident audit records;
+- project-level readiness assessment.
+
+Amba-Gov does not claim formal Y.3172 conformance. The Y.3172 P node is not
+represented as an Ethiopian regulator or as an independent source of statutory
+authority.
+
+
+6. ITU AI READINESS REFERENCE
+
+Framework ID:
+ITU-AI-READINESS-2.0
+
+Official title:
+AI Ready - Analysis Towards a Standardized Readiness Framework
+
+Report version:
+2.0
+
+Publication date:
+January 2026
+
+Publisher:
+International Telecommunication Union
+
+Electronic ISBN:
+978-92-61-41911-0
+
+Information current to:
+June 2025
+
+Assessment nature:
+self-evaluation
+
+Official certification mechanism:
+false
+
+The reference contains six structural factors:
+
+1. Data
+2. Research
+3. Deployment Support
+4. Standards
+5. Open Source and Code
+6. Sandbox Environments
+
+It contains thirteen structural dimensions:
+
+1. Data/model Marketplace
+2. Generated Content Marketplace
+3. Cross-domain Correlation Analysis
+4. Contextualization and Regional Impact
+5. Level of Integration of AI in Workflows
+6. Human Interface
+7. Strategy Alignment
+8. Collaboration with AI
+9. Impacts of Humans in AI Integration
+10. AI and Policies
+11. AI for Inclusion
+12. Granular Priorities
+13. Digital Infrastructure
+
+Reference implementation characteristics:
+
+- 6 factors;
+- 13 dimensions;
+- 111 metrics;
+- many-to-many dimension-to-factor relationships;
+- preserved reference metric identifiers;
+- reference maturity labels from 0 to 5.
+
+Amba-Gov assessment scope:
+
+assessment_subject_type:
+project
+
+assessment_subject_id:
+AMBA-GOV
+
+jurisdictional_context:
+Ethiopia
+
+national_assessment:
+false
+
+official_itu_certification:
+false
+
+assessment_method:
+project_level_self_evaluation
+
+Permitted readiness states:
+
+- demonstrated;
+- partially_demonstrated;
+- not_demonstrated;
+- not_applicable;
+- insufficient_evidence;
+- unresolved.
+
+Current score state:
+
+overall_project_score:
+null
+
+score_status:
+withheld_pending_methodology_and_evidence_coverage
+
+Readiness results do not authorize or block runtime operations. Amba-Gov does
+not invent weights or confidence values, infer maturity from source-file
+existence, treat test files as successful test execution, or convert
+unassessed evidence into a score of zero.
+
+The project emphasizes local operation, local privacy and governance,
+temporary handling of original assessment inputs, and persistence of controlled
+knowledge records rather than raw input materials.
+
+
+7. AMBA-GOV PROJECT SAFEGUARDS
+
+Policy ID:
+AMBA-GOV-SANDBOX-SAFEGUARDS
+
+Policy version:
+1.0.0
+
+Authority:
+Amba-Gov project
+
+Scope:
+synthetic education-governance sandbox
+
+Binding level:
+project_control
+
+National binding status:
+false
+
+Synthetic only:
+true
+
+Legal effect:
+false
+
+The project safeguards include:
+
+Educational processing:
+Synthetic classroom data is processed only for declared educational purposes
+and approved project destinations.
+
+Commercial purchases:
+Commercial SDKs, in-app purchases, payment capture, and learner-facing purchase
+interfaces are disabled in the synthetic learner environment.
+
+Targeted advertising:
+Synthetic learner-support signals are not exported or used for targeted
+advertising.
+
+Human review:
+Protected operations with insufficient evidence or unresolved applicability
+are held for human review.
+
+Restricted destinations:
+Protected outputs are delivered only to registered synthetic destinations.
+
+Evidence integrity:
+Binding findings require active and verified policy records.
+
+Readiness separation:
+Readiness scores and statuses cannot authorize or block runtime operations.
+
+Synthetic scope:
+Learner, payment, advertising, inference, and network facts used in the
+demonstration are synthetic.
+
+
+8. DEMONSTRATION SCENARIO
+
+Scenario ID:
+SCENARIO-ETH-EDU-GOV-001-V1
+
+Title:
+Synthetic Classroom Commercial Drift and Governance Response
+
+All scenario facts are synthetic.
+
+Stage 1: Nominal Classroom
+
+Timestamp:
+2026-01-01T09:00:00Z
+
+The stage represents a synthetic Grade 8 learner event processed locally,
+without a commercial SDK or targeted advertising, and delivered to an approved
+educational destination.
+
+Expected outcome:
+
+- recommendation to proceed;
+- execution receipt;
+- educational output delivery;
+- delivery acknowledgment.
+
+Stage 2: Commercial Drift
+
+Timestamp:
+2026-07-01T09:00:00Z
+
+The stage introduces a synthetic purchase promotion, spending event,
+commercial SDK signal, and learner-facing purchase interface.
+
+Expected outcome:
+
+- project-control finding;
+- hold-for-review recommendation;
+- no learner delivery;
+- no automatic Ethiopian legal conclusion;
+- unresolved binding evidence displayed as unresolved.
+
+Stage 3: Governance Mitigation
+
+Timestamp:
+2026-07-01T09:05:00Z
+
+The stage evaluates education, school-administration, and data-protection
+perspectives separately.
+
+Expected outcome:
+
+- monitoring detection;
+- separate context views and findings;
+- preserved uncertainty or disagreement;
+- mitigation plan;
+- synthetic approval;
+- commercial SDK disabled;
+- purchase-interface delivery prevented;
+- vendor review queued;
+- execution receipt;
+- audit event.
+
+Stage 4: Targeted Advertising Escalation
+
+Timestamp:
+2026-07-01T09:10:00Z
+
+The stage introduces the synthetic signal:
+
+simulated_prohibited_inference_signal_v1
+
+Clinical diagnosis:
+false
+
+Assessment areas:
+
+- privacy;
+- child safeguarding;
+- commercialization;
+- destination security.
+
+Expected outcome:
+
+- Amba-Gov project-control basis;
+- block recommendation;
+- simulated advertisement distribution prevented;
+- execution receipt;
+- audit verification.
+
+
+9. CLAIM AND REPORTING LIMITATIONS
+
+Amba-Gov does not claim that:
+
+- an unreviewed source has received legal review;
+- a translation is official without evidence;
+- UNICEF or UNESCO guidance independently creates Ethiopian legal duties;
+- the STME supporting document is formally adopted national policy;
+- ESDP VI remains current after 2024/25 without qualification;
+- the Y.3172 P node is a regulator;
+- Amba-Gov formally conforms to Y.3172;
+- Amba-Gov is certified by ITU;
+- a readiness score represents Ethiopia's national readiness;
+- a test passed without successful test execution;
+- an action executed without an execution receipt;
+- an operation was delivered without acknowledgment;
+- absence of a provision in the current corpus proves that no applicable law
+  exists;
+- artifact-integrity verification constitutes legal review;
+- existence of source code proves maturity;
+- existence of a test file proves successful test execution.
+
+Audit integrity is described as:
+
+"tamper-evident within verified scope"
+
+It is not described as:
+
+"tamper-proof"
+
+
+END OF VERIFIED FACTS AND GOVERNANCE BOUNDARIES

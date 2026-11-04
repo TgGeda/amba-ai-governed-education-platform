@@ -1,0 +1,29 @@
+schema_version: "1.0.0"
+
+replay_protection:
+  one_decision_per_request: true
+  one_execution_per_idempotency_key: true
+  reject_expired_mandates: true
+  reject_role_mismatch: true
+  reject_operation_scope_mismatch: true
+
+enforcement_ownership:
+  approval_replay:
+    component: "ApprovalRepository"
+    authoritative: true
+
+  execution_replay:
+    component: "ExecutionRepository"
+    authoritative: true
+
+  mandate_expiry:
+    component: "ApprovalProcessor"
+    authoritative: true
+
+  role_scope:
+    component: "MandateRegistry"
+    authoritative: true
+
+  operation_scope:
+    component: "MandateRegistry"
+    authoritative: true

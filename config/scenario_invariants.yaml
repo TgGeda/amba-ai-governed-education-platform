@@ -1,0 +1,181 @@
+schema_version: "1.1.0"
+scenario_id: "SCENARIO-ETH-EDU-GOV-001-V1"
+
+invariants:
+  - invariant_id: "INV-SYNTHETIC-001"
+    rule_type: "all_stages_synthetic"
+
+  - invariant_id: "INV-LEGAL-EFFECT-001"
+    rule_type: "scenario_has_no_legal_effect"
+
+  - invariant_id: "INV-TIME-001"
+    rule_type: "calendar_month_difference"
+    from_stage: "STAGE-1"
+    to_stage: "STAGE-2"
+    expected_months: 6
+    preserve_day: true
+    preserve_time: true
+
+  - invariant_id: "INV-SEQUENCE-001"
+    rule_type: "strict_timestamp_order"
+    stages:
+      - "STAGE-1"
+      - "STAGE-2"
+      - "STAGE-3"
+      - "STAGE-4"
+
+  - invariant_id: "INV-STAGE1-001"
+    rule_type: "expected_recommendation"
+    stage_id: "STAGE-1"
+    expected_action: "proceed"
+
+  - invariant_id: "INV-STAGE1-002"
+    rule_type: "expected_delivery"
+    stage_id: "STAGE-1"
+    expected_destination: "SYNTHETIC-TEACHER-UI"
+
+  - invariant_id: "INV-STAGE1-003"
+    rule_type: "distribution_acknowledgment_required"
+    stage_id: "STAGE-1"
+
+  - invariant_id: "INV-STAGE1-004"
+    rule_type: "complete_y3172_pipeline_visible"
+    stage_id: "STAGE-1"
+    required_nodes:
+      - "SRC"
+      - "C"
+      - "PP"
+      - "M"
+      - "P"
+      - "D"
+      - "SINK"
+
+  - invariant_id: "INV-STAGE2-001"
+    rule_type: "expected_recommendation"
+    stage_id: "STAGE-2"
+    expected_action: "hold_for_review"
+
+  - invariant_id: "INV-STAGE2-002"
+    rule_type: "no_distribution_acknowledgment_when_not_attempted"
+    stage_id: "STAGE-2"
+
+  - invariant_id: "INV-STAGE2-003"
+    rule_type: "review_queue_receipt_required"
+    stage_id: "STAGE-2"
+    expected_destination: "SYNTHETIC-REVIEW-QUEUE"
+
+  - invariant_id: "INV-STAGE2-004"
+    rule_type: "no_national_legal_conclusion"
+    stage_id: "STAGE-2"
+
+  - invariant_id: "INV-STAGE2-005"
+    rule_type: "policy_gap_required"
+    stage_id: "STAGE-2"
+    allowed_gap_types:
+      - "unclear_applicability"
+
+  - invariant_id: "INV-STAGE3-001"
+    rule_type: "required_context_views"
+    stage_id: "STAGE-3"
+    required:
+      - "EDUCATION-CONTEXT-VIEW"
+      - "SCHOOL-ADMIN-CONTEXT-VIEW"
+      - "DATA-PROTECTION-CONTEXT-VIEW"
+
+  - invariant_id: "INV-STAGE3-002"
+    rule_type: "distinct_institutional_assessments"
+    stage_id: "STAGE-3"
+    minimum_distinct_assessments: 3
+
+  - invariant_id: "INV-STAGE3-003"
+    rule_type: "uncertainty_or_dissent_preserved"
+    stage_id: "STAGE-3"
+
+  - invariant_id: "INV-STAGE3-004"
+    rule_type: "separate_mitigation_approval_required"
+    stage_id: "STAGE-3"
+    expected_role: "school_administrator"
+    expected_mandate_id: "SCHOOL-ADMIN-COMMERCIAL-REVIEW-V1"
+
+  - invariant_id: "INV-STAGE3-005"
+    rule_type: "required_mitigation_postconditions"
+    stage_id: "STAGE-3"
+    required:
+      commercial_sdk_active_after: false
+      purchase_interface_visible_after: false
+      vendor_review_queued: true
+
+  - invariant_id: "INV-STAGE3-006"
+    rule_type: "mitigation_execution_receipt_required"
+    stage_id: "STAGE-3"
+
+  - invariant_id: "INV-STAGE3-007"
+    rule_type: "no_national_legal_conclusion"
+    stage_id: "STAGE-3"
+
+  - invariant_id: "INV-STAGE4-001"
+    rule_type: "exact_signal"
+    stage_id: "STAGE-4"
+    expected_signal: "simulated_prohibited_inference_signal_v1"
+
+  - invariant_id: "INV-STAGE4-002"
+    rule_type: "no_diagnosis"
+    stage_id: "STAGE-4"
+
+  - invariant_id: "INV-STAGE4-003"
+    rule_type: "expected_recommendation"
+    stage_id: "STAGE-4"
+    expected_action: "block"
+
+  - invariant_id: "INV-STAGE4-004"
+    rule_type: "distribution_prevented"
+    stage_id: "STAGE-4"
+    expected_destination: "SYNTHETIC-AD-SINK"
+
+  - invariant_id: "INV-STAGE4-005"
+    rule_type: "no_distribution_acknowledgment_for_blocked_ad"
+    stage_id: "STAGE-4"
+
+  - invariant_id: "INV-STAGE4-006"
+    rule_type: "policy_gap_required"
+    stage_id: "STAGE-4"
+    allowed_gap_types:
+      - "unclear_applicability"
+      - "insufficient_policy"
+
+  - invariant_id: "INV-STAGE4-007"
+    rule_type: "no_national_legal_conclusion"
+    stage_id: "STAGE-4"
+
+  - invariant_id: "INV-EXECUTION-001"
+    rule_type: "execution_requires_receipt"
+
+  - invariant_id: "INV-ACK-001"
+    rule_type: "no_acknowledgment_for_not_attempted"
+
+  - invariant_id: "INV-REVIEW-001"
+    rule_type: "review_queue_uses_review_receipt"
+
+  - invariant_id: "INV-AUDIT-001"
+    rule_type: "run_scoped_chain_valid"
+
+  - invariant_id: "INV-AUDIT-002"
+    rule_type: "audit_description_required"
+    expected_description: "tamper-evident within verified scope"
+
+  - invariant_id: "INV-READINESS-001"
+    rule_type: "runtime_readiness_separation"
+
+  - invariant_id: "INV-LEGAL-001"
+    rule_type: "project_control_not_national_law"
+
+  - invariant_id: "INV-Y3172-001"
+    rule_type: "all_y3172_nodes_mapped"
+    required_nodes:
+      - "SRC"
+      - "C"
+      - "PP"
+      - "M"
+      - "P"
+      - "D"
+      - "SINK"

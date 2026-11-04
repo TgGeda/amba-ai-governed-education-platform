@@ -1,0 +1,86 @@
+schema_version: "1.1.0"
+
+assessment_subject:
+  type: "project"
+  id: "AMBA-GOV"
+  jurisdictional_context: "ethiopia"
+  national_assessment: false
+  official_itu_certification: false
+  assessment_method: "targeted_project_mapping"
+
+framework:
+  framework_id: "ITU-AI-READINESS-2.0"
+  expected_factor_count: 6
+  expected_dimension_count: 13
+  expected_metric_count: 111
+  factor_mapping_cardinality: "many_to_many"
+  preserve_reference_metric_ids: true
+  preserve_complete_reference_framework: true
+
+mentor_guidance:
+  all_factors_must_be_assessed: false
+  all_dimensions_must_be_assessed: false
+  all_metrics_must_be_assessed: false
+  numerical_score_required: false
+  comprehensive_mapping_allowed: true
+  comprehensive_mapping_preferred_when_supported: true
+
+assessment_mapping:
+  method: "targeted_project_mapping"
+
+  allowed_mapping_statuses:
+    - "directly_mapped"
+    - "indirectly_relevant"
+    - "not_assessed"
+
+  allowed_assessment_statuses:
+    - "demonstrated"
+    - "partially_demonstrated"
+    - "not_demonstrated"
+    - "not_applicable"
+    - "insufficient_evidence"
+    - "unresolved"
+    - "not_assessed"
+
+  evidence_rules:
+    require_resolvable_evidence_record: true
+    require_artifact_hash_when_artifact_exists: true
+    missing_artifact_hash: null
+    all_zero_hash_allowed: false
+    empty_content_hash_allowed_for_nonempty_artifact: false
+    source_file_existence_alone_proves_maturity: false
+    test_source_file_proves_execution: false
+    not_assessed_converts_to_zero: false
+
+scoring:
+  numerical_score_required: false
+  overall_project_score: null
+  score_status: "not_required_by_mentor_guidance"
+  allow_unverified_weights: false
+  convert_unassessed_to_zero: false
+  publish_composite_score: false
+
+coverage_reporting:
+  expose_reference_factor_count: true
+  expose_reference_dimension_count: true
+  expose_reference_metric_count: true
+  expose_direct_mapping_count: true
+  expose_indirect_relevance_count: true
+  expose_not_assessed_count: true
+  generate_counts_from_records: true
+  hard_coded_coverage_counts_allowed: false
+
+runtime_separation:
+  readiness_can_authorize_runtime: false
+  readiness_can_block_runtime: false
+  readiness_can_replace_policy_evaluation: false
+  runtime_services_may_import_readiness_results: false
+
+outputs:
+  include_relevant_mappings: true
+  include_supporting_evidence: true
+  include_evidence_sufficiency: true
+  include_gaps: true
+  include_limitations: true
+  include_recommended_improvements: true
+  include_numerical_score: false

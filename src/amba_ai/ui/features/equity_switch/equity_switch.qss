@@ -1,0 +1,154 @@
+#AmbaEquitySwitchWidgetUI {
+    background-color: #020617;
+    color: #E2E8F0;
+    font-family: "Segoe UI", "Arial", sans-serif;
+    font-size: 10pt;
+}
+
+#AmbaEquitySwitchWidgetUI QToolBar#equityToolbar {
+    background-color: #0F172A;
+    border: 1px solid #1E293B;
+    border-radius: 6px;
+    padding: 4px;
+    spacing: 4px;
+}
+
+#AmbaEquitySwitchWidgetUI QPushButton {
+    background-color: #1E293B;
+    border: 1px solid #334155;
+    border-radius: 4px;
+    padding: 6px 10px;
+    color: #E2E8F0;
+    font-weight: 600;
+    min-height: 24px;
+}
+
+#AmbaEquitySwitchWidgetUI QPushButton:hover {
+    background-color: #24324A;
+    border-color: #38BDF8;
+    color: #FFFFFF;
+}
+
+#AmbaEquitySwitchWidgetUI QPushButton:pressed {
+    background-color: #334155;
+    border-color: #0D9488;
+    color: #FFFFFF;
+}
+
+#AmbaEquitySwitchWidgetUI QPushButton:disabled {
+    background-color: #1E293B;
+    border-color: #475569;
+    color: #64748B;
+}
+
+#AmbaEquitySwitchWidgetUI QPushButton[priority="primary"] {
+    background-color: #14B8A6;
+    border-color: #2DD4BF;
+    color: #06121F;
+    font-weight: 700;
+}
+
+#AmbaEquitySwitchWidgetUI QPushButton[variant="secondary"] {
+    background-color: #334155;
+    border-color: #475569;
+    color: #E2E8F0;
+}
+
+#AmbaEquitySwitchWidgetUI QTabWidget::pane {
+    border: 1px solid #1E293B;
+    border-radius: 6px;
+    background-color: #020617;
+}
+
+#AmbaEquitySwitchWidgetUI QTabBar::tab {
+    background-color: #111827;
+    color: #94A3B8;
+    border: 1px solid #1E293B;
+    border-bottom: none;
+    padding: 6px 12px;
+    margin-right: 2px;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+}
+
+#AmbaEquitySwitchWidgetUI QTabBar::tab:hover {
+    background-color: #1E293B;
+    color: #F8FAFC;
+}
+
+#AmbaEquitySwitchWidgetUI QTabBar::tab:selected {
+    background-color: #0F172A;
+    color: #2DD4BF;
+    border-color: #0D9488;
+}
+
+#AmbaEquitySwitchWidgetUI QGroupBox {
+    color: #F8FAFC;
+    border: 1px solid #334155;
+    border-radius: 6px;
+    margin-top: 10px;
+    padding: 10px;
+    font-weight: 600;
+}
+
+#AmbaEquitySwitchWidgetUI QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 10px;
+    padding: 0 4px;
+    color: #2DD4BF;
+}
+
+#AmbaEquitySwitchWidgetUI QLabel {
+    color: #E2E8F0;
+}
+
+#AmbaEquitySwitchWidgetUI QLabel#equityStatusLabel {
+    color: #A7F3D0;
+    background-color: #042F2E;
+    border: 1px solid #0D9488;
+    border-radius: 6px;
+    padding: 6px 8px;
+    font-weight: 600;
+}
+
+#AmbaEquitySwitchWidgetUI QComboBox {
+    background-color: #0B1120;
+    color: #F8FAFC;
+    border: 1px solid #334155;
+    border-radius: 4px;
+    padding: 4px 6px;
+    min-height: 24px;
+}
+
+#AmbaEquitySwitchWidgetUI QComboBox:focus {
+    border-color: #38BDF8;
+}
+
+#AmbaEquitySwitchWidgetUI QCheckBox {
+    color: #E2E8F0;
+    spacing: 6px;
+}
+
+#AmbaEquitySwitchWidgetUI QTextBrowser#equityOperationLog {
+    background-color: #020617;
+    color: #F8FAFC;
+    border: 1px solid #0D9488;
+    border-radius: 6px;
+    padding: 8px;
+    font-family: "Cascadia Mono", "Consolas", monospace;
+    font-size: 9pt;
+}
+
+#AmbaEquitySwitchWidgetUI QProgressBar {
+    height: 18px;
+    text-align: center;
+    border: 1px solid #334155;
+    border-radius: 4px;
+    color: #E2E8F0;
+    background-color: #0B1120;
+}
+
+#AmbaEquitySwitchWidgetUI QProgressBar::chunk {
+    background-color: #14B8A6;
+    border-radius: 3px;
+}

@@ -1,0 +1,86 @@
+schema_version: 1.0.0
+operations:
+  classroom_exercise_telemetry:
+    protection_class: protected
+    pre_gate_required: true
+    post_gate_required: false
+    authorization_basis_required: true
+    allowed_authorization_basis_types:
+    - project_fixture
+    required_evaluators:
+    - EVAL-AUTHORIZATION-BASIS
+    - EVAL-DESTINATION
+    - EVAL-PROJECT-EDUCATIONAL-PROCESSING
+    required_policy_records:
+    - PROJECT-CONTROL-EDUCATIONAL-PROCESSING-V1
+    - PROJECT-CONTROL-RESTRICTED-DESTINATIONS-V1
+    approval_required: false
+    failure_behavior: hold_for_review
+    approval_role: null
+  classroom_instruction_delivery:
+    protection_class: protected
+    pre_gate_required: true
+    post_gate_required: true
+    authorization_basis_required: true
+    allowed_authorization_basis_types:
+    - project_fixture
+    required_evaluators:
+    - EVAL-AUTHORIZATION-BASIS
+    - EVAL-CITATION-INTEGRITY
+    - EVAL-CONTENT-SAFETY
+    - EVAL-DESTINATION
+    required_policy_records:
+    - PROJECT-CONTROL-EDUCATIONAL-PROCESSING-V1
+    - PROJECT-CONTROL-RESTRICTED-DESTINATIONS-V1
+    approval_required: false
+    failure_behavior: hold_for_review
+    approval_role: null
+  commercial_purchase_request:
+    protection_class: high_risk
+    pre_gate_required: true
+    post_gate_required: true
+    authorization_basis_required: true
+    allowed_authorization_basis_types:
+    - project_fixture
+    required_evaluators:
+    - EVAL-AUTHORIZATION-BASIS
+    - EVAL-PROJECT-COMMERCIAL-CONTROL
+    - EVAL-CHILD-SAFEGUARDING
+    - EVAL-DESTINATION
+    required_policy_records:
+    - PROJECT-CONTROL-COMMERCIAL-PURCHASES-V1
+    - PROJECT-CONTROL-HUMAN-REVIEW-V1
+    - PROJECT-CONTROL-RESTRICTED-DESTINATIONS-V1
+    approval_required: true
+    approval_role: school_administrator
+    failure_behavior: hold_for_review
+  targeted_ad_dispatch:
+    protection_class: prohibited_by_project_control
+    pre_gate_required: true
+    post_gate_required: true
+    authorization_basis_required: false
+    allowed_authorization_basis_types: []
+    required_evaluators:
+    - EVAL-PROJECT-TARGETED-AD-CONTROL
+    - EVAL-INFERENCE-DATA
+    - EVAL-CHILD-SAFEGUARDING
+    - EVAL-DESTINATION
+    required_policy_records:
+    - PROJECT-CONTROL-TARGETED-ADVERTISING-V1
+    - PROJECT-CONTROL-RESTRICTED-DESTINATIONS-V1
+    approval_required: false
+    failure_behavior: block
+    approval_role: null
+  policy_exploration_search:
+    protection_class: low_risk
+    pre_gate_required: false
+    post_gate_required: true
+    authorization_basis_required: false
+    allowed_authorization_basis_types: []
+    required_evaluators:
+    - EVAL-CITATION-INTEGRITY
+    required_policy_records:
+    - PROJECT-CONTROL-EVIDENCE-INTEGRITY-V1
+    approval_required: false
+    failure_behavior: abstain
+    approval_role: null

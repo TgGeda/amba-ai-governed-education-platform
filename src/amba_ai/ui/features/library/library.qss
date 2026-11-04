@@ -1,0 +1,159 @@
+#AmbaLibraryWidgetUI, #AmbaRecycleBinWidgetUI {
+    background-color: #090D16;
+    color: #F8FAFC;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 10pt;
+}
+
+/* Header & Container Cards */
+#AmbaLibraryWidgetUI QFrame#controlCard,
+#AmbaLibraryWidgetUI QFrame#containerFrame,
+#AmbaLibraryWidgetUI QFrame#inspectorCard {
+    background-color: #0F172A;
+    border: 1px solid #1E293B;
+    border-radius: 8px;
+}
+
+/* Splitter Customization */
+QSplitter::handle:horizontal {
+    background-color: #1E293B;
+    width: 3px;
+    margin: 4px 1px;
+    border-radius: 1px;
+}
+
+QSplitter::handle:horizontal:hover {
+    background-color: #14B8A6;
+}
+
+/* Inputs & Filter Fields */
+#AmbaLibraryWidgetUI QLineEdit#libraryFilter {
+    background-color: #020617;
+    border: 1px solid #334155;
+    border-radius: 6px;
+    color: #F8FAFC;
+    padding: 6px 12px;
+    font-size: 9.5pt;
+}
+
+#AmbaLibraryWidgetUI QLineEdit#libraryFilter:focus {
+    border-color: #2DD4BF;
+    background-color: #0A101D;
+}
+
+/* Dropdown Filters */
+#AmbaLibraryWidgetUI QComboBox {
+    background-color: #020617;
+    color: #F8FAFC;
+    border: 1px solid #334155;
+    border-radius: 6px;
+    padding: 4px 10px;
+    min-height: 26px;
+    font-size: 9.5pt;
+}
+
+#AmbaLibraryWidgetUI QComboBox:hover {
+    border-color: #475569;
+}
+
+#AmbaLibraryWidgetUI QComboBox:focus {
+    border-color: #2DD4BF;
+}
+
+/* Buttons */
+#AmbaLibraryWidgetUI QPushButton, #AmbaRecycleBinWidgetUI QPushButton {
+    background-color: #1E293B;
+    border: 1px solid #334155;
+    border-radius: 6px;
+    padding: 6px 14px;
+    color: #E2E8F0;
+    font-weight: 600;
+    min-height: 24px;
+}
+
+#AmbaLibraryWidgetUI QPushButton:hover, #AmbaRecycleBinWidgetUI QPushButton:hover {
+    background-color: #283548;
+    border-color: #64748B;
+    color: #FFFFFF;
+}
+
+#AmbaLibraryWidgetUI QPushButton[priority="primary"] {
+    background-color: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #0D9488, stop:1 #14B8A6);
+    border: 1px solid #2DD4BF;
+    color: #04131F;
+    font-weight: 700;
+}
+
+#AmbaLibraryWidgetUI QPushButton[priority="primary"]:hover {
+    background-color: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #14B8A6, stop:1 #2DD4BF);
+    color: #000000;
+}
+
+#AmbaRecycleBinWidgetUI QPushButton#dangerButton {
+    background-color: #991B1B;
+    border: 1px solid #DC2626;
+    color: #FFFFFF;
+    font-weight: 700;
+}
+
+#AmbaRecycleBinWidgetUI QPushButton#dangerButton:hover {
+    background-color: #B91C1C;
+}
+
+/* Document Table & Tree */
+#AmbaLibraryWidgetUI QTreeView#libraryDocumentsTree,
+#AmbaRecycleBinWidgetUI QTableWidget {
+    background-color: #0B1120;
+    border: none;
+    color: #E2E8F0;
+    alternate-background-color: #0F172A;
+    selection-background-color: #134E4A;
+    selection-color: #2DD4BF;
+    outline: none;
+}
+
+#AmbaLibraryWidgetUI QTreeView::item,
+#AmbaRecycleBinWidgetUI QTableWidget::item {
+    padding: 6px;
+    border-bottom: 1px solid #162032;
+}
+
+#AmbaLibraryWidgetUI QTreeView::item:hover,
+#AmbaRecycleBinWidgetUI QTableWidget::item:hover {
+    background-color: #1E293B;
+}
+
+#AmbaLibraryWidgetUI QHeaderView::section,
+#AmbaRecycleBinWidgetUI QHeaderView::section {
+    background-color: #0F172A;
+    color: #94A3B8;
+    border: none;
+    border-bottom: 2px solid #1E293B;
+    padding: 6px;
+    font-weight: 700;
+    font-size: 8.5pt;
+    text-transform: uppercase;
+}
+
+/* Inspector Viewer */
+#AmbaLibraryWidgetUI QTextBrowser#inspectorDisplay {
+    background-color: #020617;
+    border: 1px solid #1E293B;
+    border-radius: 6px;
+    padding: 8px;
+}
+
+/* Progress bar */
+QProgressBar {
+    background-color: #020617;
+    border: 1px solid #334155;
+    border-radius: 4px;
+    color: #F8FAFC;
+    font-size: 8.5pt;
+    text-align: center;
+}
+
+QProgressBar::chunk {
+    background-color: #14B8A6;
+    border-radius: 3px;
+}

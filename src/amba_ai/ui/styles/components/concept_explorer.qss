@@ -1,0 +1,160 @@
+/* ===================================================================
+   AmbaAI Concept Explorer & Inspector Stylesheet
+   =================================================================== */
+
+QWidget#learningConceptExplorer {
+    background-color: #FBF7EF;
+}
+
+/* Splitter Handle */
+QSplitter#conceptExplorerSplitter::handle {
+    background-color: #DCC8A9;
+    width: 2px;
+}
+
+QLabel#learningSectionTitle {
+    color: #1D3323;
+    font-size: 16px;
+    font-weight: 900;
+}
+
+/* Search Field in Left Pane */
+QLineEdit#conceptSearchInput {
+    background-color: #FFFDF8;
+    color: #1D3323;
+    border: 1px solid #DCC8A9;
+    border-radius: 6px;
+    padding: 5px 8px;
+    min-height: 26px;
+    font-size: 12px;
+}
+
+/* Category Filter Pills */
+QPushButton#conceptCategoryPill {
+    background-color: #FFFDF8;
+    color: #315343;
+    border: 1px solid #DCC8A9;
+    border-radius: 12px;
+    padding: 3px 10px;
+    font-size: 11px;
+    font-weight: 700;
+    min-height: 22px;
+}
+
+QPushButton#conceptCategoryPill:hover {
+    background-color: #F4E9D7;
+}
+
+QPushButton#conceptCategoryPill:checked {
+    background-color: #C05C46;
+    color: #FFFDF8;
+    border-color: #9C4533;
+}
+
+/* Left List Concept Buttons */
+QPushButton#learningConceptCardBtn {
+    min-height: 32px;
+    color: #1D3323;
+    background-color: #FFFDF8;
+    border: 1px solid #DCC8A9;
+    border-radius: 6px;
+    padding: 6px 12px;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 750;
+}
+
+QPushButton#learningConceptCardBtn:hover {
+    background-color: #F4E9D7;
+    border-color: #C05C46;
+}
+
+QPushButton#learningConceptCardBtn:checked {
+    color: #FFFDF8;
+    background-color: #C05C46;
+    border-color: #9C4533;
+    font-weight: 900;
+}
+
+/* Right Inspector Panel */
+QFrame#learningConceptInspector {
+    background-color: #FFFDF8;
+    border: 1px solid #DCC8A9;
+    border-radius: 8px;
+    padding: 12px;
+}
+
+QFrame#inspectorHeaderCard {
+    background-color: #F4E9D7;
+    border: 1px solid #E6D5B8;
+    border-radius: 6px;
+    padding: 8px 12px;
+}
+
+QLabel#learningCategoryBadge {
+    color: #315343;
+    background-color: #FFFDF8;
+    border: 1px solid #DCC8A9;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+QLabel#learningConceptTitle {
+    color: #C05C46;
+    font-size: 17px;
+    font-weight: 900;
+}
+
+/* Inspector Content Cards */
+QFrame#learningInspectorCard {
+    background-color: #FBF7EF;
+    border: 1px solid #E6D5B8;
+    border-radius: 6px;
+    padding: 10px;
+}
+
+QFrame#learningInspectorHighlightCard {
+    background-color: #FFF7E8;
+    border: 1px solid #E7B65A;
+    border-radius: 6px;
+    padding: 10px;
+}
+
+QLabel#learningInspectorHeading {
+    color: #315343;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+}
+
+QLabel#learningInspectorHeadingHighlight {
+    color: #C05C46;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+}
+
+/* Action Buttons inside Inspector */
+QToolButton#learningBookmarkAction,
+QToolButton#learningCopyAction {
+    background-color: #FFFDF8;
+    color: #1D3323;
+    border: 1px solid #DCC8A9;
+    border-radius: 5px;
+    padding: 3px 8px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+QToolButton#learningBookmarkAction:hover,
+QToolButton#learningCopyAction:hover {
+    background-color: #F4E9D7;
+    border-color: #C05C46;
+}
+
+QToolButton#learningBookmarkAction:checked {
+    background-color: #E7B65A;
+    color: #1D3323;
+}

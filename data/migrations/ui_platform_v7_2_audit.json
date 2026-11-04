@@ -1,0 +1,31 @@
+{
+  "schema_version": "ambaai.ui-platform.v7.2",
+  "installed_at_utc": "2026-07-27T09:06:30.222823+00:00",
+  "files_written": [
+    "F:\\AmbaAI\\amba_ai_project\\src\\amba_ai\\ui\\common\\components\\__init__.py",
+    "F:\\AmbaAI\\amba_ai_project\\src\\amba_ai\\ui\\common\\components\\accessibility.py",
+    "F:\\AmbaAI\\amba_ai_project\\src\\amba_ai\\ui\\common\\components\\reading_canvas.py",
+    "F:\\AmbaAI\\amba_ai_project\\src\\amba_ai\\ui\\common\\components\\source_chip.py",
+    "F:\\AmbaAI\\amba_ai_project\\src\\amba_ai\\ui\\common\\components\\learning_header.py",
+    "F:\\AmbaAI\\amba_ai_project\\src\\amba_ai\\ui\\common\\components\\accordion_card.py",
+    "F:\\AmbaAI\\amba_ai_project\\src\\amba_ai\\ui\\common\\components\\empty_state.py",
+    "F:\\AmbaAI\\amba_ai_project\\src\\amba_ai\\ui\\common\\components\\search_bar.py",
+    "F:\\AmbaAI\\amba_ai_project\\src\\amba_ai\\ui\\common\\components\\command_block.py",
+    "F:\\AmbaAI\\amba_ai_project\\src\\amba_ai\\ui\\common\\components\\table_view.py",
+    "F:\\AmbaAI\\amba_ai_project\\src\\amba_ai\\ui\\common\\components\\figure_view.py",
+    "F:\\AmbaAI\\amba_ai_project\\src\\amba_ai\\ui\\common\\components\\concept_explorer.py",
+    "F:\\AmbaAI\\amba_ai_project\\src\\amba_ai\\ui\\common\\components\\mastery_banner.py",
+    "F:\\AmbaAI\\amba_ai_project\\src\\amba_ai\\ui\\common\\learning_theme_loader_v7_2.py",
+    "F:\\AmbaAI\\amba_ai_project\\src\\amba_ai\\ui\\styles\\components\\learning_common_v7_2.qss"
+  ],
+  "backups": [],
+  "learning_core_modified": false,
+  "generation_modified": false,
+  "principles": {
+    "python_owns_behavior": true,
+    "qss_owns_presentation": true,
+    "document_agnostic": true,
+    "multimodal_ready": true,
+    "no_import_time_monkey_patches": true
+  }
+}

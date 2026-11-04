@@ -1,0 +1,80 @@
+schema_version: "1.0.0"
+
+application:
+  application_id: "AMBA-GOV"
+  display_name: "Amba-Gov"
+  package_name: "amba_ai"
+  source_root: "src"
+  package_root: "src/amba_ai"
+
+  profiles:
+    desktop:
+      persistent_application_database: true
+      persistent_audit_database: true
+      synthetic_scenario_only: false
+      qt_enabled: true
+
+    headless:
+      persistent_application_database: true
+      persistent_audit_database: true
+      synthetic_scenario_only: false
+      qt_enabled: false
+
+    demo:
+      persistent_application_database: false
+      persistent_audit_database: false
+      synthetic_scenario_only: true
+      deterministic_clock: true
+      deterministic_identifiers: true
+      qt_enabled: false
+
+    test:
+      persistent_application_database: false
+      persistent_audit_database: false
+      synthetic_scenario_only: true
+      deterministic_clock: true
+      deterministic_identifiers: true
+      qt_enabled: false
+
+paths:
+  knowledge_base_root: "kb"
+  configuration_root: "config"
+  documentation_root: "docs"
+  schema_root: "schemas"
+  submission_root: "submission"
+  build_root: "build"
+
+governance:
+  operations_file: "config/operations.yaml"
+  destinations_file: "config/destinations.yaml"
+  project_controls_file: "docs/policies/amba_gov_sandbox_safeguards.yaml"
+  agent_mandates_file: "config/agent_mandates.yaml"
+  policy_gap_types_file: "config/policy_gap_types.yaml"
+
+scenario:
+  definitions_file: "config/four_stage_scenario.yaml"
+  invariants_file: "config/scenario_invariants.yaml"
+  default_scenario_id: "SCENARIO-ETH-EDU-GOV-001-V1"
+
+standards:
+  y3172_mapping_file: "kb/mappings/y3172_mapping.yaml"
+  ml_intent_file: "config/ml_intent.yaml"
+
+readiness:
+  configuration_file: "config/readiness.yaml"
+  framework_root: "kb/framework"
+  evidence_mapping_file: "kb/mappings/readiness_evidence_map.yaml"
+
+runtime_boundaries:
+  readiness_can_authorize_runtime: false
+  readiness_can_block_runtime: false
+  language_model_can_authorize_runtime: false
+  semantic_similarity_can_authorize_runtime: false
+  project_controls_can_enforce_project_behavior: true
+  project_controls_can_create_national_legal_findings: false
+
+release:
+  mandatory_checks_must_execute: true
+  skipped_mandatory_check_blocks_release: true
+  unavailable_mandatory_check_blocks_release: true
+  indeterminate_mandatory_check_blocks_release: true

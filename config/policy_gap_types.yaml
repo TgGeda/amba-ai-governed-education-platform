@@ -1,0 +1,63 @@
+schema_version: "1.0.0"
+
+gap_types:
+  missing_policy:
+    description: >-
+      No relevant policy or project control was available for the operation.
+    default_runtime_disposition: "hold_for_review"
+    reportable: true
+
+  insufficient_policy:
+    description: >-
+      Available policy materials do not adequately govern the complete event.
+    default_runtime_disposition: "hold_for_review"
+    reportable: true
+
+  conflicting_policy:
+    description: >-
+      Applicable policy materials produce conflicting governance positions.
+    default_runtime_disposition: "hold_for_review"
+    reportable: true
+
+  unclear_applicability:
+    description: >-
+      A source exists, but applicability to the actor, operation, date, or
+      context remains unresolved.
+    default_runtime_disposition: "hold_for_review"
+    reportable: true
+
+  missing_exact_locator:
+    description: >-
+      A source exists, but the exact applicable provision or locator is not
+      verified.
+    default_runtime_disposition: "abstain"
+    reportable: true
+
+  missing_authority:
+    description: >-
+      The authority required to approve or execute the operation is absent or
+      unresolved.
+    default_runtime_disposition: "hold_for_review"
+    reportable: true
+
+  missing_implementation_control:
+    description: >-
+      Policy or project control exists, but the technical enforcement mechanism
+      is absent or incomplete.
+    default_runtime_disposition: "block"
+    reportable: true
+
+  readiness_evidence_gap:
+    description: >-
+      Readiness relevance is established, but sufficient project evidence is
+      not available.
+    default_runtime_disposition: "not_applicable_to_runtime"
+    reportable: true
+
+policy_gap_rules:
+  gap_is_legal_violation: false
+  gap_can_create_national_legal_finding: false
+  gap_must_record_evidence_status: true
+  gap_must_record_runtime_disposition: true
+  gap_must_record_recommended_action: true
+  reportable_gap_must_appear_in_technical_report: true

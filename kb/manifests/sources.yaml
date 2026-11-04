@@ -1,0 +1,216 @@
+schema_version: "1.1.0"
+manifest_id: "AMBA-GOV-COMPETITION-SOURCES"
+publication_rules:
+  openly_available_source_required: true
+  publish_only_sources_used_or_cited: true
+  unrelated_source_inclusion_allowed: false
+  html_anchor_markup_allowed_in_uri_fields: false
+  plain_uri_strings_required: true
+  local_artifact_required_for_integrity_claim: true
+  expected_digest_is_not_verified_digest: true
+  missing_artifact_behavior: "quarantine"
+  unresolved_locator_behavior: "non_enforcing"
+  guidance_binding_claim_allowed: false
+sources:
+  - source_id: "ETH-PDPA-1321-2024"
+    title: "Personal Data Protection Proclamation No. 1321/2024"
+    authority: "FDRE Ministry of Justice"
+    jurisdiction: "Ethiopia"
+    source_class: "primary_legislation"
+    binding_level: "primary_legislation"
+    artifact_filename: "ETH_PDPA_1321_2024.pdf"
+    expected_sha256: "f4e1eb0c4a6948d34accc3a93dbe32010af851f6cfb7f4b17a66ba94e2df0bf6"
+    open_source_url: "https://justice.gov.et/en/law/personal-data-protection-proclamation/"
+    open_availability_status: "verified_official_landing_page"
+    used_in_design: true
+    used_in_scenario: true
+    used_in_readiness_mapping: true
+    local_artifact_present: false
+    artifact_integrity_status: "expected_digest_declared"
+    locator_verification_status: "unresolved"
+    legal_review_status: "not_performed"
+    applicability_status: "unresolved"
+    activation_status: "quarantined"
+    eligible_for_project_enforcement: false
+    eligible_for_national_legal_finding: false
+  - source_id: "ETH-ECA-QOS-794-2021"
+    title: "Telecommunications Quality of Service Directive No. 794/2021"
+    authority: "Ethiopian Communications Authority"
+    jurisdiction: "Ethiopia"
+    source_class: "directive"
+    binding_level: "directive"
+    artifact_filename: "ETH_ECA_QOS_794_2021.pdf"
+    expected_sha256: "3c23ba0cfeca1f0fbdf724da211164fb8bbbec75945f16d9740cb112342ea449"
+    open_source_url: "https://eca.et/resources/2022-03-24t06-45-18-069ztelecommunications-quality-of-service-directive-no-794-2021-english/"
+    open_availability_status: "verified_official_source"
+    used_in_design: false
+    used_in_scenario: false
+    used_in_readiness_mapping: true
+    local_artifact_present: false
+    artifact_integrity_status: "expected_digest_declared"
+    locator_verification_status: "unresolved"
+    legal_review_status: "not_performed"
+    applicability_status: "not_assessed"
+    activation_status: "quarantined"
+    eligible_for_project_enforcement: false
+    eligible_for_national_legal_finding: false
+  - source_id: "ETH-ESDP-VI-2021"
+    title: "Education Sector Development Programme VI"
+    authority: "Federal Ministry of Education"
+    jurisdiction: "Ethiopia"
+    source_class: "sector_strategy"
+    binding_level: "national_policy"
+    programme_period: "2020/21-2024/25"
+    current_classification: "historical_or_completed"
+    artifact_filename: "ETH_ESDP_VI_2021.pdf"
+    expected_sha256: "f77622ff64c29d03d1e090f5c401880e3b8cda6015f6379d2afb707a0a9c7678"
+    open_source_url: "https://www.moe.gov.et/storage/Books/Ethiopian%20Education%20Sector%20Development%20Program%206%20%28ESDP%20VI%29.pdf"
+    open_availability_status: "verified_official_pdf"
+    used_in_design: true
+    used_in_scenario: false
+    used_in_readiness_mapping: true
+    local_artifact_present: false
+    artifact_integrity_status: "expected_digest_declared"
+    locator_verification_status: "unresolved"
+    legal_review_status: "not_applicable"
+    applicability_status: "historical_context"
+    activation_status: "context_only"
+    eligible_for_project_enforcement: false
+    eligible_for_national_legal_finding: false
+  - source_id: "ETH-STME-POLICY"
+    title: "Strategic Policy for National Science, Technology and Mathematics Education"
+    authority: "Ministry of Education"
+    jurisdiction: "Ethiopia"
+    source_class: "strategic_policy_supporting_document"
+    binding_level: "national_policy"
+    formal_adoption_status: "unverified"
+    artifact_filename: "ETH_STME_POLICY_FULL.pdf"
+    expected_sha256: "d5a6fb50ecd5b324d5d0eb1e1cb0eabd1744acd0423ff434127b76b4835e0260"
+    open_source_url: "https://www.moe.gov.et/storage/Books/Strategic%20Policy%20for%20National%20Science%20Technology%20and%20Mathematics%20Education_Full.pdf"
+    open_availability_status: "verified_official_pdf"
+    used_in_design: true
+    used_in_scenario: false
+    used_in_readiness_mapping: true
+    local_artifact_present: false
+    artifact_integrity_status: "expected_digest_declared"
+    locator_verification_status: "unresolved"
+    legal_review_status: "not_applicable"
+    applicability_status: "policy_context_only"
+    activation_status: "context_only"
+    eligible_for_project_enforcement: false
+    eligible_for_national_legal_finding: false
+  - source_id: "ETH-CYBERSECURITY-POLICY-2024"
+    title: "The Federal Democratic Republic of Ethiopia National Cybersecurity Policy"
+    authority: "Information Network Security Administration"
+    jurisdiction: "Ethiopia"
+    source_class: "national_policy"
+    binding_level: "national_policy"
+    publication_date: "2024-06"
+    artifact_filename: "ETH_NATIONAL_CYBERSECURITY_POLICY_2024.pdf"
+    expected_sha256: "624b0db098bff6cd075e92c2fd44e0a082b892a53bb4ea47952fb0850e12c62e"
+    open_source_url: "https://insa.gov.et/pdf/fdre-national-cyber-security-policy"
+    open_availability_status: "verified_official_pdf"
+    used_in_design: true
+    used_in_scenario: true
+    used_in_readiness_mapping: true
+    local_artifact_present: false
+    artifact_integrity_status: "expected_digest_declared"
+    locator_verification_status: "unresolved"
+    legal_review_status: "not_applicable"
+    applicability_status: "policy_context_only"
+    activation_status: "context_only"
+    eligible_for_project_enforcement: false
+    eligible_for_national_legal_finding: false
+  - source_id: "ITU-T-Y3172-2019"
+    title: "Architectural framework for machine learning in future networks including IMT-2020"
+    authority: "International Telecommunication Union"
+    jurisdiction: "International"
+    source_class: "technical_standard"
+    binding_level: "technical_standard"
+    recommendation: "ITU-T Y.3172"
+    edition: "1.0"
+    approval_date: "2019-06-22"
+    persistent_identifier: "11.1002/1000/13894"
+    artifact_filename: "ITU_T_Y3172_2019.pdf"
+    expected_sha256: "e42f9a3be3f951d3e19b9007f876f0b389c81b4693f0d8576e18185a1acfe67b"
+    open_source_url: "https://www.itu.int/rec/T-REC-Y.3172-201906-I"
+    open_availability_status: "verified_official_page"
+    used_in_design: true
+    used_in_scenario: true
+    used_in_readiness_mapping: true
+    local_artifact_present: false
+    artifact_integrity_status: "expected_digest_declared"
+    locator_verification_status: "verified_structural"
+    legal_review_status: "not_applicable"
+    applicability_status: "architecture_mapping"
+    activation_status: "architecture_only"
+    eligible_for_project_enforcement: false
+    eligible_for_national_legal_finding: false
+  - source_id: "ITU-AI-READINESS-2.0"
+    title: "AI Ready – Analysis Towards a Standardized Readiness Framework"
+    authority: "International Telecommunication Union"
+    jurisdiction: "International"
+    source_class: "readiness_framework"
+    binding_level: "technical_framework"
+    report_version: "2.0"
+    publication_date: "2026-01"
+    electronic_isbn: "978-92-61-41911-0"
+    artifact_filename: "ITU_AI_READINESS_REPORT.pdf"
+    expected_sha256: "71191768d46b60778c15f8d62b162aff73a319785cfc31ebf76bb944b0c68273"
+    open_source_url: "https://www.itu.int/dms_pub/itu-t/opb/ai4g/T-AI4G-AI4GOOD-2025-6-PDF-E.pdf"
+    open_availability_status: "verified_official_pdf"
+    used_in_design: true
+    used_in_scenario: false
+    used_in_readiness_mapping: true
+    local_artifact_present: false
+    artifact_integrity_status: "expected_digest_declared"
+    locator_verification_status: "verified_structural"
+    legal_review_status: "not_applicable"
+    applicability_status: "targeted_project_mapping"
+    activation_status: "readiness_only"
+    eligible_for_project_enforcement: false
+    eligible_for_national_legal_finding: false
+  - source_id: "UNICEF-AI-CHILDREN-3.0"
+    title: "Guidance on AI and Children 3.0"
+    authority: "UNICEF"
+    jurisdiction: "International"
+    source_class: "international_guidance"
+    binding_level: "international_guidance"
+    publication_date: "2025-12"
+    artifact_filename: "UNICEF_AI_CHILDREN_V3_2025.pdf"
+    expected_sha256: "1d218b79b894402bda57d97527ef7ea015b0642003ba582d6259b050d0a548ea"
+    open_source_url: "https://www.unicef.org/innocenti/media/11991/file/UNICEF-Innocenti-Guidance-on-AI-and-Children-3-2025.pdf"
+    open_availability_status: "verified_official_pdf"
+    used_in_design: true
+    used_in_scenario: true
+    used_in_readiness_mapping: true
+    local_artifact_present: false
+    artifact_integrity_status: "expected_digest_declared"
+    locator_verification_status: "unresolved"
+    legal_review_status: "not_applicable"
+    applicability_status: "supporting_guidance_only"
+    activation_status: "guidance_only"
+    eligible_for_project_enforcement: false
+    eligible_for_national_legal_finding: false
+  - source_id: "UNESCO-AI-ETHICS-2021"
+    title: "Recommendation on the Ethics of Artificial Intelligence"
+    authority: "UNESCO"
+    jurisdiction: "International"
+    source_class: "international_recommendation"
+    binding_level: "international_guidance"
+    adoption_date: "2021-11-23"
+    artifact_filename: "UNESCO_AI_ETHICS_RECOMMENDATION.pdf"
+    expected_sha256: "3a93a6006c591bf7600abc55e8beab883b6450b71638fea98148e4b08f005bf7"
+    open_source_url: "https://unesdoc.unesco.org/ark:/48223/pf0000380455"
+    open_availability_status: "verified_official_repository"
+    used_in_design: true
+    used_in_scenario: true
+    used_in_readiness_mapping: true
+    local_artifact_present: false
+    artifact_integrity_status: "expected_digest_declared"
+    locator_verification_status: "partially_verified"
+    legal_review_status: "not_applicable"
+    applicability_status: "supporting_guidance_only"
+    activation_status: "guidance_only"
+    eligible_for_project_enforcement: false
+    eligible_for_national_legal_finding: false
