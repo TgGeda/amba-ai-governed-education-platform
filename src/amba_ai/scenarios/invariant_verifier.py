@@ -81,17 +81,23 @@ class ScenarioInvariantVerifier:
                 raise ScenarioConfigurationError("projection fact scope differs from release")
             if any(fact.release_stage > projection.stage for fact in projection.facts):
                 raise ScenarioConfigurationError("future fact leaked into projection")
-        assessment_ids = set()
+        assessed_projection_ids: list[str] = []
         for assessment in evidence.coordination.assessments:
             projection = projections_by_id.get(assessment.projection_id)
             if projection is None:
                 raise ScenarioConfigurationError("assessment does not reference a supplied projection")
             if not set(assessment.assessed_fact_ids).issubset(projection.fact_ids):
                 raise ScenarioConfigurationError("assessment references a fact outside its projection")
-            assessment_ids.add(assessment.assessment_id)
-        coordinated_ids = {item.assessment_id for item in evidence.coordination.assessments}
-        if assessment_ids != coordinated_ids:
-            raise ScenarioConfigurationError("coordination did not preserve every assessment")
+            assessed_projection_ids.append(assessment.projection_id)
+        expected_projection_ids = set(projections_by_id)
+        if set(assessed_projection_ids) != expected_projection_ids:
+            raise ScenarioConfigurationError(
+                "coordination did not preserve one assessment for every projection"
+            )
+        if len(assessed_projection_ids) != len(set(assessed_projection_ids)):
+            raise ScenarioConfigurationError(
+                "coordination contains duplicate assessments for a projection"
+            )
         if any(conflict.resolved or not conflict.preserved for conflict in evidence.coordination.conflicts):
             raise ScenarioConfigurationError("coordination resolved or discarded an institutional conflict")
         for response in evidence.policy_agent_responses:

@@ -35,3 +35,57 @@ def test_repository_has_no_operational_surface():
     repository=ScenarioRepository()
     for name in ("recommend","approve","execute","distribute","authorize"):
         assert not hasattr(repository,name)
+
+
+
+def test_definition_allows_repeated_operation_type_across_distinct_events():
+    facts = (
+        ScenarioFact(
+            "F1",
+            "S",
+            ScenarioStage.STAGE_1,
+            ("education",),
+            "baseline",
+            {},
+        ),
+        ScenarioFact(
+            "F2",
+            "S",
+            ScenarioStage.STAGE_2,
+            ("education",),
+            "classroom_use",
+            {},
+        ),
+    )
+    destinations = (
+        ScenarioDestination("D1", "teacher_ui", "education"),
+        ScenarioDestination("D2", "review_ui", "education"),
+    )
+    events = (
+        ScenarioEventDefinition(
+            "E1",
+            "classroom_instruction_delivery",
+            ScenarioStage.STAGE_1,
+            "D1",
+            ("F1",),
+        ),
+        ScenarioEventDefinition(
+            "E2",
+            "classroom_instruction_delivery",
+            ScenarioStage.STAGE_2,
+            "D2",
+            ("F1", "F2"),
+        ),
+    )
+    value = ScenarioDefinition(
+        "S",
+        "Repeated operation type",
+        (ScenarioStage.STAGE_1, ScenarioStage.STAGE_2),
+        facts,
+        destinations,
+        events,
+    )
+    assert tuple(item.operation_id for item in value.events) == (
+        "classroom_instruction_delivery",
+        "classroom_instruction_delivery",
+    )

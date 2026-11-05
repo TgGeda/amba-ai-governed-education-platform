@@ -150,7 +150,6 @@ class ScenarioDefinition:
         _require_unique((item.fact_id for item in self.facts), "fact_id")
         _require_unique((item.destination_id for item in self.destinations), "destination_id")
         _require_unique((item.event_id for item in self.events), "event_id")
-        _require_unique((item.operation_id for item in self.events), "operation_id")
         if any(fact.scenario_id != self.scenario_id for fact in self.facts):
             raise ScenarioConfigurationError("all facts must belong to the scenario")
         _require_synthetic(self.synthetic, self.legal_effect)
