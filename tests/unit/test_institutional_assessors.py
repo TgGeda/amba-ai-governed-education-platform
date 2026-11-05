@@ -57,3 +57,104 @@ def test_assessors_create_no_governance_side_effects(cls):
     assert metadata["approval_created"] is False
     assert metadata["execution_requested"] is False
     assert metadata["distribution_attempted"] is False
+
+def test_independent_assessors_generate_distinct_identifiers():
+    education_projection, education_clock = projection(
+        "education",
+        "classroom_use",
+        {
+            "teacher_supervised": True,
+        },
+    )
+    consumer_projection, consumer_clock = projection(
+        "consumer_protection",
+        "purchase_interface",
+        {
+            "payment_enabled": True,
+        },
+    )
+
+    education_result = EducationAssessor(
+        identifier_provider=SequentialIdentifierProvider(),
+        clock=education_clock,
+    ).assess(
+        education_projection
+    )
+
+    consumer_result = ConsumerProtectionAssessor(
+        identifier_provider=SequentialIdentifierProvider(),
+        clock=consumer_clock,
+    ).assess(
+        consumer_projection
+    )
+
+    assert (
+        education_result.assessment_id
+        != consumer_result.assessment_id
+    )
+
+    assert (
+        education_result.assessment_id
+        .startswith(
+            "assessment_education_authority_"
+        )
+    )
+
+    assert (
+        consumer_result.assessment_id
+        .startswith(
+            "assessment_consumer_protection_"
+            "authority_"
+        )
+    )
+
+    education_observation_ids = tuple(
+        observation.observation_id
+        for observation
+        in education_result.observations
+    )
+
+    consumer_observation_ids = tuple(
+        observation.observation_id
+        for observation
+        in consumer_result.observations
+    )
+
+    assert education_observation_ids
+    assert consumer_observation_ids
+
+    assert all(
+        observation_id.startswith(
+            "observation_education_authority_"
+        )
+        for observation_id
+        in education_observation_ids
+    )
+
+    assert all(
+        observation_id.startswith(
+            "observation_consumer_protection_"
+            "authority_"
+        )
+        for observation_id
+        in consumer_observation_ids
+    )
+
+    assert set(
+        education_observation_ids
+    ).isdisjoint(
+        consumer_observation_ids
+    )
+
+    all_identifiers = (
+        education_observation_ids
+        + consumer_observation_ids
+        + (
+            education_result.assessment_id,
+            consumer_result.assessment_id,
+        )
+    )
+
+    assert len(all_identifiers) == len(
+        set(all_identifiers)
+    )

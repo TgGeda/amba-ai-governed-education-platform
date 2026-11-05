@@ -110,7 +110,9 @@ class BaseInstitutionalAssessor:
             unresolved=unresolved,
         )
         assessment_id = require_identifier(
-            self._identifier_provider.new_id("assessment"),
+            self._identifier_provider.new_id(
+                f"assessment_{self.institution_id}"
+            ),
             "generated assessment_id",
         )
         snapshot = self._clock.snapshot()
@@ -170,7 +172,9 @@ class BaseInstitutionalAssessor:
             )
         return InstitutionalObservation(
             observation_id=require_identifier(
-                self._identifier_provider.new_id("observation"),
+                self._identifier_provider.new_id(
+                    f"observation_{self.institution_id}"
+                ),
                 "generated observation_id",
             ),
             institution_id=self.institution_id,
