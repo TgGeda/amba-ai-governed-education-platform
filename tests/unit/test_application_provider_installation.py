@@ -464,3 +464,38 @@ def test_y3172_trace_coordinator_provider_resolves(
         )
     finally:
         providers.close()
+
+
+SCENARIO_INSTITUTIONAL_PROVIDER_NAMES = (
+    "distribution_service",
+    "policy_agent_service",
+    "scenario_clock",
+    "evidence_release_service",
+    "institutional_context_projection_service",
+    "institutional_assessor_registry",
+    "institutional_conflict_detector",
+    "institutional_coordination_service",
+    "scenario_repository",
+    "scenario_validator",
+    "scenario_invariant_verifier",
+)
+
+
+def test_scenario_institutional_providers_are_registered_and_lazy(
+    tmp_path: Path,
+) -> None:
+    providers, settings = _registry(tmp_path)
+    try:
+        install_application_providers(providers, settings)
+        assert set(SCENARIO_INSTITUTIONAL_PROVIDER_NAMES).issubset(
+            providers.names()
+        )
+        assert set(SCENARIO_INSTITUTIONAL_PROVIDER_NAMES).issubset(
+            LAZY_PROVIDER_NAMES
+        )
+        assert all(
+            not providers.is_resolved(name)
+            for name in SCENARIO_INSTITUTIONAL_PROVIDER_NAMES
+        )
+    finally:
+        providers.close()

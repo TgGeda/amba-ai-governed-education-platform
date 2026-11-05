@@ -49,6 +49,40 @@ from amba_ai.governance.policy_engine import PolicyEngine
 from amba_ai.governance.principals import PrincipalRegistry, SystemClock
 from amba_ai.governance.record_registry import PolicyRecordRegistry
 from amba_ai.rag.engine import FaissRAGEngine
+
+from amba_ai.governance.distribution import (
+    DistributionBlockExecutor,
+    DistributionPermitExecutor,
+    ReviewQueueExecutor,
+)
+from amba_ai.institutional.assessors.consumer_protection_assessor import (
+    ConsumerProtectionAssessor,
+)
+from amba_ai.institutional.assessors.data_protection_assessor import (
+    DataProtectionAssessor,
+)
+from amba_ai.institutional.assessors.education_assessor import (
+    EducationAssessor,
+)
+from amba_ai.institutional.conflict_resolution import (
+    InstitutionalConflictDetector,
+)
+from amba_ai.institutional.context_projection import (
+    InstitutionalContextProjectionService,
+)
+from amba_ai.institutional.coordination import (
+    InstitutionalCoordinationService,
+)
+from amba_ai.institutional.registry import (
+    InstitutionalAssessorRegistry,
+)
+from amba_ai.scenarios.clock import DeterministicScenarioClock
+from amba_ai.scenarios.evidence_release import EvidenceReleaseService
+from amba_ai.scenarios.invariant_verifier import ScenarioInvariantVerifier
+from amba_ai.scenarios.repository import ScenarioRepository
+from amba_ai.scenarios.validator import ScenarioValidator
+from amba_ai.services.distribution_service import DistributionService
+from amba_ai.services.policy_agent_service import PolicyAgentService
 from amba_ai.services.approval_service import ApprovalService
 from amba_ai.services.audit_service import AuditService
 from amba_ai.services.content_delivery_service import ContentDeliveryService
@@ -112,6 +146,17 @@ LAZY_PROVIDER_NAMES = (
     "y3172_trace_coordinator",
     "policy_query_adapter",
     "policy_kb_service",
+    "distribution_service",
+    "policy_agent_service",
+    "scenario_clock",
+    "evidence_release_service",
+    "institutional_context_projection_service",
+    "institutional_assessor_registry",
+    "institutional_conflict_detector",
+    "institutional_coordination_service",
+    "scenario_repository",
+    "scenario_validator",
+    "scenario_invariant_verifier",
 )
 
 REQUIRED_PROVIDER_NAMES = (
@@ -306,6 +351,88 @@ def _build_policy_kb_service(
         ),
     )
 
+
+
+
+def _build_distribution_service() -> DistributionService:
+    return DistributionService(
+        permit_executor=DistributionPermitExecutor(),
+        block_executor=DistributionBlockExecutor(),
+        review_executor=ReviewQueueExecutor(),
+    )
+
+
+def _build_policy_agent_service(
+    registry: ProviderRegistry,
+) -> PolicyAgentService:
+    return PolicyAgentService(
+        policy_kb_service=registry.get(
+            "policy_kb_service",
+            PolicyKBService,
+        ),
+        governance_service=registry.get(
+            "governance_service",
+            GovernanceService,
+        ),
+        execution_service=registry.get(
+            "execution_service",
+            ExecutionService,
+        ),
+        distribution_service=registry.get(
+            "distribution_service",
+            DistributionService,
+        ),
+        trace_coordinator=registry.get(
+            "y3172_trace_coordinator",
+            Y3172TraceCoordinator,
+        ),
+        audit_service=registry.get(
+            "audit_service",
+            AuditService,
+        ),
+    )
+
+
+def _build_scenario_clock(
+    settings: ApplicationSettings,
+) -> DeterministicScenarioClock:
+    if settings.profile.value not in {"demo", "test"}:
+        raise GovernanceConfigurationError(
+            "scenario_clock is available only for synthetic demo/test profiles"
+        )
+    if not settings.synthetic_only:
+        raise GovernanceConfigurationError(
+            "scenario_clock requires synthetic_only application settings"
+        )
+    return DeterministicScenarioClock(
+        initial_time="2026-01-01T00:00:00Z"
+    )
+
+
+def _build_institutional_assessor_registry(
+    registry: ProviderRegistry,
+) -> InstitutionalAssessorRegistry:
+    identifiers = registry.get(
+        "identifier_provider",
+        UUIDIdentifierProvider,
+    )
+    scenario_clock = registry.get(
+        "scenario_clock",
+        DeterministicScenarioClock,
+    )
+    assessor_registry = InstitutionalAssessorRegistry()
+    for assessor_type in (
+        EducationAssessor,
+        DataProtectionAssessor,
+        ConsumerProtectionAssessor,
+    ):
+        assessor_registry.register(
+            assessor_type(
+                identifier_provider=identifiers,
+                clock=scenario_clock,
+            )
+        )
+    return assessor_registry
 
 def _resolve_mandatory_providers(registry: ProviderRegistry) -> None:
     for name in MANDATORY_PROVIDER_NAMES:
@@ -527,6 +654,91 @@ def install_application_providers(
         _build_policy_kb_service,
     )
 
+
+    providers.register(
+        "distribution_service",
+        lambda _registry: _build_distribution_service(),
+    )
+    providers.register(
+        "policy_agent_service",
+        _build_policy_agent_service,
+    )
+    providers.register(
+        "scenario_clock",
+        lambda _registry: _build_scenario_clock(settings),
+    )
+    providers.register(
+        "evidence_release_service",
+        lambda registry: EvidenceReleaseService(
+            identifier_provider=registry.get(
+                "identifier_provider",
+                UUIDIdentifierProvider,
+            ),
+            clock=registry.get(
+                "scenario_clock",
+                DeterministicScenarioClock,
+            ),
+        ),
+    )
+    providers.register(
+        "institutional_context_projection_service",
+        lambda registry: InstitutionalContextProjectionService(
+            identifier_provider=registry.get(
+                "identifier_provider",
+                UUIDIdentifierProvider,
+            ),
+            clock=registry.get(
+                "scenario_clock",
+                DeterministicScenarioClock,
+            ),
+        ),
+    )
+    providers.register(
+        "institutional_assessor_registry",
+        _build_institutional_assessor_registry,
+    )
+    providers.register(
+        "institutional_conflict_detector",
+        lambda _registry: InstitutionalConflictDetector(),
+    )
+    providers.register(
+        "institutional_coordination_service",
+        lambda registry: InstitutionalCoordinationService(
+            registry=registry.get(
+                "institutional_assessor_registry",
+                InstitutionalAssessorRegistry,
+            ),
+            conflict_detector=registry.get(
+                "institutional_conflict_detector",
+                InstitutionalConflictDetector,
+            ),
+            identifier_provider=registry.get(
+                "identifier_provider",
+                UUIDIdentifierProvider,
+            ),
+            clock=registry.get(
+                "scenario_clock",
+                DeterministicScenarioClock,
+            ),
+        ),
+    )
+    providers.register(
+        "scenario_repository",
+        lambda _registry: ScenarioRepository(),
+    )
+    providers.register(
+        "scenario_validator",
+        lambda registry: ScenarioValidator(
+            institutional_registry=registry.get(
+                "institutional_assessor_registry",
+                InstitutionalAssessorRegistry,
+            )
+        ),
+    )
+    providers.register(
+        "scenario_invariant_verifier",
+        lambda _registry: ScenarioInvariantVerifier(),
+    )
     providers.register("model_service", lambda _registry: ModelService())
     providers.register(
         "content_delivery_service",
