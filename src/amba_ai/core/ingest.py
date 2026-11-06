@@ -9,8 +9,8 @@ import wave
 
 from docx import Document
 from pptx import Presentation
-from PyPDF2 import PdfReader
-from PyPDF2.errors import PdfReadError
+from pypdf import PdfReader
+from pypdf.errors import PdfReadError
 
 from amba_ai.config import (
     FFMPEG_BIN,

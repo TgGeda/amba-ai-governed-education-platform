@@ -2,11 +2,11 @@ from __future__ import annotations
 
 import pytest
 
-from amba_ai.rag.policy_chunking import PolicyStructureChunker
+from amba_ai.rag.policy_structured_text_chunker import StructuredPolicyTextChunker
 
 
 def test_structural_units_are_preserved() -> None:
-    chunks = PolicyStructureChunker().chunk(
+    chunks = StructuredPolicyTextChunker().chunk(
         record_id="record",
         locator="synthetic://record",
         text=(
@@ -33,7 +33,7 @@ def test_structural_units_are_preserved() -> None:
 
 
 def test_deterministic_ids_and_integrity_hashes() -> None:
-    chunker = PolicyStructureChunker()
+    chunker = StructuredPolicyTextChunker()
 
     first = chunker.chunk(
         record_id="record",
@@ -57,7 +57,7 @@ def test_deterministic_ids_and_integrity_hashes() -> None:
 
 
 def test_numbered_paragraphs_and_tables_are_structural() -> None:
-    chunks = PolicyStructureChunker().chunk(
+    chunks = StructuredPolicyTextChunker().chunk(
         record_id="record",
         locator="synthetic://record",
         text=(
@@ -99,7 +99,7 @@ def test_numbered_paragraphs_and_tables_are_structural() -> None:
 
 
 def test_debug_table_parsing() -> None:
-    chunks = PolicyStructureChunker().chunk(
+    chunks = StructuredPolicyTextChunker().chunk(
         record_id="record",
         locator="synthetic://record",
         text=(
@@ -146,4 +146,4 @@ def test_invalid_inputs_fail(
     kwargs: dict[str, str],
 ) -> None:
     with pytest.raises(ValueError):
-        PolicyStructureChunker().chunk(**kwargs)
+        StructuredPolicyTextChunker().chunk(**kwargs)

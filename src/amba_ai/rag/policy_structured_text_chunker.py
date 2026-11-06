@@ -90,7 +90,7 @@ def _sha256_text(value: str) -> str:
 
 
 @dataclass(frozen=True, slots=True)
-class PolicyStructureChunk:
+class StructuredPolicyTextChunk:
     chunk_id: str
     record_id: str
     sequence: int
@@ -239,14 +239,14 @@ class _Unit:
         )
 
 
-class PolicyStructureChunker:
+class StructuredPolicyTextChunker:
     def chunk(
         self,
         *,
         record_id: str,
         text: str,
         locator: str,
-    ) -> tuple[PolicyStructureChunk, ...]:
+    ) -> tuple[StructuredPolicyTextChunk, ...]:
         record = _require_text(
             record_id,
             "record_id",
@@ -265,7 +265,7 @@ class PolicyStructureChunker:
         units = self._extract_units(
             material
         )
-        chunks: list[PolicyStructureChunk] = []
+        chunks: list[StructuredPolicyTextChunk] = []
 
         for sequence, unit in enumerate(
             units,
@@ -298,7 +298,7 @@ class PolicyStructureChunker:
             )
 
             chunks.append(
-                PolicyStructureChunk(
+                StructuredPolicyTextChunk(
                     chunk_id=chunk_id,
                     record_id=record,
                     sequence=sequence,
@@ -501,7 +501,7 @@ class PolicyStructureChunker:
     def _heading(
         line: str,
     ) -> tuple[str, str] | None:
-        if PolicyStructureChunker._is_table_row(
+        if StructuredPolicyTextChunker._is_table_row(
             line
         ):
             return None

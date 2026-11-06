@@ -31,7 +31,7 @@ from amba_ai.governance.models import (
     PolicyVerdict,
 )
 from amba_ai.governance.recommendation import derive_recommendation
-from amba_ai.rag.policy_chunking import PolicyStructureChunker
+from amba_ai.rag.policy_structured_text_chunker import StructuredPolicyTextChunker
 
 
 def make_recommendation_finding(
@@ -251,7 +251,7 @@ def test_manifest_verifier_detects_wrong_checksum(tmp_path: Path) -> None:
 
 
 def test_policy_chunking_preserves_structural_units() -> None:
-    chunks = PolicyStructureChunker().chunk(
+    chunks = StructuredPolicyTextChunker().chunk(
         record_id="SYNTH-PROJECT-CONTROL",
         text=(
             "Clause Scope\n"
