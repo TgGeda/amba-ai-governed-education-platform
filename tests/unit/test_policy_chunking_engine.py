@@ -169,10 +169,10 @@ def test_index_rebuild_is_idempotent_and_authority_is_registry_derived():
     assert index.rebuild((*chunks, *chunks)) == len(chunks)
     results = index.search("classroom supervision", min_score=0.0)
     assert results
-    assert results[0].binding_level is BindingLevel.PROJECT_CONTROL
+    assert results[0].policy_record.binding_level is BindingLevel.PROJECT_CONTROL
     assert results[0].eligible_for_project_enforcement is True
-    assert results[0].eligible_for_national_legal_finding is False
-    assert results[0].national_binding_status is False
+    assert results[0].eligible_for_binding_findings is False
+    assert results[0].policy_record.national_binding_status is False
 
 
 def test_conflicting_duplicate_chunk_fails_closed():
