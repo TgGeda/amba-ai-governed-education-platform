@@ -1,0 +1,76 @@
+schema_version: "1.0.0"
+framework_id: "ITU-AI-READINESS-2.0"
+official_title: "AI Ready – Analysis Towards a Standardized Readiness Framework"
+report_version: "2.0"
+publication_date: "January 2026"
+publisher: "International Telecommunication Union"
+electronic_isbn: "978-92-61-41911-0"
+information_current_to: "June 2025"
+source_path: "kb/sources/international/ITU_AI_READINESS_REPORT.pdf"
+artifact_sha256: "71191768d46b60778c15f8d62b162aff73a319785cfc31ebf76bb944b0c68273"
+reference_metric_catalog: "evidence/readiness_reference_minimal/simulation/data/framework/dimensions.json"
+reference_metric_count: 111
+reference_metric_id_examples:
+  - "d1_m01"
+  - "d13_m09"
+dimension_to_factor_relationship: "many_to_many"
+factors:
+  - "Data"
+  - "Research"
+  - "Deployment Support"
+  - "Standards"
+  - "Open Source and Code"
+  - "Sandbox Environments"
+dimensions:
+  - "Data/model Marketplace"
+  - "Generated Content Marketplace"
+  - "Cross-domain Correlation Analysis"
+  - "Contextualization and Regional Impact"
+  - "Level of Integration of AI in Workflows"
+  - "Human Interface"
+  - "Strategy Alignment"
+  - "Collaboration with AI"
+  - "Impacts of Humans in AI Integration"
+  - "AI & Policies"
+  - "AI for Inclusion"
+  - "Granular Priorities"
+  - "Digital Infrastructure"
+maturity_labels:
+  provenance: "reference_implementation"
+  values:
+    0: "Not Started"
+    1: "Initial / Ad-hoc"
+    2: "Developing"
+    3: "Established"
+    4: "Advanced"
+    5: "Leading / Optimizing"
+assessment_scope:
+  assessment_subject_type: "project"
+  assessment_subject_id: "AMBA-GOV"
+  jurisdictional_context: "Ethiopia"
+  national_assessment: false
+  official_itu_certification: false
+  assessment_method: "project_level_self_evaluation"
+  legal_determination_scope: false
+permitted_statuses:
+  - "demonstrated"
+  - "partially_demonstrated"
+  - "not_demonstrated"
+  - "not_applicable"
+  - "insufficient_evidence"
+  - "unresolved"
+initial_result:
+  overall_project_score: null
+  score_status: "withheld_pending_methodology_and_evidence_coverage"
+weighting_status:
+  metric: "methodology_unresolved"
+  dimension: "methodology_unresolved"
+  factor: "methodology_unresolved"
+prohibited_claims:
+  - "Ethiopia national AI readiness score"
+  - "ITU certification"
+  - "runtime authorization from readiness results"
+  - "invented metric, dimension, or factor weights"
+  - "maturity awarded because a source-code file exists"
+  - "test passed because a test source file exists"
+  - "not-assessed converted to score zero"
