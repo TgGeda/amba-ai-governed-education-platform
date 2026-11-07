@@ -1,0 +1,58 @@
+{
+  "artifact_sha256": "3a93a6006c591bf7600abc55e8beab883b6450b71638fea98148e4b08f005bf7",
+  "assessments": [
+    {
+      "is_complete": true,
+      "links": [
+        {
+          "chunk_id": "UNESCO-AI-ETHICS-2021@2021:source:p17-p17:c0016:5595b6118afc",
+          "excerpt_exactness": "source_derived",
+          "match_status": "structural_match",
+          "matched_locators": [
+            "104"
+          ],
+          "record_identity": {
+            "record_id": "UNESCO-AI-ETHICS-PARAGRAPH-104",
+            "source_id": "UNESCO-AI-ETHICS-2021",
+            "version_id": "2021"
+          },
+          "registered_locator": "Paragraph 104",
+          "required_locators": [
+            "104"
+          ],
+          "source_page_end": 17,
+          "source_page_start": 17
+        }
+      ],
+      "match_status": "structural_match",
+      "matched_locators": [
+        "104"
+      ],
+      "record_identity": {
+        "record_id": "UNESCO-AI-ETHICS-PARAGRAPH-104",
+        "source_id": "UNESCO-AI-ETHICS-2021",
+        "version_id": "2021"
+      },
+      "registered_locator": "Paragraph 104",
+      "required_locators": [
+        "104"
+      ]
+    }
+  ],
+  "claim_boundaries": {
+    "eligible_for_binding_findings": false,
+    "exact_source_excerpt_verified": false,
+    "independent_ethiopian_legal_violation": false,
+    "international_supporting_evidence_only": true,
+    "national_binding_status": false,
+    "source_page_locator_verified": false
+  },
+  "formal_y3172_conformance_claimed": false,
+  "matching_method": "deterministic_structural_locator",
+  "schema_version": "1.0.0",
+  "semantic_score_creates_links": false,
+  "source_id": "UNESCO-AI-ETHICS-2021",
+  "source_path": "kb/sources/international/UNESCO_AI_ETHICS_RECOMMENDATION.pdf",
+  "verified_exact_excerpt_claimed": false,
+  "version_id": "2021"
+}

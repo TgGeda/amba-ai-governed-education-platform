@@ -1,0 +1,24 @@
+schema_version: "1.0.0"
+record_set_id: "AMBA-GOV-VERIFIED-UNESCO-AI-ETHICS-2021"
+source_id: "UNESCO-AI-ETHICS-2021"
+source_path: "kb/sources/international/UNESCO_AI_ETHICS_RECOMMENDATION.pdf"
+artifact_sha256: "3a93a6006c591bf7600abc55e8beab883b6450b71638fea98148e4b08f005bf7"
+document_title: "Recommendation on the Ethics of Artificial Intelligence"
+adoption_date: "2021-11-23"
+source_class: "international_recommendation"
+binding_level: "international_guidance"
+national_binding_status: false
+eligible_for_binding_findings: false
+eligible_for_supporting_evidence: true
+independent_ethiopian_legal_violation: false
+records:
+  - record_id: "UNESCO-AI-ETHICS-PARAGRAPH-104"
+    version_id: "2021"
+    locator: "Paragraph 104"
+    locator_verification_status: "verified_structural"
+    exact_source_excerpt_verified: false
+    source_page_locator_verified: false
+    statement: >-
+      Paragraph 104 is relevant to educational AI, learner monitoring,
+      learner behaviour, sensitive information, and non-commercial misuse
+      of learner interaction data.
