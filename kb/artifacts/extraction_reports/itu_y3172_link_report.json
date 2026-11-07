@@ -1,0 +1,298 @@
+{
+  "artifact_sha256": "e42f9a3be3f951d3e19b9007f876f0b389c81b4693f0d8576e18185a1acfe67b",
+  "assessments": [
+    {
+      "is_complete": true,
+      "links": [
+        {
+          "chunk_id": "ITU-T-Y3172-2019@1.0:source:p5-p5:c0004:c9fb637138f8",
+          "excerpt_exactness": "source_derived",
+          "match_status": "structural_match",
+          "matched_locators": [
+            "8.1",
+            "8.2"
+          ],
+          "record_identity": {
+            "record_id": "ITU-Y3172-ARCHITECTURE-SANDBOX-COMPONENTS",
+            "source_id": "ITU-T-Y3172-2019",
+            "version_id": "1.0"
+          },
+          "registered_locator": "Clauses 8.1 and 8.2",
+          "required_locators": [
+            "8.1",
+            "8.2"
+          ],
+          "source_page_end": 5,
+          "source_page_start": 5
+        },
+        {
+          "chunk_id": "ITU-T-Y3172-2019@1.0:source:p20-p20:c0018:d056b97d0879",
+          "excerpt_exactness": "source_derived",
+          "match_status": "partial_structural_match",
+          "matched_locators": [
+            "8.1"
+          ],
+          "record_identity": {
+            "record_id": "ITU-Y3172-ARCHITECTURE-SANDBOX-COMPONENTS",
+            "source_id": "ITU-T-Y3172-2019",
+            "version_id": "1.0"
+          },
+          "registered_locator": "Clauses 8.1 and 8.2",
+          "required_locators": [
+            "8.1",
+            "8.2"
+          ],
+          "source_page_end": 20,
+          "source_page_start": 20
+        },
+        {
+          "chunk_id": "ITU-T-Y3172-2019@1.0:source:p22-p22:c0020:cc6442abffe5",
+          "excerpt_exactness": "source_derived",
+          "match_status": "partial_structural_match",
+          "matched_locators": [
+            "8.2"
+          ],
+          "record_identity": {
+            "record_id": "ITU-Y3172-ARCHITECTURE-SANDBOX-COMPONENTS",
+            "source_id": "ITU-T-Y3172-2019",
+            "version_id": "1.0"
+          },
+          "registered_locator": "Clauses 8.1 and 8.2",
+          "required_locators": [
+            "8.1",
+            "8.2"
+          ],
+          "source_page_end": 22,
+          "source_page_start": 22
+        }
+      ],
+      "match_status": "structural_match",
+      "matched_locators": [
+        "8.1",
+        "8.2"
+      ],
+      "record_identity": {
+        "record_id": "ITU-Y3172-ARCHITECTURE-SANDBOX-COMPONENTS",
+        "source_id": "ITU-T-Y3172-2019",
+        "version_id": "1.0"
+      },
+      "registered_locator": "Clauses 8.1 and 8.2",
+      "required_locators": [
+        "8.1",
+        "8.2"
+      ]
+    },
+    {
+      "is_complete": true,
+      "links": [
+        {
+          "chunk_id": "ITU-T-Y3172-2019@1.0:source:p5-p5:c0004:c9fb637138f8",
+          "excerpt_exactness": "source_derived",
+          "match_status": "structural_match",
+          "matched_locators": [
+            "7.4"
+          ],
+          "record_identity": {
+            "record_id": "ITU-Y3172-DECLARATIVE-ML-SPECIFICATION",
+            "source_id": "ITU-T-Y3172-2019",
+            "version_id": "1.0"
+          },
+          "registered_locator": "Clause 7.4",
+          "required_locators": [
+            "7.4"
+          ],
+          "source_page_end": 5,
+          "source_page_start": 5
+        },
+        {
+          "chunk_id": "ITU-T-Y3172-2019@1.0:source:p16-p16:c0014:e5591b4cf7e5",
+          "excerpt_exactness": "source_derived",
+          "match_status": "structural_match",
+          "matched_locators": [
+            "7.4"
+          ],
+          "record_identity": {
+            "record_id": "ITU-Y3172-DECLARATIVE-ML-SPECIFICATION",
+            "source_id": "ITU-T-Y3172-2019",
+            "version_id": "1.0"
+          },
+          "registered_locator": "Clause 7.4",
+          "required_locators": [
+            "7.4"
+          ],
+          "source_page_end": 16,
+          "source_page_start": 16
+        }
+      ],
+      "match_status": "structural_match",
+      "matched_locators": [
+        "7.4"
+      ],
+      "record_identity": {
+        "record_id": "ITU-Y3172-DECLARATIVE-ML-SPECIFICATION",
+        "source_id": "ITU-T-Y3172-2019",
+        "version_id": "1.0"
+      },
+      "registered_locator": "Clause 7.4",
+      "required_locators": [
+        "7.4"
+      ]
+    },
+    {
+      "is_complete": true,
+      "links": [
+        {
+          "chunk_id": "ITU-T-Y3172-2019@1.0:source:p5-p5:c0004:c9fb637138f8",
+          "excerpt_exactness": "source_derived",
+          "match_status": "structural_match",
+          "matched_locators": [
+            "8.1"
+          ],
+          "record_identity": {
+            "record_id": "ITU-Y3172-ML-PIPELINE-COMPONENTS",
+            "source_id": "ITU-T-Y3172-2019",
+            "version_id": "1.0"
+          },
+          "registered_locator": "Clause 8.1",
+          "required_locators": [
+            "8.1"
+          ],
+          "source_page_end": 5,
+          "source_page_start": 5
+        },
+        {
+          "chunk_id": "ITU-T-Y3172-2019@1.0:source:p20-p20:c0018:d056b97d0879",
+          "excerpt_exactness": "source_derived",
+          "match_status": "structural_match",
+          "matched_locators": [
+            "8.1"
+          ],
+          "record_identity": {
+            "record_id": "ITU-Y3172-ML-PIPELINE-COMPONENTS",
+            "source_id": "ITU-T-Y3172-2019",
+            "version_id": "1.0"
+          },
+          "registered_locator": "Clause 8.1",
+          "required_locators": [
+            "8.1"
+          ],
+          "source_page_end": 20,
+          "source_page_start": 20
+        }
+      ],
+      "match_status": "structural_match",
+      "matched_locators": [
+        "8.1"
+      ],
+      "record_identity": {
+        "record_id": "ITU-Y3172-ML-PIPELINE-COMPONENTS",
+        "source_id": "ITU-T-Y3172-2019",
+        "version_id": "1.0"
+      },
+      "registered_locator": "Clause 8.1",
+      "required_locators": [
+        "8.1"
+      ]
+    },
+    {
+      "is_complete": true,
+      "links": [
+        {
+          "chunk_id": "ITU-T-Y3172-2019@1.0:source:p8-p8:c0006:34a7d3f1c8e4",
+          "excerpt_exactness": "source_derived",
+          "match_status": "structural_match",
+          "matched_locators": [
+            "3.2.6"
+          ],
+          "record_identity": {
+            "record_id": "ITU-Y3172-ML-SANDBOX-DEFINITION",
+            "source_id": "ITU-T-Y3172-2019",
+            "version_id": "1.0"
+          },
+          "registered_locator": "Clause 3.2.6",
+          "required_locators": [
+            "3.2.6"
+          ],
+          "source_page_end": 8,
+          "source_page_start": 8
+        }
+      ],
+      "match_status": "structural_match",
+      "matched_locators": [
+        "3.2.6"
+      ],
+      "record_identity": {
+        "record_id": "ITU-Y3172-ML-SANDBOX-DEFINITION",
+        "source_id": "ITU-T-Y3172-2019",
+        "version_id": "1.0"
+      },
+      "registered_locator": "Clause 3.2.6",
+      "required_locators": [
+        "3.2.6"
+      ]
+    },
+    {
+      "is_complete": true,
+      "links": [
+        {
+          "chunk_id": "ITU-T-Y3172-2019@1.0:source:p5-p5:c0004:c9fb637138f8",
+          "excerpt_exactness": "source_derived",
+          "match_status": "structural_match",
+          "matched_locators": [
+            "9"
+          ],
+          "record_identity": {
+            "record_id": "ITU-Y3172-SECURITY-CONSIDERATIONS",
+            "source_id": "ITU-T-Y3172-2019",
+            "version_id": "1.0"
+          },
+          "registered_locator": "Clause 9",
+          "required_locators": [
+            "9"
+          ],
+          "source_page_end": 5,
+          "source_page_start": 5
+        },
+        {
+          "chunk_id": "ITU-T-Y3172-2019@1.0:source:p25-p25:c0023:2e684e0b2421",
+          "excerpt_exactness": "source_derived",
+          "match_status": "structural_match",
+          "matched_locators": [
+            "9"
+          ],
+          "record_identity": {
+            "record_id": "ITU-Y3172-SECURITY-CONSIDERATIONS",
+            "source_id": "ITU-T-Y3172-2019",
+            "version_id": "1.0"
+          },
+          "registered_locator": "Clause 9",
+          "required_locators": [
+            "9"
+          ],
+          "source_page_end": 25,
+          "source_page_start": 25
+        }
+      ],
+      "match_status": "structural_match",
+      "matched_locators": [
+        "9"
+      ],
+      "record_identity": {
+        "record_id": "ITU-Y3172-SECURITY-CONSIDERATIONS",
+        "source_id": "ITU-T-Y3172-2019",
+        "version_id": "1.0"
+      },
+      "registered_locator": "Clause 9",
+      "required_locators": [
+        "9"
+      ]
+    }
+  ],
+  "formal_y3172_conformance_claimed": false,
+  "matching_method": "deterministic_structural_locator",
+  "schema_version": "1.0.0",
+  "semantic_score_creates_links": false,
+  "source_id": "ITU-T-Y3172-2019",
+  "verified_exact_excerpt_claimed": false,
+  "version_id": "1.0"
+}
