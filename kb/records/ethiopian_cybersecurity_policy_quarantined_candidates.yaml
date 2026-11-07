@@ -1,0 +1,42 @@
+schema_version: "1.0.0"
+record_set_id: "AMBA-GOV-QUARANTINED-ETH-CYBERSECURITY-POLICY-2024"
+source_id: "ETH-CYBERSECURITY-POLICY-2024"
+version_id: "2024-06"
+source_path: "kb/sources/ethiopia/ETH_NATIONAL_CYBERSECURITY_POLICY_2024.pdf"
+artifact_sha256: "624b0db098bff6cd075e92c2fd44e0a082b892a53bb4ea47952fb0850e12c62e"
+document_title: "The Federal Democratic Republic of Ethiopia National Cybersecurity Policy"
+publication_date: "June 2024"
+administering_authority: "Information Network Security Administration"
+source_class: "national_policy"
+binding_level: "national_policy"
+eligible_for_policy_context: true
+eligible_for_readiness_evidence: true
+eligible_for_binding_legal_findings: false
+eligible_for_citation: false
+national_binding_status: false
+legal_effect: false
+record_status: "human_review_required"
+locator_status: "unresolved"
+exact_source_excerpt_verified: false
+source_page_locator_verified: false
+prohibited_independent_claims:
+  criminal_offence: false
+  statutory_penalty: false
+  valid_guardian_consent: false
+  binding_technical_threshold: false
+  automatic_statutory_block: false
+promotion_requirements:
+  - "deterministic source locator"
+  - "source-derived excerpt"
+  - "excerpt SHA-256"
+  - "human review"
+candidates:
+  - {candidate_id: "ETH-CYBERSECURITY-POLICY-CYBERSECURITY-GOVERNANCE", theme: "cybersecurity governance"}
+  - {candidate_id: "ETH-CYBERSECURITY-POLICY-SHARED-RESPONSIBILITY", theme: "shared responsibility"}
+  - {candidate_id: "ETH-CYBERSECURITY-POLICY-PRIVACY-SECURITY-BALANCE", theme: "privacy and security balance"}
+  - {candidate_id: "ETH-CYBERSECURITY-POLICY-DATA-LIFECYCLE-GOVERNANCE", theme: "data-lifecycle governance"}
+  - {candidate_id: "ETH-CYBERSECURITY-POLICY-EDUCATION-CAPACITY-BUILDING", theme: "education and capacity building"}
+  - {candidate_id: "ETH-CYBERSECURITY-POLICY-INDIGENOUS-RESEARCH", theme: "indigenous research"}
+  - {candidate_id: "ETH-CYBERSECURITY-POLICY-CRITICAL-INFRASTRUCTURE-RESILIENCE", theme: "critical-infrastructure resilience"}
+  - {candidate_id: "ETH-CYBERSECURITY-POLICY-INSTITUTIONAL-COORDINATION", theme: "institutional coordination"}
+  - {candidate_id: "ETH-CYBERSECURITY-POLICY-MONITORING-EVALUATION", theme: "monitoring and evaluation"}
