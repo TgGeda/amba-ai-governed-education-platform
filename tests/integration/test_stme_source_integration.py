@@ -1,0 +1,37 @@
+from __future__ import annotations
+
+import hashlib
+from pathlib import Path
+
+from amba_ai.governance.verified_stme_context_evidence import (
+    ARTIFACT_SHA256,
+    verified_stme_context_evidence,
+)
+from amba_ai.rag.policy_pdf_extractor import PolicyPdfExtractor
+
+REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
+SOURCE_PATH = (
+    REPOSITORY_ROOT
+    / "kb"
+    / "sources"
+    / "ethiopia"
+    / "ETH_STME_POLICY_FULL.pdf"
+)
+
+
+def test_verified_stme_artifact_extracts_without_overstating_adoption() -> None:
+    data = SOURCE_PATH.read_bytes()
+    assert data[:5] == b"%PDF-"
+    assert hashlib.sha256(data).hexdigest() == ARTIFACT_SHA256
+    pages = PolicyPdfExtractor().extract_pages(
+        SOURCE_PATH,
+        remove_repeated_marginal_lines=False,
+    )
+    assert pages
+    assert all(page.page_number >= 1 for page in pages)
+    for record in verified_stme_context_evidence():
+        assert record.formal_adoption_status == "unverified"
+        assert record.formal_adoption_claimed is False
+        assert record.official_locator is None
+        assert record.eligible_for_citation is False
+        assert record.eligible_for_binding_findings is False
