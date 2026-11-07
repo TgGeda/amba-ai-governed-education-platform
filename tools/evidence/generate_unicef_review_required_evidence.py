@@ -19,14 +19,14 @@ from amba_ai.governance.verified_unicef_records import (
     quarantined_unicef_supporting_evidence_records,
 )
 
-OUTPUT_PATH = REPOSITORY_ROOT / "kb" / "records" / "unicef_ai_children_quarantined_candidates.json"
+OUTPUT_PATH = REPOSITORY_ROOT / "kb" / "records" / "unicef_ai_children_review_required_evidence.json"
 
 
 def main() -> int:
     records = quarantined_unicef_supporting_evidence_records()
     payload = {
         "schema_version": "1.0.0",
-        "record_set_id": "AMBA-GOV-QUARANTINED-UNICEF-AI-CHILDREN-3.0",
+        "record_set_id": "AMBA-GOV-REVIEW-REQUIRED-UNICEF-AI-CHILDREN-3.0",
         "source_id": SOURCE_ID,
         "version_id": VERSION_ID,
         "source_path": "kb/sources/international/UNICEF_AI_CHILDREN_V3_2025.pdf",

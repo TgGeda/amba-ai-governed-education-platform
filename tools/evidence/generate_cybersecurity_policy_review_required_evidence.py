@@ -30,7 +30,7 @@ OUTPUT_PATH = (
     REPOSITORY_ROOT
     / "kb"
     / "records"
-    / "ethiopian_cybersecurity_policy_quarantined_candidates.json"
+    / "ethiopian_cybersecurity_policy_review_required_evidence.json"
 )
 
 
@@ -53,7 +53,7 @@ def main() -> int:
     records = quarantined_cybersecurity_policy_candidates()
     payload = {
         "schema_version": "1.0.0",
-        "record_set_id": "AMBA-GOV-QUARANTINED-ETH-CYBERSECURITY-POLICY-2024",
+        "record_set_id": "AMBA-GOV-REVIEW-REQUIRED-ETH-CYBERSECURITY-POLICY-2024",
         "source_id": SOURCE_ID,
         "version_id": VERSION_ID,
         "source_path": SOURCE_RELATIVE_PATH.as_posix(),

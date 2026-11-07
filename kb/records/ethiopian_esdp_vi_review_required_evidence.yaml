@@ -1,5 +1,5 @@
 schema_version: "1.0.0"
-record_set_id: "AMBA-GOV-QUARANTINED-ETH-ESDP-VI-2021"
+record_set_id: "AMBA-GOV-REVIEW-REQUIRED-ETH-ESDP-VI-2021"
 source_id: "ETH-ESDP-VI-2021"
 version_id: "2021"
 source_path: "kb/sources/ethiopia/ETH_ESDP_VI_2021.pdf"

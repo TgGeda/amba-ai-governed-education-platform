@@ -25,7 +25,7 @@ from amba_ai.rag.policy_pdf_extractor import PolicyPdfExtractor
 SOURCE_RELATIVE_PATH = Path("kb/sources/ethiopia/ETH_ESDP_VI_2021.pdf")
 SOURCE_PATH = REPOSITORY_ROOT / SOURCE_RELATIVE_PATH
 OUTPUT_PATH = (
-    REPOSITORY_ROOT / "kb" / "records" / "ethiopian_esdp_vi_quarantined_candidates.json"
+    REPOSITORY_ROOT / "kb" / "records" / "ethiopian_esdp_vi_review_required_evidence.json"
 )
 
 
@@ -48,7 +48,7 @@ def main() -> int:
     records = quarantined_esdp_vi_candidates()
     payload = {
         "schema_version": "1.0.0",
-        "record_set_id": "AMBA-GOV-QUARANTINED-ETH-ESDP-VI-2021",
+        "record_set_id": "AMBA-GOV-REVIEW-REQUIRED-ETH-ESDP-VI-2021",
         "source_id": SOURCE_ID,
         "version_id": VERSION_ID,
         "source_path": SOURCE_RELATIVE_PATH.as_posix(),

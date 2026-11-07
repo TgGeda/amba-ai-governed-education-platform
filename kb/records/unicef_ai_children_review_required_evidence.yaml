@@ -1,5 +1,5 @@
 schema_version: "1.0.0"
-record_set_id: "AMBA-GOV-QUARANTINED-UNICEF-AI-CHILDREN-3.0"
+record_set_id: "AMBA-GOV-REVIEW-REQUIRED-UNICEF-AI-CHILDREN-3.0"
 source_id: "UNICEF-AI-CHILDREN-3.0"
 source_path: "kb/sources/international/UNICEF_AI_CHILDREN_V3_2025.pdf"
 artifact_sha256: "1d218b79b894402bda57d97527ef7ea015b0642003ba582d6259b050d0a548ea"
