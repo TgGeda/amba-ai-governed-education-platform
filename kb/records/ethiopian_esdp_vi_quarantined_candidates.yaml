@@ -1,0 +1,48 @@
+schema_version: "1.0.0"
+record_set_id: "AMBA-GOV-QUARANTINED-ETH-ESDP-VI-2021"
+source_id: "ETH-ESDP-VI-2021"
+version_id: "2021"
+source_path: "kb/sources/ethiopia/ETH_ESDP_VI_2021.pdf"
+artifact_sha256: "f77622ff64c29d03d1e090f5c401880e3b8cda6015f6379d2afb707a0a9c7678"
+document_title: "Education Sector Development Programme VI"
+programme_period: "2020/21–2024/25"
+source_class: "sector_strategy"
+binding_level: "national_policy"
+current_classification: "historical_or_completed"
+historical_qualification_required: true
+current_after_2024_25: false
+verified_successor_identified: false
+eligible_for_historical_context: true
+eligible_for_policy_context: true
+eligible_for_readiness_evidence: true
+eligible_for_current_programme_claim: false
+eligible_for_binding_legal_findings: false
+eligible_for_project_enforcement: false
+eligible_for_citation: false
+national_binding_status: false
+legal_effect: false
+record_status: "human_review_required"
+locator_status: "unresolved"
+exact_source_excerpt_verified: false
+source_page_locator_verified: false
+prohibited_claims:
+  current_national_education_programme: false
+  binding_legal_obligation: false
+  statutory_offence: false
+  statutory_penalty: false
+  automatic_project_authorization: false
+  automatic_project_block: false
+promotion_requirements:
+  - "deterministic source locator"
+  - "source-derived excerpt"
+  - "excerpt SHA-256"
+  - "human review"
+  - "historical qualification"
+candidates:
+  - {candidate_id: "ETH-ESDP-VI-EDUCATION-SECTOR-CONTEXT", theme: "education-sector context"}
+  - {candidate_id: "ETH-ESDP-VI-DIGITIZATION-CONTEXT", theme: "digitization context"}
+  - {candidate_id: "ETH-ESDP-VI-QUALITY-EQUITY-ANALYSIS", theme: "quality and equity analysis"}
+  - {candidate_id: "ETH-ESDP-VI-CURRICULUM-REFORM", theme: "curriculum reform"}
+  - {candidate_id: "ETH-ESDP-VI-TEACHER-DEVELOPMENT", theme: "teacher development"}
+  - {candidate_id: "ETH-ESDP-VI-INFRASTRUCTURE-ANALYSIS", theme: "infrastructure analysis"}
+  - {candidate_id: "ETH-ESDP-VI-PROJECT-READINESS-EVIDENCE", theme: "project-level readiness evidence"}
