@@ -1,0 +1,30 @@
+evidence_package:
+  package_id: "AMBA-GOV-EVIDENCE-2026-10-30"
+  prepared_by: "Birhan Abuhay Jemere"
+  acquisition_date: "2026-10-30"
+  artifact_count: 9
+  reference_archives: 1
+
+verification_completed:
+  - "PDF magic-header validation"
+  - "Byte-size inventory"
+  - "SHA-256 artifact checksums"
+  - "Local file inventory"
+
+verification_not_yet_completed:
+  - "Document-title verification"
+  - "Authority verification"
+  - "Edition and publication-date verification"
+  - "Article and clause locator verification"
+  - "Quotation verification"
+  - "Translation-status verification"
+  - "Legal applicability review"
+  - "ITU AI Readiness framework reconciliation"
+
+legal_review:
+  performed: false
+
+scope_notice: >
+  Artifact integrity verification confirms the identity of the acquired local
+  bytes. It does not constitute legal review, official translation review,
+  applicability determination, or ITU certification.

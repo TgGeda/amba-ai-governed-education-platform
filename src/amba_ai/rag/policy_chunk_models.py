@@ -2,16 +2,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import hashlib
-import math
 import re
 from typing import Any
-
-from amba_ai.governance.models import (
-    ActivationStatus,
-    BindingLevel,
-    LegalReviewStatus,
-    LocatorVerificationStatus,
-)
 
 _IDENTIFIER_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:@#/-]*$")
 _SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
@@ -38,6 +30,26 @@ def require_text(value: object, field_name: str) -> str:
     normalized = " ".join(value.split())
     if not normalized:
         raise PolicyChunkError(f"{field_name} must not be empty")
+    return normalized
+
+
+def require_raw_text(value: object, field_name: str) -> str:
+    if not isinstance(value, str):
+        raise TypeError(f"{field_name} must be a string")
+    normalized = value.replace("\r\n", "\n").replace("\r", "\n").strip()
+    if not normalized:
+        raise PolicyChunkError(f"{field_name} must not be empty")
+    return normalized
+
+
+def require_path_text(value: object, field_name: str) -> str:
+    if not isinstance(value, str):
+        raise TypeError(f"{field_name} must be a string")
+    normalized = value.strip()
+    if not normalized:
+        raise PolicyChunkError(f"{field_name} must not be empty")
+    if "\x00" in normalized:
+        raise PolicyChunkError(f"{field_name} contains a null byte")
     return normalized
 
 
@@ -83,10 +95,18 @@ class PolicyChunkIdentity:
     version_id: str
     source_id: str
     chunk_index: int
+    language: str | None = None
 
     def __post_init__(self) -> None:
         for field_name in ("chunk_id", "record_id", "version_id", "source_id"):
             object.__setattr__(self, field_name, require_identifier(getattr(self, field_name), field_name))
+        if self.language is not None:
+            if not isinstance(self.language, str):
+                raise TypeError("language must be a string or None")
+            language = self.language.strip().lower()
+            if language not in {"am", "en"}:
+                raise PolicyChunkError("language must be am, en, or None")
+            object.__setattr__(self, "language", language)
         if isinstance(self.chunk_index, bool) or not isinstance(self.chunk_index, int):
             raise TypeError("chunk_index must be an integer")
         if self.chunk_index < 0:
@@ -107,16 +127,35 @@ class PolicyChunk:
     text_sha256: str
     token_count: int
     chunking_version: str
+    column: str | None = None
+    parallel_unit_id: str | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.identity, PolicyChunkIdentity):
             raise TypeError("identity must be a PolicyChunkIdentity")
         object.__setattr__(self, "artifact_sha256", require_sha256(self.artifact_sha256, "artifact_sha256"))
         object.__setattr__(self, "text_sha256", require_sha256(self.text_sha256, "text_sha256"))
-        object.__setattr__(self, "artifact_path", require_text(self.artifact_path, "artifact_path"))
+        object.__setattr__(self, "artifact_path", require_path_text(self.artifact_path, "artifact_path"))
         object.__setattr__(self, "official_locator", require_text(self.official_locator, "official_locator"))
-        object.__setattr__(self, "raw_text", require_text(self.raw_text, "raw_text"))
+        object.__setattr__(self, "raw_text", require_raw_text(self.raw_text, "raw_text"))
         object.__setattr__(self, "chunking_version", require_identifier(self.chunking_version, "chunking_version"))
+        if (self.identity.language is None) != (self.column is None):
+            raise PolicyChunkError("language and column must both be set or both be None")
+        if self.column is not None:
+            if not isinstance(self.column, str):
+                raise TypeError("column must be a string or None")
+            column = self.column.strip().lower()
+            if column not in {"left", "right"}:
+                raise PolicyChunkError("column must be left, right, or None")
+            object.__setattr__(self, "column", column)
+        if self.identity.language is not None and self.parallel_unit_id is None:
+            raise PolicyChunkError("bilingual chunk requires parallel_unit_id")
+        if self.identity.language is None and self.parallel_unit_id is not None:
+            raise PolicyChunkError("standard chunk must not define parallel_unit_id")
+        if self.parallel_unit_id is not None:
+            if not isinstance(self.parallel_unit_id, str):
+                raise TypeError("parallel_unit_id must be a string or None")
+            object.__setattr__(self, "parallel_unit_id", require_identifier(self.parallel_unit_id, "parallel_unit_id"))
         if self.section_title is not None:
             object.__setattr__(self, "section_title", require_text(self.section_title, "section_title"))
         if not isinstance(self.provision_numbers, tuple):
@@ -133,23 +172,31 @@ class PolicyChunk:
             raise PolicyChunkError("invalid page range")
         if self.token_count < 1:
             raise PolicyChunkError("token_count must be positive")
-        actual = hashlib.sha256(self.raw_text.encode("utf-8")).hexdigest()
-        if actual != self.text_sha256:
+        actual_digest = hashlib.sha256(self.raw_text.encode("utf-8")).hexdigest()
+        if actual_digest != self.text_sha256:
             raise PolicyChunkError("text_sha256 does not match raw_text")
-        expected_prefix = (
+        language_part = "" if self.language is None else f"{self.language}:"
+        expected_chunk_id = (
             f"{self.identity.record_id}@{self.identity.version_id}:"
-            f"p{self.page_start}-p{self.page_end}:c{self.identity.chunk_index:04d}:"
+            f"{language_part}p{self.page_start}-p{self.page_end}:"
+            f"c{self.identity.chunk_index:04d}:{self.text_sha256[:12]}"
         )
-        if not self.identity.chunk_id.startswith(expected_prefix):
-            raise PolicyChunkError("chunk_id is not bound to identity, page range, and index")
-        if not self.identity.chunk_id.endswith(self.text_sha256[:12]):
-            raise PolicyChunkError("chunk_id is not bound to text_sha256")
+        if self.identity.chunk_id != expected_chunk_id:
+            raise PolicyChunkError(
+                "chunk_id does not exactly match identity, language, page range, index, and text digest"
+            )
+
+    @property
+    def language(self) -> str | None:
+        return self.identity.language
 
     def to_embedding_payload(self, source_title: str) -> str:
         title = require_text(source_title, "source_title")
         section = self.section_title or "General"
+        language_line = "" if self.language is None else f"language: {self.language}\n"
         return (
             f"passage: {title}\n"
+            f"{language_line}"
             f"section: {section}\n"
             f"locator: {self.official_locator}\n"
             f"text: {self.raw_text}"
@@ -162,6 +209,9 @@ class PolicyChunk:
             "version_id": self.identity.version_id,
             "source_id": self.identity.source_id,
             "chunk_index": self.identity.chunk_index,
+            "language": self.language,
+            "column": self.column,
+            "parallel_unit_id": self.parallel_unit_id,
             "artifact_sha256": self.artifact_sha256,
             "artifact_path": self.artifact_path,
             "page_start": self.page_start,
@@ -173,62 +223,4 @@ class PolicyChunk:
             "text_sha256": self.text_sha256,
             "token_count": self.token_count,
             "chunking_version": self.chunking_version,
-        }
-
-
-@dataclass(frozen=True, slots=True)
-class GroundedChunkRetrievalResult:
-    chunk: PolicyChunk
-    binding_level: BindingLevel
-    activation_status: ActivationStatus
-    national_binding_status: bool
-    legal_review_status: LegalReviewStatus
-    locator_verification_status: LocatorVerificationStatus
-    eligible_for_project_enforcement: bool
-    eligible_for_national_legal_finding: bool
-    eligible_for_citation: bool
-    retrieval_score: float
-    retrieval_rank: int
-
-    def __post_init__(self) -> None:
-        if not isinstance(self.chunk, PolicyChunk):
-            raise TypeError("chunk must be a PolicyChunk")
-        for field_name, enum_type in (
-            ("binding_level", BindingLevel),
-            ("activation_status", ActivationStatus),
-            ("legal_review_status", LegalReviewStatus),
-            ("locator_verification_status", LocatorVerificationStatus),
-        ):
-            if not isinstance(getattr(self, field_name), enum_type):
-                raise TypeError(f"{field_name} must be a {enum_type.__name__}")
-        for field_name in (
-            "national_binding_status",
-            "eligible_for_project_enforcement",
-            "eligible_for_national_legal_finding",
-            "eligible_for_citation",
-        ):
-            if type(getattr(self, field_name)) is not bool:
-                raise TypeError(f"{field_name} must be a strict Boolean")
-        if isinstance(self.retrieval_score, bool) or not isinstance(self.retrieval_score, float):
-            raise TypeError("retrieval_score must be a float")
-        if not math.isfinite(self.retrieval_score):
-            raise PolicyChunkError("retrieval_score must be finite")
-        if isinstance(self.retrieval_rank, bool) or not isinstance(self.retrieval_rank, int):
-            raise TypeError("retrieval_rank must be an integer")
-        if self.retrieval_rank < 1:
-            raise PolicyChunkError("retrieval_rank must be positive")
-
-    def to_dict(self) -> dict[str, Any]:
-        return {
-            "chunk": self.chunk.to_dict(),
-            "binding_level": self.binding_level.value,
-            "activation_status": self.activation_status.value,
-            "national_binding_status": self.national_binding_status,
-            "legal_review_status": self.legal_review_status.value,
-            "locator_verification_status": self.locator_verification_status.value,
-            "eligible_for_project_enforcement": self.eligible_for_project_enforcement,
-            "eligible_for_national_legal_finding": self.eligible_for_national_legal_finding,
-            "eligible_for_citation": self.eligible_for_citation,
-            "retrieval_score": self.retrieval_score,
-            "retrieval_rank": self.retrieval_rank,
         }

@@ -1,0 +1,51 @@
+============================================================
+AMBA-GOV AUTHORITATIVE SOURCE VERIFIER
+Repository: repository root resolved by verifier
+Expected PDFs: 9
+Checks: file presence, PDF magic header, SHA-256 identity
+============================================================
+
+[VERIFIED] kb\sources\ethiopia\ETH_ECA_QOS_794_2021.pdf
+  expected_sha256: 3c23ba0cfeca1f0fbdf724da211164fb8bbbec75945f16d9740cb112342ea449
+  actual_sha256:   3c23ba0cfeca1f0fbdf724da211164fb8bbbec75945f16d9740cb112342ea449
+  pdf_magic:       VERIFIED
+[VERIFIED] kb\sources\ethiopia\ETH_ESDP_VI_2021.pdf
+  expected_sha256: f77622ff64c29d03d1e090f5c401880e3b8cda6015f6379d2afb707a0a9c7678
+  actual_sha256:   f77622ff64c29d03d1e090f5c401880e3b8cda6015f6379d2afb707a0a9c7678
+  pdf_magic:       VERIFIED
+[VERIFIED] kb\sources\ethiopia\ETH_NATIONAL_CYBERSECURITY_POLICY_2024.pdf
+  expected_sha256: 624b0db098bff6cd075e92c2fd44e0a082b892a53bb4ea47952fb0850e12c62e
+  actual_sha256:   624b0db098bff6cd075e92c2fd44e0a082b892a53bb4ea47952fb0850e12c62e
+  pdf_magic:       VERIFIED
+[VERIFIED] kb\sources\ethiopia\ETH_PDPA_1321_2024.pdf
+  expected_sha256: f4e1eb0c4a6948d34accc3a93dbe32010af851f6cfb7f4b17a66ba94e2df0bf6
+  actual_sha256:   f4e1eb0c4a6948d34accc3a93dbe32010af851f6cfb7f4b17a66ba94e2df0bf6
+  pdf_magic:       VERIFIED
+[VERIFIED] kb\sources\ethiopia\ETH_STME_POLICY_FULL.pdf
+  expected_sha256: d5a6fb50ecd5b324d5d0eb1e1cb0eabd1744acd0423ff434127b76b4835e0260
+  actual_sha256:   d5a6fb50ecd5b324d5d0eb1e1cb0eabd1744acd0423ff434127b76b4835e0260
+  pdf_magic:       VERIFIED
+[VERIFIED] kb\sources\international\ITU_AI_READINESS_REPORT.pdf
+  expected_sha256: 71191768d46b60778c15f8d62b162aff73a319785cfc31ebf76bb944b0c68273
+  actual_sha256:   71191768d46b60778c15f8d62b162aff73a319785cfc31ebf76bb944b0c68273
+  pdf_magic:       VERIFIED
+[VERIFIED] kb\sources\international\ITU_T_Y3172_2019.pdf
+  expected_sha256: e42f9a3be3f951d3e19b9007f876f0b389c81b4693f0d8576e18185a1acfe67b
+  actual_sha256:   e42f9a3be3f951d3e19b9007f876f0b389c81b4693f0d8576e18185a1acfe67b
+  pdf_magic:       VERIFIED
+[VERIFIED] kb\sources\international\UNESCO_AI_ETHICS_RECOMMENDATION.pdf
+  expected_sha256: 3a93a6006c591bf7600abc55e8beab883b6450b71638fea98148e4b08f005bf7
+  actual_sha256:   3a93a6006c591bf7600abc55e8beab883b6450b71638fea98148e4b08f005bf7
+  pdf_magic:       VERIFIED
+[VERIFIED] kb\sources\international\UNICEF_AI_CHILDREN_V3_2025.pdf
+  expected_sha256: 1d218b79b894402bda57d97527ef7ea015b0642003ba582d6259b050d0a548ea
+  actual_sha256:   1d218b79b894402bda57d97527ef7ea015b0642003ba582d6259b050d0a548ea
+  pdf_magic:       VERIFIED
+
+============================================================
+Verification summary
+  Verified: 9
+  Failed:   0
+============================================================
+ALL NINE AUTHORITATIVE SOURCE PDF HASHES AND MAGIC HEADERS VERIFIED
+verifier_exit_code=0

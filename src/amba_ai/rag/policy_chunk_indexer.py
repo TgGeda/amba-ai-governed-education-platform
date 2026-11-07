@@ -62,6 +62,9 @@ class PolicyChunkRetrievalHit:
     page_end: int
     chunk_locator: str
     text_sha256: str
+    language: str | None = None
+    column: str | None = None
+    parallel_unit_id: str | None = None
 
     def __post_init__(self) -> None:
         for field_name in (
@@ -90,6 +93,33 @@ class PolicyChunkRetrievalHit:
                 raise TypeError(f"{field_name} must be an integer")
         if self.page_start < 1 or self.page_end < self.page_start:
             raise PolicyChunkError("retrieval hit has an invalid page range")
+        if (self.language is None) != (self.column is None):
+            raise PolicyChunkError("language and column must both be set or both be None")
+        if self.language is not None:
+            if not isinstance(self.language, str):
+                raise TypeError("language must be a string or None")
+            language = self.language.strip().lower()
+            if language not in {"am", "en"}:
+                raise PolicyChunkError("language must be am, en, or None")
+            object.__setattr__(self, "language", language)
+        if self.column is not None:
+            if not isinstance(self.column, str):
+                raise TypeError("column must be a string or None")
+            column = self.column.strip().lower()
+            if column not in {"left", "right"}:
+                raise PolicyChunkError("column must be left, right, or None")
+            object.__setattr__(self, "column", column)
+        if self.language is not None and self.parallel_unit_id is None:
+            raise PolicyChunkError("bilingual retrieval hit requires parallel_unit_id")
+        if self.language is None and self.parallel_unit_id is not None:
+            raise PolicyChunkError("standard retrieval hit must not define parallel_unit_id")
+        if self.parallel_unit_id is not None:
+            if not isinstance(self.parallel_unit_id, str):
+                raise TypeError("parallel_unit_id must be a string or None")
+            parallel_id = self.parallel_unit_id.strip()
+            if not parallel_id:
+                raise PolicyChunkError("parallel_unit_id must not be empty")
+            object.__setattr__(self, "parallel_unit_id", parallel_id)
 
 
 class PolicyChunkIndex:
@@ -238,6 +268,9 @@ class PolicyChunkIndex:
                     page_end=chunk.page_end,
                     chunk_locator=chunk.official_locator,
                     text_sha256=chunk.text_sha256,
+                    language=chunk.language,
+                    column=chunk.column,
+                    parallel_unit_id=chunk.parallel_unit_id,
                 )
             )
         return tuple(hits)
