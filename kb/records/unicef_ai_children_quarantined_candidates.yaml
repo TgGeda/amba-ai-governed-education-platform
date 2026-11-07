@@ -1,0 +1,40 @@
+schema_version: "1.0.0"
+record_set_id: "AMBA-GOV-QUARANTINED-UNICEF-AI-CHILDREN-3.0"
+source_id: "UNICEF-AI-CHILDREN-3.0"
+source_path: "kb/sources/international/UNICEF_AI_CHILDREN_V3_2025.pdf"
+artifact_sha256: "1d218b79b894402bda57d97527ef7ea015b0642003ba582d6259b050d0a548ea"
+document_title: "Guidance on AI and Children 3.0"
+publication_date: "December 2025"
+source_class: "international_guidance"
+binding_level: "international_guidance"
+national_binding_status: false
+eligible_for_binding_findings: false
+eligible_for_supporting_evidence: true
+eligible_for_citation: false
+independent_ethiopian_legal_violation: false
+record_status: "human_review_required"
+locator_status: "unresolved"
+exact_source_excerpt_verified: false
+source_page_locator_verified: false
+promotion_requirements:
+  - "deterministic source locator"
+  - "source-derived excerpt"
+  - "excerpt SHA-256"
+  - "human review"
+candidates:
+  - candidate_id: "UNICEF-AI-CHILDREN-CHILD-CENTRED-SAFEGUARDS"
+    theme: "child-centred AI safeguards"
+  - candidate_id: "UNICEF-AI-CHILDREN-PRIVACY-DATA-GOVERNANCE"
+    theme: "privacy and data governance"
+  - candidate_id: "UNICEF-AI-CHILDREN-HUMAN-OVERSIGHT"
+    theme: "human oversight"
+  - candidate_id: "UNICEF-AI-CHILDREN-COMMERCIAL-EXPLOITATION"
+    theme: "protection against commercial exploitation"
+  - candidate_id: "UNICEF-AI-CHILDREN-INCLUSION"
+    theme: "inclusion"
+  - candidate_id: "UNICEF-AI-CHILDREN-EDTECH-ASSESSMENT"
+    theme: "EdTech assessment"
+  - candidate_id: "UNICEF-AI-CHILDREN-LOCAL-OFFLINE-OPERATION"
+    theme: "local and offline operation"
+  - candidate_id: "UNICEF-AI-CHILDREN-CHILD-PARTICIPATION"
+    theme: "child participation"
