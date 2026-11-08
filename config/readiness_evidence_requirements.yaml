@@ -1,0 +1,107 @@
+schema_version: "1.0.0"
+requirements_set_id: AMBA-GOV-READINESS-EVIDENCE-CLOSURE-1.0
+methodology_id: AMBA-GOV-PROJECT-READINESS-SCORING-1.0
+selection_policy:
+  objective: minimum_additional_metrics_to_reach_coverage_threshold
+  tie_breakers:
+    - lowest_delivery_risk
+    - strongest_existing_project_provenance
+    - lowest_external_dependency
+    - metric_id
+  prohibit_threshold_reduction: true
+  prohibit_status_change_without_verified_evidence: true
+requirements:
+  F2-M01:
+    title: Research capability evidence
+    eligible_target_statuses: [partially_demonstrated, demonstrated]
+    missing_evidence:
+      - documented research question and evaluation protocol
+      - reproducible experiment or comparative evaluation results
+      - reviewed findings linked to project decisions
+    recommended_actions:
+      - publish an experiment protocol under docs/research
+      - execute and archive a reproducible comparative evaluation
+      - link reviewed findings to the evidence-chain artifact
+    acceptance_criteria:
+      - protocol has immutable identifier and SHA-256
+      - results include dataset, configuration, and execution provenance
+      - finding is reviewed and referenced by an approved evidence record
+    delivery_risk: medium
+    external_dependency: medium
+  F5-M01:
+    title: Open-source governance evidence
+    eligible_target_statuses: [partially_demonstrated, demonstrated]
+    missing_evidence:
+      - explicit software license
+      - contribution governance policy
+      - security vulnerability disclosure policy
+      - dependency inventory or software bill of materials
+    recommended_actions:
+      - add an approved LICENSE file
+      - add CONTRIBUTING.md and CODE_OF_CONDUCT.md
+      - add SECURITY.md with coordinated disclosure instructions
+      - generate and verify a CycloneDX SBOM from requirements.txt
+    acceptance_criteria:
+      - license identity is explicit and repository-tracked
+      - contribution and security policies are repository-tracked
+      - SBOM is reproducibly generated and hash-verified
+    delivery_risk: low
+    external_dependency: low
+  D1-M01:
+    title: Data and model marketplace evidence
+    eligible_target_statuses: [partially_demonstrated, demonstrated]
+    missing_evidence:
+      - governed data or model catalog
+      - licensing and permitted-use metadata
+      - provenance and version controls
+      - marketplace access and revocation controls
+    recommended_actions:
+      - define a synthetic governed catalog schema
+      - register at least one versioned synthetic asset
+      - test access, licensing, provenance, and revocation controls
+    acceptance_criteria:
+      - no personal or restricted production data is used
+      - asset identity, version, license, provenance, and owner are explicit
+      - access and revocation tests pass
+    delivery_risk: high
+    external_dependency: medium
+  D2-M01:
+    title: Generated-content marketplace evidence
+    eligible_target_statuses: [partially_demonstrated, demonstrated]
+    missing_evidence:
+      - generated-content provenance model
+      - labeling and rights metadata
+      - content review and withdrawal controls
+    recommended_actions:
+      - define a synthetic generated-content registry
+      - record generation provenance and rights metadata
+      - test review, withdrawal, and audit behavior
+    acceptance_criteria:
+      - generated content is synthetic and clearly labeled
+      - provenance and rights metadata are mandatory
+      - withdrawal and audit tests pass
+    delivery_risk: high
+    external_dependency: medium
+  D11-M01:
+    title: Inclusion outcome evidence
+    eligible_target_statuses: [partially_demonstrated, demonstrated]
+    missing_evidence:
+      - accessibility evaluation
+      - affected-user participation
+      - measured inclusion outcome
+      - low-bandwidth or offline operation result
+    recommended_actions:
+      - run a WCAG 2.2 AA-oriented accessibility test protocol
+      - capture low-bandwidth and offline-mode execution results
+      - record an affected-user or representative review
+      - publish measurable inclusion findings with limitations
+    acceptance_criteria:
+      - test protocol and results have immutable identifiers and SHA-256
+      - accessibility findings distinguish tested from untested criteria
+      - participation evidence documents scope and limitations
+      - outcome measures are linked to the verified execution artifact
+    delivery_risk: low
+    external_dependency: medium
+preferred_closure_metrics:
+  - F5-M01
+  - D11-M01
