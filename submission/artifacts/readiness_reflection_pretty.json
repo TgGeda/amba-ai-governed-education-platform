@@ -1,0 +1,387 @@
+{
+  "artifact_type": "evidence_bounded_readiness_reflection",
+  "assessment_subject": {
+    "id": "AMBA-GOV",
+    "national_assessment": false,
+    "official_itu_certification": false,
+    "type": "project"
+  },
+  "coverage": {
+    "demonstrated": 6,
+    "dimension_count": 13,
+    "factor_count": 6,
+    "finding_count": 19,
+    "insufficient_evidence": 1,
+    "not_assessed": 4,
+    "partially_demonstrated": 8,
+    "reference_metric_count": 111
+  },
+  "evidence_artifact": {
+    "path": "submission/artifacts/four_stage_evidence_chain.json",
+    "sha256": "469792ed9f9fd574d51c67b5d7298c6755bbe959772b16978ac69c10fe758c06"
+  },
+  "findings": [
+    {
+      "evidence_pointers": [
+        "/stages/*/released_fact_ids",
+        "/stages/*/recipient_projections",
+        "/final_audit_verification/valid"
+      ],
+      "framework_element_id": "F1",
+      "framework_element_name": "Data",
+      "framework_element_type": "factor",
+      "limitations": [],
+      "mapping_id": "F1",
+      "passage_ids": [
+        "ITU-READINESS-6-13"
+      ],
+      "rationale": "Four verified stages preserve released facts, projections, evidence identities, and audit hashes.",
+      "status": "demonstrated",
+      "y3172_record_ids": [
+        "ITU-Y3172-ML-PIPELINE-COMPONENTS"
+      ]
+    },
+    {
+      "evidence_pointers": [],
+      "framework_element_id": "F2",
+      "framework_element_name": "Research",
+      "framework_element_type": "factor",
+      "limitations": [
+        "No research outcome evidence in the run artifact."
+      ],
+      "mapping_id": "F2",
+      "passage_ids": [
+        "ITU-READINESS-OUTPUTS"
+      ],
+      "rationale": "The execution artifact contains no research-capacity or R&D performance evidence.",
+      "status": "not_assessed",
+      "y3172_record_ids": []
+    },
+    {
+      "evidence_pointers": [
+        "/stages/*/policy_agent_results/*/deterministic_governance"
+      ],
+      "framework_element_id": "F3",
+      "framework_element_name": "Deployment Support",
+      "framework_element_type": "factor",
+      "limitations": [
+        "Synthetic scope does not establish production deployment maturity."
+      ],
+      "mapping_id": "F3",
+      "passage_ids": [
+        "ITU-READINESS-SELF-EVAL"
+      ],
+      "rationale": "Execution, review queue, prevention, distribution, and audit paths are demonstrated in a synthetic scenario only.",
+      "status": "partially_demonstrated",
+      "y3172_record_ids": [
+        "ITU-Y3172-ML-PIPELINE-COMPONENTS"
+      ]
+    },
+    {
+      "evidence_pointers": [
+        "/stages/*/policy_agent_results/*/y3172_trace",
+        "/final_audit_verification/valid"
+      ],
+      "framework_element_id": "F4",
+      "framework_element_name": "Standards",
+      "framework_element_type": "factor",
+      "limitations": [],
+      "mapping_id": "F4",
+      "passage_ids": [
+        "ITU-READINESS-METRICS",
+        "Y3172-8.1-PIPELINE"
+      ],
+      "rationale": "Each policy-agent result includes an interpreted Y.3172 trace and verified audit binding.",
+      "status": "demonstrated",
+      "y3172_record_ids": [
+        "ITU-Y3172-ML-PIPELINE-COMPONENTS",
+        "ITU-Y3172-SECURITY-CONSIDERATIONS"
+      ]
+    },
+    {
+      "evidence_pointers": [],
+      "framework_element_id": "F5",
+      "framework_element_name": "Open Source and Code",
+      "framework_element_type": "factor",
+      "limitations": [
+        "Repository source availability alone does not prove this factor."
+      ],
+      "mapping_id": "F5",
+      "passage_ids": [
+        "ITU-READINESS-METRICS"
+      ],
+      "rationale": "The artifact does not establish open-source governance, contribution, reuse, or community health.",
+      "status": "not_assessed",
+      "y3172_record_ids": []
+    },
+    {
+      "evidence_pointers": [
+        "/synthetic",
+        "/legal_effect",
+        "/stages/*/invariant_verification/valid"
+      ],
+      "framework_element_id": "F6",
+      "framework_element_name": "Sandbox Environments",
+      "framework_element_type": "factor",
+      "limitations": [],
+      "mapping_id": "F6",
+      "passage_ids": [
+        "ITU-READINESS-SELF-EVAL",
+        "Y3172-3.2.6"
+      ],
+      "rationale": "The artifact is synthetic, legally non-effective, invariant-checked, and uses isolated deterministic state.",
+      "status": "demonstrated",
+      "y3172_record_ids": [
+        "ITU-Y3172-ML-SANDBOX-DEFINITION",
+        "ITU-Y3172-ARCHITECTURE-SANDBOX-COMPONENTS"
+      ]
+    },
+    {
+      "evidence_pointers": [],
+      "framework_element_id": "D1",
+      "framework_element_name": "Data/model Marketplace",
+      "framework_element_type": "dimension",
+      "limitations": [],
+      "mapping_id": "D1",
+      "passage_ids": [],
+      "rationale": "No marketplace exchange, model catalog, licensing, or procurement evidence is present.",
+      "status": "not_assessed",
+      "y3172_record_ids": []
+    },
+    {
+      "evidence_pointers": [],
+      "framework_element_id": "D2",
+      "framework_element_name": "Generated Content Marketplace",
+      "framework_element_type": "dimension",
+      "limitations": [],
+      "mapping_id": "D2",
+      "passage_ids": [],
+      "rationale": "No generated-content marketplace evidence is present.",
+      "status": "not_assessed",
+      "y3172_record_ids": []
+    },
+    {
+      "evidence_pointers": [
+        "/stages/*/recipient_projections",
+        "/stages/*/institutional_observations"
+      ],
+      "framework_element_id": "D3",
+      "framework_element_name": "Cross-domain Correlation Analysis",
+      "framework_element_type": "dimension",
+      "limitations": [
+        "One synthetic scenario does not establish organizational maturity."
+      ],
+      "mapping_id": "D3",
+      "passage_ids": [],
+      "rationale": "Recipient projections and institutional assessments correlate released facts across mandates while preserving separation.",
+      "status": "partially_demonstrated",
+      "y3172_record_ids": []
+    },
+    {
+      "evidence_pointers": [
+        "/stages/*/policy_agent_results/*/verified_evidence",
+        "/stages/*/policy_agent_results/*/limitations"
+      ],
+      "framework_element_id": "D4",
+      "framework_element_name": "Contextualization and Regional Impact",
+      "framework_element_type": "dimension",
+      "limitations": [
+        "Project mapping only; not national readiness."
+      ],
+      "mapping_id": "D4",
+      "passage_ids": [
+        "ITU-READINESS-ENTITY-LEVEL"
+      ],
+      "rationale": "Ethiopian policy evidence and international guidance are distinguished, but no population-level impact evidence is present.",
+      "status": "partially_demonstrated",
+      "y3172_record_ids": []
+    },
+    {
+      "evidence_pointers": [
+        "/stages",
+        "/run_digest"
+      ],
+      "framework_element_id": "D5",
+      "framework_element_name": "Level of Integration of AI in Workflows",
+      "framework_element_type": "dimension",
+      "limitations": [],
+      "mapping_id": "D5",
+      "passage_ids": [
+        "ITU-READINESS-REQ-026"
+      ],
+      "rationale": "Four stages execute through retrieval, governance, review/execution, distribution control, trace, and audit.",
+      "status": "demonstrated",
+      "y3172_record_ids": [
+        "ITU-Y3172-ML-PIPELINE-COMPONENTS"
+      ]
+    },
+    {
+      "evidence_pointers": [
+        "/stages/*/policy_agent_results/*/deterministic_governance/approval_state"
+      ],
+      "framework_element_id": "D6",
+      "framework_element_name": "Human Interface",
+      "framework_element_type": "dimension",
+      "limitations": [
+        "No usability study."
+      ],
+      "mapping_id": "D6",
+      "passage_ids": [
+        "ITU-READINESS-REQ-027"
+      ],
+      "rationale": "Approval requirements and review-queue states are explicit, but user experience quality is not evaluated.",
+      "status": "partially_demonstrated",
+      "y3172_record_ids": []
+    },
+    {
+      "evidence_pointers": [
+        "/stages/*/thematic_evidence_references",
+        "/stages/*/policy_agent_results/*/deterministic_governance"
+      ],
+      "framework_element_id": "D7",
+      "framework_element_name": "Strategy Alignment",
+      "framework_element_type": "dimension",
+      "limitations": [],
+      "mapping_id": "D7",
+      "passage_ids": [
+        "ITU-READINESS-OUTPUTS"
+      ],
+      "rationale": "Configured governance controls and policy gaps are traceable, but enterprise strategy outcomes are not evidenced.",
+      "status": "partially_demonstrated",
+      "y3172_record_ids": []
+    },
+    {
+      "evidence_pointers": [
+        "/stages/*/policy_agent_results/*/deterministic_governance",
+        "/stages/*/policy_agent_results/*/limitations"
+      ],
+      "framework_element_id": "D8",
+      "framework_element_name": "Collaboration with AI",
+      "framework_element_type": "dimension",
+      "limitations": [],
+      "mapping_id": "D8",
+      "passage_ids": [
+        "ITU-READINESS-REQ-028"
+      ],
+      "rationale": "The system routes decisions to execution or human review while retaining limitations.",
+      "status": "partially_demonstrated",
+      "y3172_record_ids": []
+    },
+    {
+      "evidence_pointers": [
+        "/stages/*/institutional_observations"
+      ],
+      "framework_element_id": "D9",
+      "framework_element_name": "Impacts of Humans in AI Integration",
+      "framework_element_type": "dimension",
+      "limitations": [
+        "No field impact evidence."
+      ],
+      "mapping_id": "D9",
+      "passage_ids": [
+        "ITU-READINESS-REQ-027"
+      ],
+      "rationale": "Institutional observations and review gates are represented; real-world human impact is not measured.",
+      "status": "partially_demonstrated",
+      "y3172_record_ids": []
+    },
+    {
+      "evidence_pointers": [
+        "/stages/*/policy_agent_results",
+        "/final_audit_verification/valid"
+      ],
+      "framework_element_id": "D10",
+      "framework_element_name": "AI & Policies",
+      "framework_element_type": "dimension",
+      "limitations": [],
+      "mapping_id": "D10",
+      "passage_ids": [
+        "ITU-READINESS-LEGAL-SCOPE"
+      ],
+      "rationale": "Approved passages, thematic views, explicit gaps, deterministic recommendations, and audit hashes are connected end to end.",
+      "status": "demonstrated",
+      "y3172_record_ids": [
+        "ITU-Y3172-SECURITY-CONSIDERATIONS"
+      ]
+    },
+    {
+      "evidence_pointers": [
+        "/stages/*/policy_agent_results/*/derived_thematic_interpretation"
+      ],
+      "framework_element_id": "D11",
+      "framework_element_name": "AI for Inclusion",
+      "framework_element_type": "dimension",
+      "limitations": [
+        "Outcome evidence is missing."
+      ],
+      "mapping_id": "D11",
+      "passage_ids": [
+        "ITU-READINESS-ENTITY-LEVEL"
+      ],
+      "rationale": "The run includes inclusion-oriented evidence but does not measure accessibility or distributional outcomes.",
+      "status": "insufficient_evidence",
+      "y3172_record_ids": []
+    },
+    {
+      "evidence_pointers": [
+        "/stages/*/thematic_evidence_references",
+        "/stages/*/policy_agent_results/*/evidence_gaps"
+      ],
+      "framework_element_id": "D12",
+      "framework_element_name": "Granular Priorities",
+      "framework_element_type": "dimension",
+      "limitations": [],
+      "mapping_id": "D12",
+      "passage_ids": [
+        "ITU-READINESS-OUTPUTS"
+      ],
+      "rationale": "Stage-specific routing, passage IDs, theme IDs, gap IDs, and distinct execution outcomes provide granular priorities.",
+      "status": "demonstrated",
+      "y3172_record_ids": []
+    },
+    {
+      "evidence_pointers": [
+        "/stages/*/policy_agent_results/*/y3172_trace",
+        "/final_audit_verification"
+      ],
+      "framework_element_id": "D13",
+      "framework_element_name": "Digital Infrastructure",
+      "framework_element_type": "dimension",
+      "limitations": [
+        "No production availability, scale, latency, or resilience evidence."
+      ],
+      "mapping_id": "D13",
+      "passage_ids": [
+        "ITU-READINESS-6-13",
+        "Y3172-9-SECURITY"
+      ],
+      "rationale": "Pipeline security, trace, execution, persistence, and audit behavior are demonstrated in a local synthetic environment.",
+      "status": "partially_demonstrated",
+      "y3172_record_ids": [
+        "ITU-Y3172-SECURITY-CONSIDERATIONS"
+      ]
+    }
+  ],
+  "framework": {
+    "dimension_count": 13,
+    "factor_count": 6,
+    "framework_id": "ITU-AI-READINESS-2.0",
+    "metric_count": 111
+  },
+  "limitations": [
+    "project reflection, not a national assessment",
+    "not an official ITU certification",
+    "no unverified metric weights or maturity score applied",
+    "readiness cannot authorize or block runtime operations"
+  ],
+  "national_ai_readiness_score": null,
+  "overall_project_score": null,
+  "schema_version": "1.0.0",
+  "score_status": "withheld_pending_methodology_and_evidence_coverage",
+  "y3172_mapping": {
+    "formal_y3172_conformance": false,
+    "itu_certification": false,
+    "mapping_type": "interpreted_project_architecture_mapping",
+    "source_id": "ITU-T-Y3172-2019"
+  }
+}
