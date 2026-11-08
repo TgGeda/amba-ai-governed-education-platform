@@ -1,0 +1,44 @@
+schema_version: "1.0.0"
+methodology_id: AMBA-GOV-PROJECT-READINESS-SCORING-1.0
+assessment_scope: project
+framework_reference: ITU-AI-READINESS-2.0
+framework_metric_reference_count: 111
+implemented_project_proxy_metric_count: 19
+score_scale:
+  minimum: 0.0
+  maximum: 1.0
+status_values:
+  demonstrated: 1.0
+  partially_demonstrated: 0.5
+  not_demonstrated: 0.0
+non_scoring_statuses:
+  not_applicable: excluded
+  insufficient_evidence: unscored
+  unresolved: unscored
+  not_assessed: unscored
+coverage:
+  denominator: applicable_metric_weight
+  numerator: scored_applicable_metric_weight
+  minimum_for_metric_set_score: 0.80
+  minimum_for_dimension_score: 0.80
+  minimum_for_factor_score: 0.80
+  minimum_for_overall_project_score: 0.80
+aggregation:
+  metric_to_element: weighted_arithmetic_mean
+  factor_score: weighted_arithmetic_mean_of_scored_factor_metrics
+  dimension_score: weighted_arithmetic_mean_of_scored_dimension_metrics
+  overall_project_score: weighted_arithmetic_mean_of_scored_applicable_metrics
+  rounding_decimal_places: 6
+validation:
+  require_unique_metric_ids: true
+  require_positive_weights: true
+  require_complete_finding_coverage: true
+  require_evidence_pointer_for_scored_status: true
+  reject_unknown_statuses: true
+  reject_scores_outside_scale: true
+  reject_overall_score_below_coverage_threshold: true
+claim_boundaries:
+  official_itu_score: false
+  national_ai_readiness_score: false
+  formal_y3172_conformance: false
+  runtime_authority: false

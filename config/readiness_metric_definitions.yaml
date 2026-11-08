@@ -1,0 +1,25 @@
+schema_version: "1.0.0"
+metric_set_id: AMBA-GOV-READINESS-PROXY-METRICS-1.0
+framework_reference: ITU-AI-READINESS-2.0
+framework_metric_reference_count: 111
+metric_scope: evidence_mapped_project_proxy_metrics
+metrics:
+- {metric_id: F1-M01, finding_id: F1, element_type: factor, element_id: F1, name: Verified data lineage and auditability, weight: 1.0}
+- {metric_id: F2-M01, finding_id: F2, element_type: factor, element_id: F2, name: Research capability evidence, weight: 1.0}
+- {metric_id: F3-M01, finding_id: F3, element_type: factor, element_id: F3, name: Deployment support demonstrated by controlled execution, weight: 1.0}
+- {metric_id: F4-M01, finding_id: F4, element_type: factor, element_id: F4, name: Standards traceability and audit binding, weight: 1.0}
+- {metric_id: F5-M01, finding_id: F5, element_type: factor, element_id: F5, name: Open-source governance evidence, weight: 1.0}
+- {metric_id: F6-M01, finding_id: F6, element_type: factor, element_id: F6, name: Synthetic sandbox isolation and invariant verification, weight: 1.0}
+- {metric_id: D1-M01, finding_id: D1, element_type: dimension, element_id: D1, name: Data and model marketplace evidence, weight: 1.0}
+- {metric_id: D2-M01, finding_id: D2, element_type: dimension, element_id: D2, name: Generated-content marketplace evidence, weight: 1.0}
+- {metric_id: D3-M01, finding_id: D3, element_type: dimension, element_id: D3, name: Cross-domain evidence correlation with mandate separation, weight: 1.0}
+- {metric_id: D4-M01, finding_id: D4, element_type: dimension, element_id: D4, name: Contextualized regional policy interpretation, weight: 1.0}
+- {metric_id: D5-M01, finding_id: D5, element_type: dimension, element_id: D5, name: End-to-end AI workflow integration, weight: 1.0}
+- {metric_id: D6-M01, finding_id: D6, element_type: dimension, element_id: D6, name: Human approval and review interface evidence, weight: 1.0}
+- {metric_id: D7-M01, finding_id: D7, element_type: dimension, element_id: D7, name: Governance strategy traceability, weight: 1.0}
+- {metric_id: D8-M01, finding_id: D8, element_type: dimension, element_id: D8, name: Human-AI collaboration and escalation, weight: 1.0}
+- {metric_id: D9-M01, finding_id: D9, element_type: dimension, element_id: D9, name: Human impact evidence in AI integration, weight: 1.0}
+- {metric_id: D10-M01, finding_id: D10, element_type: dimension, element_id: D10, name: Policy evidence and governance integration, weight: 1.0}
+- {metric_id: D11-M01, finding_id: D11, element_type: dimension, element_id: D11, name: Inclusion outcome evidence, weight: 1.0}
+- {metric_id: D12-M01, finding_id: D12, element_type: dimension, element_id: D12, name: Granular priority and evidence-gap traceability, weight: 1.0}
+- {metric_id: D13-M01, finding_id: D13, element_type: dimension, element_id: D13, name: Digital infrastructure execution and resilience evidence, weight: 1.0}

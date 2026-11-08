@@ -6,8 +6,12 @@ Evidence artifact SHA-256: `469792ed9f9fd574d51c67b5d7298c6755bbe959772b16978ac6
 
 ## Score boundary
 
-- Overall project score: withheld
-- Status: `withheld_pending_methodology_and_evidence_coverage`
+- Overall project score: `None`
+- Status: `withheld_insufficient_evidence_coverage`
+- Evidence coverage: `0.736842`
+- Minimum required coverage: `0.8`
+- Scored project proxy metrics: `14/19`
+- Scope: 19 project proxy metrics mapped to the verified reflection; the ITU framework's 111 metrics remain a reference count, not a claim of full metric assessment.
 
 ## Findings
 

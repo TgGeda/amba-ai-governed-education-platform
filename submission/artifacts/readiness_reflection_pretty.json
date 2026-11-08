@@ -20,6 +20,18 @@
     "path": "submission/artifacts/four_stage_evidence_chain.json",
     "sha256": "469792ed9f9fd574d51c67b5d7298c6755bbe959772b16978ac69c10fe758c06"
   },
+  "evidence_coverage": {
+    "applicable_metric_count": 19,
+    "applicable_weight": 19.0,
+    "coverage_ratio": 0.736842,
+    "excluded_metric_count": 0,
+    "minimum_required_ratio": 0.8,
+    "scored_metric_count": 14,
+    "scored_weight": 14.0,
+    "sufficient": false,
+    "total_metric_count": 19,
+    "unscored_metric_count": 5
+  },
   "findings": [
     {
       "evidence_pointers": [
@@ -377,7 +389,763 @@
   "national_ai_readiness_score": null,
   "overall_project_score": null,
   "schema_version": "1.0.0",
-  "score_status": "withheld_pending_methodology_and_evidence_coverage",
+  "score_status": "withheld_insufficient_evidence_coverage",
+  "scoring": {
+    "claim_boundaries": {
+      "formal_y3172_conformance": false,
+      "national_ai_readiness_score": false,
+      "official_itu_score": false,
+      "runtime_authority": false
+    },
+    "dimension_scores": [
+      {
+        "coverage": {
+          "applicable_metric_count": 1,
+          "applicable_weight": 1.0,
+          "coverage_ratio": 0.0,
+          "excluded_metric_count": 0,
+          "minimum_required_ratio": 0.8,
+          "scored_metric_count": 0,
+          "scored_weight": 0,
+          "sufficient": false,
+          "total_metric_count": 1,
+          "unscored_metric_count": 1
+        },
+        "element_id": "D1",
+        "metric_ids": [
+          "D1-M01"
+        ],
+        "score": null,
+        "scored_weight": 0,
+        "status": "withheld_insufficient_evidence_coverage",
+        "weighted_score_sum": 0
+      },
+      {
+        "coverage": {
+          "applicable_metric_count": 1,
+          "applicable_weight": 1.0,
+          "coverage_ratio": 1.0,
+          "excluded_metric_count": 0,
+          "minimum_required_ratio": 0.8,
+          "scored_metric_count": 1,
+          "scored_weight": 1.0,
+          "sufficient": true,
+          "total_metric_count": 1,
+          "unscored_metric_count": 0
+        },
+        "element_id": "D10",
+        "metric_ids": [
+          "D10-M01"
+        ],
+        "score": 1.0,
+        "scored_weight": 1.0,
+        "status": "calculated_with_sufficient_project_evidence",
+        "weighted_score_sum": 1.0
+      },
+      {
+        "coverage": {
+          "applicable_metric_count": 1,
+          "applicable_weight": 1.0,
+          "coverage_ratio": 0.0,
+          "excluded_metric_count": 0,
+          "minimum_required_ratio": 0.8,
+          "scored_metric_count": 0,
+          "scored_weight": 0,
+          "sufficient": false,
+          "total_metric_count": 1,
+          "unscored_metric_count": 1
+        },
+        "element_id": "D11",
+        "metric_ids": [
+          "D11-M01"
+        ],
+        "score": null,
+        "scored_weight": 0,
+        "status": "withheld_insufficient_evidence_coverage",
+        "weighted_score_sum": 0
+      },
+      {
+        "coverage": {
+          "applicable_metric_count": 1,
+          "applicable_weight": 1.0,
+          "coverage_ratio": 1.0,
+          "excluded_metric_count": 0,
+          "minimum_required_ratio": 0.8,
+          "scored_metric_count": 1,
+          "scored_weight": 1.0,
+          "sufficient": true,
+          "total_metric_count": 1,
+          "unscored_metric_count": 0
+        },
+        "element_id": "D12",
+        "metric_ids": [
+          "D12-M01"
+        ],
+        "score": 1.0,
+        "scored_weight": 1.0,
+        "status": "calculated_with_sufficient_project_evidence",
+        "weighted_score_sum": 1.0
+      },
+      {
+        "coverage": {
+          "applicable_metric_count": 1,
+          "applicable_weight": 1.0,
+          "coverage_ratio": 1.0,
+          "excluded_metric_count": 0,
+          "minimum_required_ratio": 0.8,
+          "scored_metric_count": 1,
+          "scored_weight": 1.0,
+          "sufficient": true,
+          "total_metric_count": 1,
+          "unscored_metric_count": 0
+        },
+        "element_id": "D13",
+        "metric_ids": [
+          "D13-M01"
+        ],
+        "score": 0.5,
+        "scored_weight": 1.0,
+        "status": "calculated_with_sufficient_project_evidence",
+        "weighted_score_sum": 0.5
+      },
+      {
+        "coverage": {
+          "applicable_metric_count": 1,
+          "applicable_weight": 1.0,
+          "coverage_ratio": 0.0,
+          "excluded_metric_count": 0,
+          "minimum_required_ratio": 0.8,
+          "scored_metric_count": 0,
+          "scored_weight": 0,
+          "sufficient": false,
+          "total_metric_count": 1,
+          "unscored_metric_count": 1
+        },
+        "element_id": "D2",
+        "metric_ids": [
+          "D2-M01"
+        ],
+        "score": null,
+        "scored_weight": 0,
+        "status": "withheld_insufficient_evidence_coverage",
+        "weighted_score_sum": 0
+      },
+      {
+        "coverage": {
+          "applicable_metric_count": 1,
+          "applicable_weight": 1.0,
+          "coverage_ratio": 1.0,
+          "excluded_metric_count": 0,
+          "minimum_required_ratio": 0.8,
+          "scored_metric_count": 1,
+          "scored_weight": 1.0,
+          "sufficient": true,
+          "total_metric_count": 1,
+          "unscored_metric_count": 0
+        },
+        "element_id": "D3",
+        "metric_ids": [
+          "D3-M01"
+        ],
+        "score": 0.5,
+        "scored_weight": 1.0,
+        "status": "calculated_with_sufficient_project_evidence",
+        "weighted_score_sum": 0.5
+      },
+      {
+        "coverage": {
+          "applicable_metric_count": 1,
+          "applicable_weight": 1.0,
+          "coverage_ratio": 1.0,
+          "excluded_metric_count": 0,
+          "minimum_required_ratio": 0.8,
+          "scored_metric_count": 1,
+          "scored_weight": 1.0,
+          "sufficient": true,
+          "total_metric_count": 1,
+          "unscored_metric_count": 0
+        },
+        "element_id": "D4",
+        "metric_ids": [
+          "D4-M01"
+        ],
+        "score": 0.5,
+        "scored_weight": 1.0,
+        "status": "calculated_with_sufficient_project_evidence",
+        "weighted_score_sum": 0.5
+      },
+      {
+        "coverage": {
+          "applicable_metric_count": 1,
+          "applicable_weight": 1.0,
+          "coverage_ratio": 1.0,
+          "excluded_metric_count": 0,
+          "minimum_required_ratio": 0.8,
+          "scored_metric_count": 1,
+          "scored_weight": 1.0,
+          "sufficient": true,
+          "total_metric_count": 1,
+          "unscored_metric_count": 0
+        },
+        "element_id": "D5",
+        "metric_ids": [
+          "D5-M01"
+        ],
+        "score": 1.0,
+        "scored_weight": 1.0,
+        "status": "calculated_with_sufficient_project_evidence",
+        "weighted_score_sum": 1.0
+      },
+      {
+        "coverage": {
+          "applicable_metric_count": 1,
+          "applicable_weight": 1.0,
+          "coverage_ratio": 1.0,
+          "excluded_metric_count": 0,
+          "minimum_required_ratio": 0.8,
+          "scored_metric_count": 1,
+          "scored_weight": 1.0,
+          "sufficient": true,
+          "total_metric_count": 1,
+          "unscored_metric_count": 0
+        },
+        "element_id": "D6",
+        "metric_ids": [
+          "D6-M01"
+        ],
+        "score": 0.5,
+        "scored_weight": 1.0,
+        "status": "calculated_with_sufficient_project_evidence",
+        "weighted_score_sum": 0.5
+      },
+      {
+        "coverage": {
+          "applicable_metric_count": 1,
+          "applicable_weight": 1.0,
+          "coverage_ratio": 1.0,
+          "excluded_metric_count": 0,
+          "minimum_required_ratio": 0.8,
+          "scored_metric_count": 1,
+          "scored_weight": 1.0,
+          "sufficient": true,
+          "total_metric_count": 1,
+          "unscored_metric_count": 0
+        },
+        "element_id": "D7",
+        "metric_ids": [
+          "D7-M01"
+        ],
+        "score": 0.5,
+        "scored_weight": 1.0,
+        "status": "calculated_with_sufficient_project_evidence",
+        "weighted_score_sum": 0.5
+      },
+      {
+        "coverage": {
+          "applicable_metric_count": 1,
+          "applicable_weight": 1.0,
+          "coverage_ratio": 1.0,
+          "excluded_metric_count": 0,
+          "minimum_required_ratio": 0.8,
+          "scored_metric_count": 1,
+          "scored_weight": 1.0,
+          "sufficient": true,
+          "total_metric_count": 1,
+          "unscored_metric_count": 0
+        },
+        "element_id": "D8",
+        "metric_ids": [
+          "D8-M01"
+        ],
+        "score": 0.5,
+        "scored_weight": 1.0,
+        "status": "calculated_with_sufficient_project_evidence",
+        "weighted_score_sum": 0.5
+      },
+      {
+        "coverage": {
+          "applicable_metric_count": 1,
+          "applicable_weight": 1.0,
+          "coverage_ratio": 1.0,
+          "excluded_metric_count": 0,
+          "minimum_required_ratio": 0.8,
+          "scored_metric_count": 1,
+          "scored_weight": 1.0,
+          "sufficient": true,
+          "total_metric_count": 1,
+          "unscored_metric_count": 0
+        },
+        "element_id": "D9",
+        "metric_ids": [
+          "D9-M01"
+        ],
+        "score": 0.5,
+        "scored_weight": 1.0,
+        "status": "calculated_with_sufficient_project_evidence",
+        "weighted_score_sum": 0.5
+      }
+    ],
+    "factor_scores": [
+      {
+        "coverage": {
+          "applicable_metric_count": 1,
+          "applicable_weight": 1.0,
+          "coverage_ratio": 1.0,
+          "excluded_metric_count": 0,
+          "minimum_required_ratio": 0.8,
+          "scored_metric_count": 1,
+          "scored_weight": 1.0,
+          "sufficient": true,
+          "total_metric_count": 1,
+          "unscored_metric_count": 0
+        },
+        "element_id": "F1",
+        "metric_ids": [
+          "F1-M01"
+        ],
+        "score": 1.0,
+        "scored_weight": 1.0,
+        "status": "calculated_with_sufficient_project_evidence",
+        "weighted_score_sum": 1.0
+      },
+      {
+        "coverage": {
+          "applicable_metric_count": 1,
+          "applicable_weight": 1.0,
+          "coverage_ratio": 0.0,
+          "excluded_metric_count": 0,
+          "minimum_required_ratio": 0.8,
+          "scored_metric_count": 0,
+          "scored_weight": 0,
+          "sufficient": false,
+          "total_metric_count": 1,
+          "unscored_metric_count": 1
+        },
+        "element_id": "F2",
+        "metric_ids": [
+          "F2-M01"
+        ],
+        "score": null,
+        "scored_weight": 0,
+        "status": "withheld_insufficient_evidence_coverage",
+        "weighted_score_sum": 0
+      },
+      {
+        "coverage": {
+          "applicable_metric_count": 1,
+          "applicable_weight": 1.0,
+          "coverage_ratio": 1.0,
+          "excluded_metric_count": 0,
+          "minimum_required_ratio": 0.8,
+          "scored_metric_count": 1,
+          "scored_weight": 1.0,
+          "sufficient": true,
+          "total_metric_count": 1,
+          "unscored_metric_count": 0
+        },
+        "element_id": "F3",
+        "metric_ids": [
+          "F3-M01"
+        ],
+        "score": 0.5,
+        "scored_weight": 1.0,
+        "status": "calculated_with_sufficient_project_evidence",
+        "weighted_score_sum": 0.5
+      },
+      {
+        "coverage": {
+          "applicable_metric_count": 1,
+          "applicable_weight": 1.0,
+          "coverage_ratio": 1.0,
+          "excluded_metric_count": 0,
+          "minimum_required_ratio": 0.8,
+          "scored_metric_count": 1,
+          "scored_weight": 1.0,
+          "sufficient": true,
+          "total_metric_count": 1,
+          "unscored_metric_count": 0
+        },
+        "element_id": "F4",
+        "metric_ids": [
+          "F4-M01"
+        ],
+        "score": 1.0,
+        "scored_weight": 1.0,
+        "status": "calculated_with_sufficient_project_evidence",
+        "weighted_score_sum": 1.0
+      },
+      {
+        "coverage": {
+          "applicable_metric_count": 1,
+          "applicable_weight": 1.0,
+          "coverage_ratio": 0.0,
+          "excluded_metric_count": 0,
+          "minimum_required_ratio": 0.8,
+          "scored_metric_count": 0,
+          "scored_weight": 0,
+          "sufficient": false,
+          "total_metric_count": 1,
+          "unscored_metric_count": 1
+        },
+        "element_id": "F5",
+        "metric_ids": [
+          "F5-M01"
+        ],
+        "score": null,
+        "scored_weight": 0,
+        "status": "withheld_insufficient_evidence_coverage",
+        "weighted_score_sum": 0
+      },
+      {
+        "coverage": {
+          "applicable_metric_count": 1,
+          "applicable_weight": 1.0,
+          "coverage_ratio": 1.0,
+          "excluded_metric_count": 0,
+          "minimum_required_ratio": 0.8,
+          "scored_metric_count": 1,
+          "scored_weight": 1.0,
+          "sufficient": true,
+          "total_metric_count": 1,
+          "unscored_metric_count": 0
+        },
+        "element_id": "F6",
+        "metric_ids": [
+          "F6-M01"
+        ],
+        "score": 1.0,
+        "scored_weight": 1.0,
+        "status": "calculated_with_sufficient_project_evidence",
+        "weighted_score_sum": 1.0
+      }
+    ],
+    "framework_metric_reference_count": 111,
+    "implemented_project_proxy_metric_count": 19,
+    "methodology_id": "AMBA-GOV-PROJECT-READINESS-SCORING-1.0",
+    "metric_evaluations": [
+      {
+        "applicable": true,
+        "element_id": "F1",
+        "element_type": "factor",
+        "evidence_pointers": [
+          "/stages/*/released_fact_ids",
+          "/stages/*/recipient_projections",
+          "/final_audit_verification/valid"
+        ],
+        "finding_id": "F1",
+        "metric_id": "F1-M01",
+        "rationale": "Four verified stages preserve released facts, projections, evidence identities, and audit hashes.",
+        "score": 1.0,
+        "scored": true,
+        "status": "demonstrated",
+        "weight": 1.0
+      },
+      {
+        "applicable": true,
+        "element_id": "F2",
+        "element_type": "factor",
+        "evidence_pointers": [],
+        "finding_id": "F2",
+        "metric_id": "F2-M01",
+        "rationale": "The execution artifact contains no research-capacity or R&D performance evidence.",
+        "score": null,
+        "scored": false,
+        "status": "not_assessed",
+        "weight": 1.0
+      },
+      {
+        "applicable": true,
+        "element_id": "F3",
+        "element_type": "factor",
+        "evidence_pointers": [
+          "/stages/*/policy_agent_results/*/deterministic_governance"
+        ],
+        "finding_id": "F3",
+        "metric_id": "F3-M01",
+        "rationale": "Execution, review queue, prevention, distribution, and audit paths are demonstrated in a synthetic scenario only.",
+        "score": 0.5,
+        "scored": true,
+        "status": "partially_demonstrated",
+        "weight": 1.0
+      },
+      {
+        "applicable": true,
+        "element_id": "F4",
+        "element_type": "factor",
+        "evidence_pointers": [
+          "/stages/*/policy_agent_results/*/y3172_trace",
+          "/final_audit_verification/valid"
+        ],
+        "finding_id": "F4",
+        "metric_id": "F4-M01",
+        "rationale": "Each policy-agent result includes an interpreted Y.3172 trace and verified audit binding.",
+        "score": 1.0,
+        "scored": true,
+        "status": "demonstrated",
+        "weight": 1.0
+      },
+      {
+        "applicable": true,
+        "element_id": "F5",
+        "element_type": "factor",
+        "evidence_pointers": [],
+        "finding_id": "F5",
+        "metric_id": "F5-M01",
+        "rationale": "The artifact does not establish open-source governance, contribution, reuse, or community health.",
+        "score": null,
+        "scored": false,
+        "status": "not_assessed",
+        "weight": 1.0
+      },
+      {
+        "applicable": true,
+        "element_id": "F6",
+        "element_type": "factor",
+        "evidence_pointers": [
+          "/synthetic",
+          "/legal_effect",
+          "/stages/*/invariant_verification/valid"
+        ],
+        "finding_id": "F6",
+        "metric_id": "F6-M01",
+        "rationale": "The artifact is synthetic, legally non-effective, invariant-checked, and uses isolated deterministic state.",
+        "score": 1.0,
+        "scored": true,
+        "status": "demonstrated",
+        "weight": 1.0
+      },
+      {
+        "applicable": true,
+        "element_id": "D1",
+        "element_type": "dimension",
+        "evidence_pointers": [],
+        "finding_id": "D1",
+        "metric_id": "D1-M01",
+        "rationale": "No marketplace exchange, model catalog, licensing, or procurement evidence is present.",
+        "score": null,
+        "scored": false,
+        "status": "not_assessed",
+        "weight": 1.0
+      },
+      {
+        "applicable": true,
+        "element_id": "D2",
+        "element_type": "dimension",
+        "evidence_pointers": [],
+        "finding_id": "D2",
+        "metric_id": "D2-M01",
+        "rationale": "No generated-content marketplace evidence is present.",
+        "score": null,
+        "scored": false,
+        "status": "not_assessed",
+        "weight": 1.0
+      },
+      {
+        "applicable": true,
+        "element_id": "D3",
+        "element_type": "dimension",
+        "evidence_pointers": [
+          "/stages/*/recipient_projections",
+          "/stages/*/institutional_observations"
+        ],
+        "finding_id": "D3",
+        "metric_id": "D3-M01",
+        "rationale": "Recipient projections and institutional assessments correlate released facts across mandates while preserving separation.",
+        "score": 0.5,
+        "scored": true,
+        "status": "partially_demonstrated",
+        "weight": 1.0
+      },
+      {
+        "applicable": true,
+        "element_id": "D4",
+        "element_type": "dimension",
+        "evidence_pointers": [
+          "/stages/*/policy_agent_results/*/verified_evidence",
+          "/stages/*/policy_agent_results/*/limitations"
+        ],
+        "finding_id": "D4",
+        "metric_id": "D4-M01",
+        "rationale": "Ethiopian policy evidence and international guidance are distinguished, but no population-level impact evidence is present.",
+        "score": 0.5,
+        "scored": true,
+        "status": "partially_demonstrated",
+        "weight": 1.0
+      },
+      {
+        "applicable": true,
+        "element_id": "D5",
+        "element_type": "dimension",
+        "evidence_pointers": [
+          "/stages",
+          "/run_digest"
+        ],
+        "finding_id": "D5",
+        "metric_id": "D5-M01",
+        "rationale": "Four stages execute through retrieval, governance, review/execution, distribution control, trace, and audit.",
+        "score": 1.0,
+        "scored": true,
+        "status": "demonstrated",
+        "weight": 1.0
+      },
+      {
+        "applicable": true,
+        "element_id": "D6",
+        "element_type": "dimension",
+        "evidence_pointers": [
+          "/stages/*/policy_agent_results/*/deterministic_governance/approval_state"
+        ],
+        "finding_id": "D6",
+        "metric_id": "D6-M01",
+        "rationale": "Approval requirements and review-queue states are explicit, but user experience quality is not evaluated.",
+        "score": 0.5,
+        "scored": true,
+        "status": "partially_demonstrated",
+        "weight": 1.0
+      },
+      {
+        "applicable": true,
+        "element_id": "D7",
+        "element_type": "dimension",
+        "evidence_pointers": [
+          "/stages/*/thematic_evidence_references",
+          "/stages/*/policy_agent_results/*/deterministic_governance"
+        ],
+        "finding_id": "D7",
+        "metric_id": "D7-M01",
+        "rationale": "Configured governance controls and policy gaps are traceable, but enterprise strategy outcomes are not evidenced.",
+        "score": 0.5,
+        "scored": true,
+        "status": "partially_demonstrated",
+        "weight": 1.0
+      },
+      {
+        "applicable": true,
+        "element_id": "D8",
+        "element_type": "dimension",
+        "evidence_pointers": [
+          "/stages/*/policy_agent_results/*/deterministic_governance",
+          "/stages/*/policy_agent_results/*/limitations"
+        ],
+        "finding_id": "D8",
+        "metric_id": "D8-M01",
+        "rationale": "The system routes decisions to execution or human review while retaining limitations.",
+        "score": 0.5,
+        "scored": true,
+        "status": "partially_demonstrated",
+        "weight": 1.0
+      },
+      {
+        "applicable": true,
+        "element_id": "D9",
+        "element_type": "dimension",
+        "evidence_pointers": [
+          "/stages/*/institutional_observations"
+        ],
+        "finding_id": "D9",
+        "metric_id": "D9-M01",
+        "rationale": "Institutional observations and review gates are represented; real-world human impact is not measured.",
+        "score": 0.5,
+        "scored": true,
+        "status": "partially_demonstrated",
+        "weight": 1.0
+      },
+      {
+        "applicable": true,
+        "element_id": "D10",
+        "element_type": "dimension",
+        "evidence_pointers": [
+          "/stages/*/policy_agent_results",
+          "/final_audit_verification/valid"
+        ],
+        "finding_id": "D10",
+        "metric_id": "D10-M01",
+        "rationale": "Approved passages, thematic views, explicit gaps, deterministic recommendations, and audit hashes are connected end to end.",
+        "score": 1.0,
+        "scored": true,
+        "status": "demonstrated",
+        "weight": 1.0
+      },
+      {
+        "applicable": true,
+        "element_id": "D11",
+        "element_type": "dimension",
+        "evidence_pointers": [
+          "/stages/*/policy_agent_results/*/derived_thematic_interpretation"
+        ],
+        "finding_id": "D11",
+        "metric_id": "D11-M01",
+        "rationale": "The run includes inclusion-oriented evidence but does not measure accessibility or distributional outcomes.",
+        "score": null,
+        "scored": false,
+        "status": "insufficient_evidence",
+        "weight": 1.0
+      },
+      {
+        "applicable": true,
+        "element_id": "D12",
+        "element_type": "dimension",
+        "evidence_pointers": [
+          "/stages/*/thematic_evidence_references",
+          "/stages/*/policy_agent_results/*/evidence_gaps"
+        ],
+        "finding_id": "D12",
+        "metric_id": "D12-M01",
+        "rationale": "Stage-specific routing, passage IDs, theme IDs, gap IDs, and distinct execution outcomes provide granular priorities.",
+        "score": 1.0,
+        "scored": true,
+        "status": "demonstrated",
+        "weight": 1.0
+      },
+      {
+        "applicable": true,
+        "element_id": "D13",
+        "element_type": "dimension",
+        "evidence_pointers": [
+          "/stages/*/policy_agent_results/*/y3172_trace",
+          "/final_audit_verification"
+        ],
+        "finding_id": "D13",
+        "metric_id": "D13-M01",
+        "rationale": "Pipeline security, trace, execution, persistence, and audit behavior are demonstrated in a local synthetic environment.",
+        "score": 0.5,
+        "scored": true,
+        "status": "partially_demonstrated",
+        "weight": 1.0
+      }
+    ],
+    "metric_scope": "19 evidence-mapped project proxy metrics; not the complete 111-metric ITU instrument",
+    "metric_set_id": "AMBA-GOV-READINESS-PROXY-METRICS-1.0",
+    "non_scoring_statuses": {
+      "insufficient_evidence": "unscored",
+      "not_applicable": "excluded",
+      "not_assessed": "unscored",
+      "unresolved": "unscored"
+    },
+    "overall": {
+      "coverage": {
+        "applicable_metric_count": 19,
+        "applicable_weight": 19.0,
+        "coverage_ratio": 0.736842,
+        "excluded_metric_count": 0,
+        "minimum_required_ratio": 0.8,
+        "scored_metric_count": 14,
+        "scored_weight": 14.0,
+        "sufficient": false,
+        "total_metric_count": 19,
+        "unscored_metric_count": 5
+      },
+      "score": null,
+      "scored_weight": 14.0,
+      "status": "withheld_insufficient_evidence_coverage",
+      "weighted_score_sum": 10.0
+    },
+    "status_values": {
+      "demonstrated": 1.0,
+      "not_demonstrated": 0.0,
+      "partially_demonstrated": 0.5
+    }
+  },
   "y3172_mapping": {
     "formal_y3172_conformance": false,
     "itu_certification": false,
