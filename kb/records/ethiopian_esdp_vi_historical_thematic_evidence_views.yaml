@@ -1,0 +1,117 @@
+schema_version: 1.0.0
+record_type: derived_thematic_evidence_views
+mapping_file: kb/mappings/esdp_vi_theme_passages.yaml
+catalog_file: kb/passages/verified_passage_catalog.json
+views:
+- theme_id: DIGITAL-ACCESS-BASELINE
+  theme: digital access baseline
+  source_id: ETH-ESDP-VI-2021
+  supporting_passage_ids:
+  - ESDP-DIGITAL-BASELINE
+  evidence_status: sufficient_for_defined_context
+  gap_ids: []
+  source_citation_eligible: true
+  contextual_evidence_eligible: true
+  provision_citation_eligible: true
+  binding_finding_eligible: false
+  historical_qualification_required: true
+  current_after_2024_25: false
+  verified_successor_identified: false
+- theme_id: DATA-GOVERNANCE
+  theme: evidence quality and data governance
+  source_id: ETH-ESDP-VI-2021
+  supporting_passage_ids:
+  - ESDP-DATA-GAP
+  evidence_status: sufficient_for_defined_context
+  gap_ids: []
+  source_citation_eligible: true
+  contextual_evidence_eligible: true
+  provision_citation_eligible: true
+  binding_finding_eligible: false
+  historical_qualification_required: true
+  current_after_2024_25: false
+  verified_successor_identified: false
+- theme_id: CURRICULUM-DIGITAL
+  theme: curriculum and digital learning
+  source_id: ETH-ESDP-VI-2021
+  supporting_passage_ids:
+  - ESDP-CURRICULUM
+  evidence_status: sufficient_for_defined_context
+  gap_ids: []
+  source_citation_eligible: true
+  contextual_evidence_eligible: true
+  provision_citation_eligible: true
+  binding_finding_eligible: false
+  historical_qualification_required: true
+  current_after_2024_25: false
+  verified_successor_identified: false
+- theme_id: TEACHER-DIGITAL
+  theme: teacher digital development
+  source_id: ETH-ESDP-VI-2021
+  supporting_passage_ids:
+  - ESDP-TEACHER-DIGITAL
+  evidence_status: sufficient_for_defined_context
+  gap_ids: []
+  source_citation_eligible: true
+  contextual_evidence_eligible: true
+  provision_citation_eligible: true
+  binding_finding_eligible: false
+  historical_qualification_required: true
+  current_after_2024_25: false
+  verified_successor_identified: false
+- theme_id: DATA-ACCOUNTABILITY
+  theme: data accountability
+  source_id: ETH-ESDP-VI-2021
+  supporting_passage_ids:
+  - ESDP-DATA-ACCOUNTABILITY
+  evidence_status: sufficient_for_defined_context
+  gap_ids: []
+  source_citation_eligible: true
+  contextual_evidence_eligible: true
+  provision_citation_eligible: true
+  binding_finding_eligible: false
+  historical_qualification_required: true
+  current_after_2024_25: false
+  verified_successor_identified: false
+- theme_id: INCLUSIVE-DIGITAL
+  theme: inclusive digital access
+  source_id: ETH-ESDP-VI-2021
+  supporting_passage_ids:
+  - ESDP-INCLUSIVE-DIGITAL
+  evidence_status: sufficient_for_defined_context
+  gap_ids: []
+  source_citation_eligible: true
+  contextual_evidence_eligible: true
+  provision_citation_eligible: true
+  binding_finding_eligible: false
+  historical_qualification_required: true
+  current_after_2024_25: false
+  verified_successor_identified: false
+- theme_id: ADAPTIVE-MONITORING
+  theme: adaptive monitoring
+  source_id: ETH-ESDP-VI-2021
+  supporting_passage_ids:
+  - ESDP-ME-ADAPTIVE
+  evidence_status: sufficient_for_defined_context
+  gap_ids: []
+  source_citation_eligible: true
+  contextual_evidence_eligible: true
+  provision_citation_eligible: true
+  binding_finding_eligible: false
+  historical_qualification_required: true
+  current_after_2024_25: false
+  verified_successor_identified: false
+- theme_id: FUNDING-GAP
+  theme: funding gap
+  source_id: ETH-ESDP-VI-2021
+  supporting_passage_ids:
+  - ESDP-FUNDING-GAP
+  evidence_status: sufficient_for_defined_context
+  gap_ids: []
+  source_citation_eligible: true
+  contextual_evidence_eligible: true
+  provision_citation_eligible: true
+  binding_finding_eligible: false
+  historical_qualification_required: true
+  current_after_2024_25: false
+  verified_successor_identified: false

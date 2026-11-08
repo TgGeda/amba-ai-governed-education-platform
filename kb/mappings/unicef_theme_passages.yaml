@@ -1,0 +1,12 @@
+schema_version: "1.0.0"
+source_id: UNICEF-AI-CHILDREN-3.0
+themes:
+- {theme_id: CHILD-CENTRED-GOVERNANCE, theme: child-centred governance, supporting_passage_ids: [UNICEF-REQ-10]}
+- {theme_id: REGULATORY-GAP-ANALYSIS, theme: regulatory gap analysis, supporting_passage_ids: [UNICEF-GAP-ANALYSIS]}
+- {theme_id: CHILD-IMPACT-LIFECYCLE, theme: child impact lifecycle, supporting_passage_ids: [UNICEF-IMPACT-LIFECYCLE]}
+- {theme_id: PRIVACY-BY-DESIGN, theme: privacy by design, supporting_passage_ids: [UNICEF-PRIVACY-BY-DESIGN]}
+- {theme_id: HUMAN-CONTROL, theme: human control, supporting_passage_ids: [UNICEF-HUMAN-DECISION]}
+- {theme_id: INCLUSION-PARTICIPATION, theme: inclusion and participation, supporting_passage_ids: [UNICEF-INCLUSION]}
+- {theme_id: EVIDENCE-BASED-EDTECH, theme: evidence-based EdTech, supporting_passage_ids: [UNICEF-EDTECH-EVIDENCE]}
+- {theme_id: OFFLINE-LOW-RESOURCE, theme: offline and low-resource operation, supporting_passage_ids: [UNICEF-OFFLINE]}
+- {theme_id: COMMERCIAL-EXPLOITATION, theme: commercial exploitation, supporting_passage_ids: []}

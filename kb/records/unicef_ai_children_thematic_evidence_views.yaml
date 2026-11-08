@@ -1,0 +1,131 @@
+schema_version: 1.0.0
+record_type: derived_thematic_evidence_views
+mapping_file: kb/mappings/unicef_theme_passages.yaml
+catalog_file: kb/passages/verified_passage_catalog.json
+views:
+- theme_id: CHILD-CENTRED-GOVERNANCE
+  theme: child-centred governance
+  source_id: UNICEF-AI-CHILDREN-3.0
+  supporting_passage_ids:
+  - UNICEF-REQ-10
+  evidence_status: sufficient_for_defined_context
+  gap_ids: []
+  source_citation_eligible: true
+  contextual_evidence_eligible: true
+  provision_citation_eligible: true
+  binding_finding_eligible: false
+  historical_qualification_required: false
+  current_after_2024_25: null
+  verified_successor_identified: null
+- theme_id: REGULATORY-GAP-ANALYSIS
+  theme: regulatory gap analysis
+  source_id: UNICEF-AI-CHILDREN-3.0
+  supporting_passage_ids:
+  - UNICEF-GAP-ANALYSIS
+  evidence_status: sufficient_for_defined_context
+  gap_ids: []
+  source_citation_eligible: true
+  contextual_evidence_eligible: true
+  provision_citation_eligible: true
+  binding_finding_eligible: false
+  historical_qualification_required: false
+  current_after_2024_25: null
+  verified_successor_identified: null
+- theme_id: CHILD-IMPACT-LIFECYCLE
+  theme: child impact lifecycle
+  source_id: UNICEF-AI-CHILDREN-3.0
+  supporting_passage_ids:
+  - UNICEF-IMPACT-LIFECYCLE
+  evidence_status: sufficient_for_defined_context
+  gap_ids: []
+  source_citation_eligible: true
+  contextual_evidence_eligible: true
+  provision_citation_eligible: true
+  binding_finding_eligible: false
+  historical_qualification_required: false
+  current_after_2024_25: null
+  verified_successor_identified: null
+- theme_id: PRIVACY-BY-DESIGN
+  theme: privacy by design
+  source_id: UNICEF-AI-CHILDREN-3.0
+  supporting_passage_ids:
+  - UNICEF-PRIVACY-BY-DESIGN
+  evidence_status: sufficient_for_defined_context
+  gap_ids: []
+  source_citation_eligible: true
+  contextual_evidence_eligible: true
+  provision_citation_eligible: true
+  binding_finding_eligible: false
+  historical_qualification_required: false
+  current_after_2024_25: null
+  verified_successor_identified: null
+- theme_id: HUMAN-CONTROL
+  theme: human control
+  source_id: UNICEF-AI-CHILDREN-3.0
+  supporting_passage_ids:
+  - UNICEF-HUMAN-DECISION
+  evidence_status: sufficient_for_defined_context
+  gap_ids: []
+  source_citation_eligible: true
+  contextual_evidence_eligible: true
+  provision_citation_eligible: true
+  binding_finding_eligible: false
+  historical_qualification_required: false
+  current_after_2024_25: null
+  verified_successor_identified: null
+- theme_id: INCLUSION-PARTICIPATION
+  theme: inclusion and participation
+  source_id: UNICEF-AI-CHILDREN-3.0
+  supporting_passage_ids:
+  - UNICEF-INCLUSION
+  evidence_status: sufficient_for_defined_context
+  gap_ids: []
+  source_citation_eligible: true
+  contextual_evidence_eligible: true
+  provision_citation_eligible: true
+  binding_finding_eligible: false
+  historical_qualification_required: false
+  current_after_2024_25: null
+  verified_successor_identified: null
+- theme_id: EVIDENCE-BASED-EDTECH
+  theme: evidence-based EdTech
+  source_id: UNICEF-AI-CHILDREN-3.0
+  supporting_passage_ids:
+  - UNICEF-EDTECH-EVIDENCE
+  evidence_status: sufficient_for_defined_context
+  gap_ids: []
+  source_citation_eligible: true
+  contextual_evidence_eligible: true
+  provision_citation_eligible: true
+  binding_finding_eligible: false
+  historical_qualification_required: false
+  current_after_2024_25: null
+  verified_successor_identified: null
+- theme_id: OFFLINE-LOW-RESOURCE
+  theme: offline and low-resource operation
+  source_id: UNICEF-AI-CHILDREN-3.0
+  supporting_passage_ids:
+  - UNICEF-OFFLINE
+  evidence_status: sufficient_for_defined_context
+  gap_ids: []
+  source_citation_eligible: true
+  contextual_evidence_eligible: true
+  provision_citation_eligible: true
+  binding_finding_eligible: false
+  historical_qualification_required: false
+  current_after_2024_25: null
+  verified_successor_identified: null
+- theme_id: COMMERCIAL-EXPLOITATION
+  theme: commercial exploitation
+  source_id: UNICEF-AI-CHILDREN-3.0
+  supporting_passage_ids: []
+  evidence_status: insufficient_evidence
+  gap_ids:
+  - GAP-COMMERCIAL-EXPLOITATION
+  source_citation_eligible: false
+  contextual_evidence_eligible: false
+  provision_citation_eligible: false
+  binding_finding_eligible: false
+  historical_qualification_required: false
+  current_after_2024_25: null
+  verified_successor_identified: null

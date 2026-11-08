@@ -1,0 +1,161 @@
+{
+  "catalog_file": "kb/passages/verified_passage_catalog.json",
+  "mapping_file": "kb/mappings/cybersecurity_theme_passages.yaml",
+  "record_type": "derived_thematic_evidence_views",
+  "schema_version": "1.0.0",
+  "views": [
+    {
+      "binding_finding_eligible": false,
+      "contextual_evidence_eligible": true,
+      "current_after_2024_25": null,
+      "evidence_status": "sufficient_for_defined_context",
+      "gap_ids": [],
+      "historical_qualification_required": false,
+      "provision_citation_eligible": true,
+      "source_citation_eligible": true,
+      "source_id": "ETH-CYBERSECURITY-POLICY-2024",
+      "supporting_passage_ids": [
+        "CYBER-SHARED-RULE-LAW"
+      ],
+      "theme": "cybersecurity governance",
+      "theme_id": "CYBERSECURITY-GOVERNANCE",
+      "verified_successor_identified": null
+    },
+    {
+      "binding_finding_eligible": false,
+      "contextual_evidence_eligible": true,
+      "current_after_2024_25": null,
+      "evidence_status": "sufficient_for_defined_context",
+      "gap_ids": [],
+      "historical_qualification_required": false,
+      "provision_citation_eligible": true,
+      "source_citation_eligible": true,
+      "source_id": "ETH-CYBERSECURITY-POLICY-2024",
+      "supporting_passage_ids": [
+        "CYBER-SHARED-RULE-LAW"
+      ],
+      "theme": "shared responsibility",
+      "theme_id": "SHARED-RESPONSIBILITY",
+      "verified_successor_identified": null
+    },
+    {
+      "binding_finding_eligible": false,
+      "contextual_evidence_eligible": true,
+      "current_after_2024_25": null,
+      "evidence_status": "sufficient_for_defined_context",
+      "gap_ids": [],
+      "historical_qualification_required": false,
+      "provision_citation_eligible": true,
+      "source_citation_eligible": true,
+      "source_id": "ETH-CYBERSECURITY-POLICY-2024",
+      "supporting_passage_ids": [
+        "CYBER-PRIVACY-BALANCE"
+      ],
+      "theme": "privacy and security balance",
+      "theme_id": "PRIVACY-SECURITY-BALANCE",
+      "verified_successor_identified": null
+    },
+    {
+      "binding_finding_eligible": false,
+      "contextual_evidence_eligible": true,
+      "current_after_2024_25": null,
+      "evidence_status": "sufficient_for_defined_context",
+      "gap_ids": [],
+      "historical_qualification_required": false,
+      "provision_citation_eligible": true,
+      "source_citation_eligible": true,
+      "source_id": "ETH-CYBERSECURITY-POLICY-2024",
+      "supporting_passage_ids": [
+        "CYBER-DATA-LIFECYCLE"
+      ],
+      "theme": "data lifecycle governance",
+      "theme_id": "DATA-LIFECYCLE-GOVERNANCE",
+      "verified_successor_identified": null
+    },
+    {
+      "binding_finding_eligible": false,
+      "contextual_evidence_eligible": true,
+      "current_after_2024_25": null,
+      "evidence_status": "sufficient_for_defined_context",
+      "gap_ids": [],
+      "historical_qualification_required": false,
+      "provision_citation_eligible": true,
+      "source_citation_eligible": true,
+      "source_id": "ETH-CYBERSECURITY-POLICY-2024",
+      "supporting_passage_ids": [
+        "CYBER-CAPACITY-EDU"
+      ],
+      "theme": "capacity and education",
+      "theme_id": "CAPACITY-EDUCATION",
+      "verified_successor_identified": null
+    },
+    {
+      "binding_finding_eligible": false,
+      "contextual_evidence_eligible": true,
+      "current_after_2024_25": null,
+      "evidence_status": "sufficient_for_defined_context",
+      "gap_ids": [],
+      "historical_qualification_required": false,
+      "provision_citation_eligible": true,
+      "source_citation_eligible": true,
+      "source_id": "ETH-CYBERSECURITY-POLICY-2024",
+      "supporting_passage_ids": [
+        "CYBER-RD"
+      ],
+      "theme": "indigenous research and development",
+      "theme_id": "INDIGENOUS-RD",
+      "verified_successor_identified": null
+    },
+    {
+      "binding_finding_eligible": false,
+      "contextual_evidence_eligible": true,
+      "current_after_2024_25": null,
+      "evidence_status": "sufficient_for_defined_context",
+      "gap_ids": [],
+      "historical_qualification_required": false,
+      "provision_citation_eligible": true,
+      "source_citation_eligible": true,
+      "source_id": "ETH-CYBERSECURITY-POLICY-2024",
+      "supporting_passage_ids": [
+        "CYBER-CII-AUDIT"
+      ],
+      "theme": "critical infrastructure assurance",
+      "theme_id": "CII-ASSURANCE",
+      "verified_successor_identified": null
+    },
+    {
+      "binding_finding_eligible": false,
+      "contextual_evidence_eligible": true,
+      "current_after_2024_25": null,
+      "evidence_status": "sufficient_for_defined_context",
+      "gap_ids": [],
+      "historical_qualification_required": false,
+      "provision_citation_eligible": true,
+      "source_citation_eligible": true,
+      "source_id": "ETH-CYBERSECURITY-POLICY-2024",
+      "supporting_passage_ids": [
+        "CYBER-COORDINATION"
+      ],
+      "theme": "multi-stakeholder coordination",
+      "theme_id": "COORDINATION",
+      "verified_successor_identified": null
+    },
+    {
+      "binding_finding_eligible": false,
+      "contextual_evidence_eligible": true,
+      "current_after_2024_25": null,
+      "evidence_status": "sufficient_for_defined_context",
+      "gap_ids": [],
+      "historical_qualification_required": false,
+      "provision_citation_eligible": true,
+      "source_citation_eligible": true,
+      "source_id": "ETH-CYBERSECURITY-POLICY-2024",
+      "supporting_passage_ids": [
+        "CYBER-ME"
+      ],
+      "theme": "monitoring and evaluation",
+      "theme_id": "MONITORING-EVALUATION",
+      "verified_successor_identified": null
+    }
+  ]
+}

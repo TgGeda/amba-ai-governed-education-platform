@@ -1,0 +1,12 @@
+schema_version: "1.0.0"
+source_id: ETH-ESDP-VI-2021
+defaults: {historical_qualification_required: true, current_after_2024_25: false, verified_successor_identified: false}
+themes:
+- {theme_id: DIGITAL-ACCESS-BASELINE, theme: digital access baseline, supporting_passage_ids: [ESDP-DIGITAL-BASELINE]}
+- {theme_id: DATA-GOVERNANCE, theme: evidence quality and data governance, supporting_passage_ids: [ESDP-DATA-GAP]}
+- {theme_id: CURRICULUM-DIGITAL, theme: curriculum and digital learning, supporting_passage_ids: [ESDP-CURRICULUM]}
+- {theme_id: TEACHER-DIGITAL, theme: teacher digital development, supporting_passage_ids: [ESDP-TEACHER-DIGITAL]}
+- {theme_id: DATA-ACCOUNTABILITY, theme: data accountability, supporting_passage_ids: [ESDP-DATA-ACCOUNTABILITY]}
+- {theme_id: INCLUSIVE-DIGITAL, theme: inclusive digital access, supporting_passage_ids: [ESDP-INCLUSIVE-DIGITAL]}
+- {theme_id: ADAPTIVE-MONITORING, theme: adaptive monitoring, supporting_passage_ids: [ESDP-ME-ADAPTIVE]}
+- {theme_id: FUNDING-GAP, theme: funding gap, supporting_passage_ids: [ESDP-FUNDING-GAP]}

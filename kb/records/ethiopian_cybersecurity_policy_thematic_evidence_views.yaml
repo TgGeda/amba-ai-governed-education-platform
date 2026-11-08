@@ -1,0 +1,131 @@
+schema_version: 1.0.0
+record_type: derived_thematic_evidence_views
+mapping_file: kb/mappings/cybersecurity_theme_passages.yaml
+catalog_file: kb/passages/verified_passage_catalog.json
+views:
+- theme_id: CYBERSECURITY-GOVERNANCE
+  theme: cybersecurity governance
+  source_id: ETH-CYBERSECURITY-POLICY-2024
+  supporting_passage_ids:
+  - CYBER-SHARED-RULE-LAW
+  evidence_status: sufficient_for_defined_context
+  gap_ids: []
+  source_citation_eligible: true
+  contextual_evidence_eligible: true
+  provision_citation_eligible: true
+  binding_finding_eligible: false
+  historical_qualification_required: false
+  current_after_2024_25: null
+  verified_successor_identified: null
+- theme_id: SHARED-RESPONSIBILITY
+  theme: shared responsibility
+  source_id: ETH-CYBERSECURITY-POLICY-2024
+  supporting_passage_ids:
+  - CYBER-SHARED-RULE-LAW
+  evidence_status: sufficient_for_defined_context
+  gap_ids: []
+  source_citation_eligible: true
+  contextual_evidence_eligible: true
+  provision_citation_eligible: true
+  binding_finding_eligible: false
+  historical_qualification_required: false
+  current_after_2024_25: null
+  verified_successor_identified: null
+- theme_id: PRIVACY-SECURITY-BALANCE
+  theme: privacy and security balance
+  source_id: ETH-CYBERSECURITY-POLICY-2024
+  supporting_passage_ids:
+  - CYBER-PRIVACY-BALANCE
+  evidence_status: sufficient_for_defined_context
+  gap_ids: []
+  source_citation_eligible: true
+  contextual_evidence_eligible: true
+  provision_citation_eligible: true
+  binding_finding_eligible: false
+  historical_qualification_required: false
+  current_after_2024_25: null
+  verified_successor_identified: null
+- theme_id: DATA-LIFECYCLE-GOVERNANCE
+  theme: data lifecycle governance
+  source_id: ETH-CYBERSECURITY-POLICY-2024
+  supporting_passage_ids:
+  - CYBER-DATA-LIFECYCLE
+  evidence_status: sufficient_for_defined_context
+  gap_ids: []
+  source_citation_eligible: true
+  contextual_evidence_eligible: true
+  provision_citation_eligible: true
+  binding_finding_eligible: false
+  historical_qualification_required: false
+  current_after_2024_25: null
+  verified_successor_identified: null
+- theme_id: CAPACITY-EDUCATION
+  theme: capacity and education
+  source_id: ETH-CYBERSECURITY-POLICY-2024
+  supporting_passage_ids:
+  - CYBER-CAPACITY-EDU
+  evidence_status: sufficient_for_defined_context
+  gap_ids: []
+  source_citation_eligible: true
+  contextual_evidence_eligible: true
+  provision_citation_eligible: true
+  binding_finding_eligible: false
+  historical_qualification_required: false
+  current_after_2024_25: null
+  verified_successor_identified: null
+- theme_id: INDIGENOUS-RD
+  theme: indigenous research and development
+  source_id: ETH-CYBERSECURITY-POLICY-2024
+  supporting_passage_ids:
+  - CYBER-RD
+  evidence_status: sufficient_for_defined_context
+  gap_ids: []
+  source_citation_eligible: true
+  contextual_evidence_eligible: true
+  provision_citation_eligible: true
+  binding_finding_eligible: false
+  historical_qualification_required: false
+  current_after_2024_25: null
+  verified_successor_identified: null
+- theme_id: CII-ASSURANCE
+  theme: critical infrastructure assurance
+  source_id: ETH-CYBERSECURITY-POLICY-2024
+  supporting_passage_ids:
+  - CYBER-CII-AUDIT
+  evidence_status: sufficient_for_defined_context
+  gap_ids: []
+  source_citation_eligible: true
+  contextual_evidence_eligible: true
+  provision_citation_eligible: true
+  binding_finding_eligible: false
+  historical_qualification_required: false
+  current_after_2024_25: null
+  verified_successor_identified: null
+- theme_id: COORDINATION
+  theme: multi-stakeholder coordination
+  source_id: ETH-CYBERSECURITY-POLICY-2024
+  supporting_passage_ids:
+  - CYBER-COORDINATION
+  evidence_status: sufficient_for_defined_context
+  gap_ids: []
+  source_citation_eligible: true
+  contextual_evidence_eligible: true
+  provision_citation_eligible: true
+  binding_finding_eligible: false
+  historical_qualification_required: false
+  current_after_2024_25: null
+  verified_successor_identified: null
+- theme_id: MONITORING-EVALUATION
+  theme: monitoring and evaluation
+  source_id: ETH-CYBERSECURITY-POLICY-2024
+  supporting_passage_ids:
+  - CYBER-ME
+  evidence_status: sufficient_for_defined_context
+  gap_ids: []
+  source_citation_eligible: true
+  contextual_evidence_eligible: true
+  provision_citation_eligible: true
+  binding_finding_eligible: false
+  historical_qualification_required: false
+  current_after_2024_25: null
+  verified_successor_identified: null

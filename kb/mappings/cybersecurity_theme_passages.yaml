@@ -1,0 +1,12 @@
+schema_version: "1.0.0"
+source_id: ETH-CYBERSECURITY-POLICY-2024
+themes:
+- {theme_id: CYBERSECURITY-GOVERNANCE, theme: cybersecurity governance, supporting_passage_ids: [CYBER-SHARED-RULE-LAW]}
+- {theme_id: SHARED-RESPONSIBILITY, theme: shared responsibility, supporting_passage_ids: [CYBER-SHARED-RULE-LAW]}
+- {theme_id: PRIVACY-SECURITY-BALANCE, theme: privacy and security balance, supporting_passage_ids: [CYBER-PRIVACY-BALANCE]}
+- {theme_id: DATA-LIFECYCLE-GOVERNANCE, theme: data lifecycle governance, supporting_passage_ids: [CYBER-DATA-LIFECYCLE]}
+- {theme_id: CAPACITY-EDUCATION, theme: capacity and education, supporting_passage_ids: [CYBER-CAPACITY-EDU]}
+- {theme_id: INDIGENOUS-RD, theme: indigenous research and development, supporting_passage_ids: [CYBER-RD]}
+- {theme_id: CII-ASSURANCE, theme: critical infrastructure assurance, supporting_passage_ids: [CYBER-CII-AUDIT]}
+- {theme_id: COORDINATION, theme: multi-stakeholder coordination, supporting_passage_ids: [CYBER-COORDINATION]}
+- {theme_id: MONITORING-EVALUATION, theme: monitoring and evaluation, supporting_passage_ids: [CYBER-ME]}

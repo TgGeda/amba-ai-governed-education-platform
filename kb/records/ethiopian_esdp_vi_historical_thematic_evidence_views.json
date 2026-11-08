@@ -1,0 +1,144 @@
+{
+  "catalog_file": "kb/passages/verified_passage_catalog.json",
+  "mapping_file": "kb/mappings/esdp_vi_theme_passages.yaml",
+  "record_type": "derived_thematic_evidence_views",
+  "schema_version": "1.0.0",
+  "views": [
+    {
+      "binding_finding_eligible": false,
+      "contextual_evidence_eligible": true,
+      "current_after_2024_25": false,
+      "evidence_status": "sufficient_for_defined_context",
+      "gap_ids": [],
+      "historical_qualification_required": true,
+      "provision_citation_eligible": true,
+      "source_citation_eligible": true,
+      "source_id": "ETH-ESDP-VI-2021",
+      "supporting_passage_ids": [
+        "ESDP-DIGITAL-BASELINE"
+      ],
+      "theme": "digital access baseline",
+      "theme_id": "DIGITAL-ACCESS-BASELINE",
+      "verified_successor_identified": false
+    },
+    {
+      "binding_finding_eligible": false,
+      "contextual_evidence_eligible": true,
+      "current_after_2024_25": false,
+      "evidence_status": "sufficient_for_defined_context",
+      "gap_ids": [],
+      "historical_qualification_required": true,
+      "provision_citation_eligible": true,
+      "source_citation_eligible": true,
+      "source_id": "ETH-ESDP-VI-2021",
+      "supporting_passage_ids": [
+        "ESDP-DATA-GAP"
+      ],
+      "theme": "evidence quality and data governance",
+      "theme_id": "DATA-GOVERNANCE",
+      "verified_successor_identified": false
+    },
+    {
+      "binding_finding_eligible": false,
+      "contextual_evidence_eligible": true,
+      "current_after_2024_25": false,
+      "evidence_status": "sufficient_for_defined_context",
+      "gap_ids": [],
+      "historical_qualification_required": true,
+      "provision_citation_eligible": true,
+      "source_citation_eligible": true,
+      "source_id": "ETH-ESDP-VI-2021",
+      "supporting_passage_ids": [
+        "ESDP-CURRICULUM"
+      ],
+      "theme": "curriculum and digital learning",
+      "theme_id": "CURRICULUM-DIGITAL",
+      "verified_successor_identified": false
+    },
+    {
+      "binding_finding_eligible": false,
+      "contextual_evidence_eligible": true,
+      "current_after_2024_25": false,
+      "evidence_status": "sufficient_for_defined_context",
+      "gap_ids": [],
+      "historical_qualification_required": true,
+      "provision_citation_eligible": true,
+      "source_citation_eligible": true,
+      "source_id": "ETH-ESDP-VI-2021",
+      "supporting_passage_ids": [
+        "ESDP-TEACHER-DIGITAL"
+      ],
+      "theme": "teacher digital development",
+      "theme_id": "TEACHER-DIGITAL",
+      "verified_successor_identified": false
+    },
+    {
+      "binding_finding_eligible": false,
+      "contextual_evidence_eligible": true,
+      "current_after_2024_25": false,
+      "evidence_status": "sufficient_for_defined_context",
+      "gap_ids": [],
+      "historical_qualification_required": true,
+      "provision_citation_eligible": true,
+      "source_citation_eligible": true,
+      "source_id": "ETH-ESDP-VI-2021",
+      "supporting_passage_ids": [
+        "ESDP-DATA-ACCOUNTABILITY"
+      ],
+      "theme": "data accountability",
+      "theme_id": "DATA-ACCOUNTABILITY",
+      "verified_successor_identified": false
+    },
+    {
+      "binding_finding_eligible": false,
+      "contextual_evidence_eligible": true,
+      "current_after_2024_25": false,
+      "evidence_status": "sufficient_for_defined_context",
+      "gap_ids": [],
+      "historical_qualification_required": true,
+      "provision_citation_eligible": true,
+      "source_citation_eligible": true,
+      "source_id": "ETH-ESDP-VI-2021",
+      "supporting_passage_ids": [
+        "ESDP-INCLUSIVE-DIGITAL"
+      ],
+      "theme": "inclusive digital access",
+      "theme_id": "INCLUSIVE-DIGITAL",
+      "verified_successor_identified": false
+    },
+    {
+      "binding_finding_eligible": false,
+      "contextual_evidence_eligible": true,
+      "current_after_2024_25": false,
+      "evidence_status": "sufficient_for_defined_context",
+      "gap_ids": [],
+      "historical_qualification_required": true,
+      "provision_citation_eligible": true,
+      "source_citation_eligible": true,
+      "source_id": "ETH-ESDP-VI-2021",
+      "supporting_passage_ids": [
+        "ESDP-ME-ADAPTIVE"
+      ],
+      "theme": "adaptive monitoring",
+      "theme_id": "ADAPTIVE-MONITORING",
+      "verified_successor_identified": false
+    },
+    {
+      "binding_finding_eligible": false,
+      "contextual_evidence_eligible": true,
+      "current_after_2024_25": false,
+      "evidence_status": "sufficient_for_defined_context",
+      "gap_ids": [],
+      "historical_qualification_required": true,
+      "provision_citation_eligible": true,
+      "source_citation_eligible": true,
+      "source_id": "ETH-ESDP-VI-2021",
+      "supporting_passage_ids": [
+        "ESDP-FUNDING-GAP"
+      ],
+      "theme": "funding gap",
+      "theme_id": "FUNDING-GAP",
+      "verified_successor_identified": false
+    }
+  ]
+}
