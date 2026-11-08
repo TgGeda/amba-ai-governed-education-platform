@@ -1,0 +1,25 @@
+schema_version: "1.0.0"
+metric_id: F5-M01
+evidence_id: AMBA-GOV-F5-OPEN-SOURCE-EVIDENCE-001
+required_repository_files:
+  - LICENSE
+  - CONTRIBUTING.md
+  - CODE_OF_CONDUCT.md
+  - SECURITY.md
+required_artifacts:
+  - submission/artifacts/sbom.cdx.json
+  - submission/artifacts/open_source_governance_evidence.json
+acceptance:
+  license_must_be_nonempty: true
+  license_must_not_contain_placeholder_markers: true
+  governance_files_must_be_nonempty: true
+  sbom_format: CycloneDX
+  sbom_spec_version: "1.5"
+  sbom_must_be_deterministic: true
+  dependency_source: requirements.txt
+  required_hash_algorithm: SHA-256
+  target_status_after_acceptance: partially_demonstrated
+prohibited:
+  - infer_or_select_software_license
+  - claim_open_source_without_repository_license
+  - accept_unhashed_evidence

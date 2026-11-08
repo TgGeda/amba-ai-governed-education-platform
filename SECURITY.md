@@ -1,0 +1,3 @@
+# AMBA-GOV Security Policy
+
+Do not disclose suspected vulnerabilities in a public issue. Report them through the repository owner's private coordinated-disclosure channel with affected version, reproduction steps, impact, and supporting evidence. Do not include credentials, personal data, or production secrets. Maintainers should acknowledge receipt, validate the report, assign severity, preserve an audit record, develop and test a fix, and coordinate disclosure. Until a dedicated security address is approved, use the private repository contact mechanism. This file does not promise a response time or bounty.

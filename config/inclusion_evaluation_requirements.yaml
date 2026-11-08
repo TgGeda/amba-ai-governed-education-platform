@@ -1,0 +1,28 @@
+schema_version: "1.0.0"
+metric_id: D11-M01
+evidence_id: AMBA-GOV-D11-INCLUSION-EVIDENCE-001
+required_protocols:
+  - docs/inclusion/accessibility_test_protocol.md
+  - docs/inclusion/representative_review_protocol.md
+required_artifacts:
+  - submission/artifacts/accessibility_evaluation.json
+  - submission/artifacts/offline_operation_evaluation.json
+  - submission/artifacts/representative_review_record.json
+  - submission/artifacts/inclusion_outcome_evidence.json
+acceptance:
+  accessibility_standard_orientation: WCAG_2_2_AA
+  formal_accessibility_certification: false
+  require_explicit_tested_criteria: true
+  require_explicit_untested_criteria: true
+  require_offline_or_constrained_connectivity_result: true
+  representative_review_must_be_completed: true
+  representative_review_must_document_scope_and_limitations: true
+  representative_review_personal_data_prohibited: true
+  all_artifacts_require_sha256: true
+  source_artifact: submission/artifacts/four_stage_evidence_chain.json
+  target_status_after_acceptance: partially_demonstrated
+prohibited:
+  - fabricate_participant_or_representative_review
+  - claim_formal_wcag_conformance
+  - include_personal_data
+  - accept_unhashed_evidence

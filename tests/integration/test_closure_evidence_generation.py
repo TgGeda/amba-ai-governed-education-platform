@@ -1,0 +1,6 @@
+from pathlib import Path
+import json,subprocess,sys
+ROOT=Path(__file__).resolve().parents[2]
+def test_generator_is_deterministic_and_closure_application_refuses_pending_metrics():
+ subprocess.run([sys.executable,str(ROOT/'tools/evidence/generate_sbom.py')],check=True,cwd=ROOT);subprocess.run([sys.executable,str(ROOT/'tools/readiness/generate_closure_evidence.py')],check=True,cwd=ROOT);a=(ROOT/'submission/artifacts/readiness_closure_evidence_registry.json').read_bytes();subprocess.run([sys.executable,str(ROOT/'tools/evidence/generate_sbom.py')],check=True,cwd=ROOT);subprocess.run([sys.executable,str(ROOT/'tools/readiness/generate_closure_evidence.py')],check=True,cwd=ROOT);b=(ROOT/'submission/artifacts/readiness_closure_evidence_registry.json').read_bytes();assert a==b
+ registry=json.loads(a);assert 'D11-M01' in registry['pending_metric_ids'];subprocess.run([sys.executable,str(ROOT/'tools/readiness/apply_verified_readiness_closure.py')],check=True,cwd=ROOT);application=json.loads((ROOT/'submission/artifacts/readiness_closure_application.json').read_text(encoding='utf-8'));assert 'D11-M01' in application['refused_metric_ids'];assert all(x['metric_id'] not in application['refused_metric_ids'] for x in application['updates'])
