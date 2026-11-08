@@ -1,0 +1,47 @@
+schema_version: "1.0.0"
+manifest_id: AMBA-GOV-SUBMISSION-MANIFEST-001
+required_artifacts:
+  - path: submission/artifacts/four_stage_evidence_chain.json
+    artifact_type: deterministic_evidence_chain
+    required_json_assertions:
+      - pointer: /artifact_type
+        equals: four_stage_evidence_chain
+      - pointer: /final_audit_verification/valid
+        equals: true
+  - path: submission/artifacts/readiness_reflection.json
+    artifact_type: readiness_reflection
+    required_json_assertions:
+      - pointer: /artifact_type
+        equals: evidence_bounded_readiness_reflection
+      - pointer: /assessment_subject/national_assessment
+        equals: false
+      - pointer: /y3172_mapping/formal_y3172_conformance
+        equals: false
+  - path: submission/artifacts/readiness_evidence_plan.json
+    artifact_type: evidence_coverage_plan
+    required_json_assertions:
+      - pointer: /artifact_type
+        equals: readiness_evidence_coverage_closure_plan
+      - pointer: /claim_boundaries/project_score_guaranteed_after_plan
+        equals: false
+  - path: submission/artifacts/readiness_closure_evidence_registry.json
+    artifact_type: closure_evidence_registry
+    required_json_assertions:
+      - pointer: /registry_id
+        equals: AMBA-GOV-READINESS-CLOSURE-EVIDENCE-REGISTRY-001
+  - path: submission/artifacts/readiness_closure_application.json
+    artifact_type: closure_application
+required_source_records:
+  - kb/passages/verified_passage_catalog.json
+  - kb/records/itu_y3172_verified_records.yaml
+  - config/readiness_evidence_mapping.yaml
+  - config/readiness_scoring_methodology.yaml
+  - config/readiness_metric_definitions.yaml
+  - config/readiness_evidence_requirements.yaml
+claim_boundaries:
+  national_ai_readiness_score: false
+  official_itu_score: false
+  official_itu_certification: false
+  formal_y3172_conformance: false
+  legal_effect: false
+  binding_finding_eligible: false
