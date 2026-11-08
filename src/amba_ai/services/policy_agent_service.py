@@ -21,6 +21,7 @@ from amba_ai.services.distribution_service import DistributionService
 from amba_ai.services.execution_service import ExecutionService
 from amba_ai.services.governance_service import GovernanceService
 from amba_ai.services.policy_kb_service import PolicyKBQueryResponse, PolicyKBService
+from amba_ai.services.thematic_evidence_service import ThematicEvidenceRunContext, ThematicEvidenceService
 from amba_ai.standards.y3172_models import Y3172PipelineTrace
 from amba_ai.standards.y3172_trace_coordinator import (
     Y3172TraceArtifacts,
@@ -90,6 +91,7 @@ class PolicyAgentResponse:
     distribution_effect: DistributionEffect | None
     y3172_trace: Y3172PipelineTrace
     audit_block: AuditBlock
+    thematic_evidence_context: ThematicEvidenceRunContext
     limitations: tuple[str, ...]
 
     def __post_init__(self) -> None:
@@ -109,6 +111,8 @@ class PolicyAgentResponse:
             raise TypeError("y3172_trace must be a Y3172PipelineTrace")
         if not isinstance(self.audit_block, AuditBlock):
             raise TypeError("audit_block must be an AuditBlock")
+        if not isinstance(self.thematic_evidence_context, ThematicEvidenceRunContext):
+            raise TypeError("thematic_evidence_context must be a ThematicEvidenceRunContext")
         if self.governance_bundle.event_id != self.event_id:
             raise GovernanceConfigurationError("governance bundle event mismatch")
         if self.execution_result.request.event_id != self.event_id:
@@ -150,6 +154,7 @@ class PolicyAgentResponse:
             "distribution_effect": None if self.distribution_effect is None else self.distribution_effect.to_dict(),
             "y3172_trace": self.y3172_trace.to_dict(),
             "audit_block": self.audit_block.to_dict(),
+            "thematic_evidence_context": self.thematic_evidence_context.to_dict(),
             "limitations": list(self.limitations),
         }
 
@@ -166,6 +171,7 @@ class PolicyAgentService:
         execution_service: ExecutionService,
         distribution_service: DistributionService,
         trace_coordinator: Y3172TraceCoordinator,
+        thematic_evidence_service: ThematicEvidenceService,
         audit_service: AuditService,
     ) -> None:
         dependencies = (
@@ -174,6 +180,7 @@ class PolicyAgentService:
             ("execution_service", execution_service, ExecutionService),
             ("distribution_service", distribution_service, DistributionService),
             ("trace_coordinator", trace_coordinator, Y3172TraceCoordinator),
+            ("thematic_evidence_service", thematic_evidence_service, ThematicEvidenceService),
             ("audit_service", audit_service, AuditService),
         )
         for name, value, expected in dependencies:
@@ -184,11 +191,13 @@ class PolicyAgentService:
         self._execution_service = execution_service
         self._distribution_service = distribution_service
         self._trace_coordinator = trace_coordinator
+        self._thematic_evidence_service = thematic_evidence_service
         self._audit_service = audit_service
 
     def run(self, request: PolicyAgentRequest) -> PolicyAgentResponse:
         if not isinstance(request, PolicyAgentRequest):
             raise TypeError("request must be a PolicyAgentRequest")
+        thematic_context = self._thematic_evidence_service.for_stage(request.stage_id)
         kb_response = self._policy_kb_service.query(
             request.policy_query,
             limit=request.query_limit,
@@ -200,6 +209,9 @@ class PolicyAgentService:
             "policy_query_digest": kb_response.query_digest,
             "resolved_evidence_count": kb_response.summary.resolved_count,
             "evidence_gaps": kb_response.evidence_gaps,
+            "verified_passage_ids": thematic_context.passage_ids,
+            "theme_ids": thematic_context.theme_ids,
+            "gap_ids": thematic_context.gap_ids,
         }
         execution_result = self._execution_service.execute(
             event=request.event,
@@ -238,6 +250,9 @@ class PolicyAgentService:
             "execution_request_id": execution_result.request.request_id,
             "distribution_disposition": None if distribution_effect is None else distribution_effect.disposition.value,
             "trace_id": trace.trace_id,
+            "verified_passage_ids": list(thematic_context.passage_ids),
+            "theme_ids": list(thematic_context.theme_ids),
+            "gap_ids": list(thematic_context.gap_ids),
         }
         audit_block = self._audit_service.append(
             run_id=request.run_id,
@@ -253,6 +268,7 @@ class PolicyAgentService:
                 set(
                     kb_response.limitations
                     + kb_response.evidence_gaps
+                    + tuple(f"thematic_evidence_gap:{gap_id}" for gap_id in thematic_context.gap_ids)
                     + ("distribution_and_audit_not_transactionally_atomic",)
                 )
             )
@@ -266,5 +282,6 @@ class PolicyAgentService:
             distribution_effect=distribution_effect,
             y3172_trace=trace,
             audit_block=audit_block,
+            thematic_evidence_context=thematic_context,
             limitations=limitations,
         )

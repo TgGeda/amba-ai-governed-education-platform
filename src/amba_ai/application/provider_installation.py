@@ -94,6 +94,7 @@ from amba_ai.services.model_service import ModelService
 
 from amba_ai.rag.policy_query import PolicyQueryAdapter
 from amba_ai.services.policy_kb_service import PolicyKBService
+from amba_ai.services.thematic_evidence_service import ThematicEvidenceService
 from amba_ai.standards.ml_intent import (
     MLIntent,
     load_ml_intent,
@@ -148,6 +149,11 @@ LAZY_PROVIDER_NAMES = (
     "policy_kb_service",
     "distribution_service",
     "policy_agent_service",
+    "verified_passage_catalog",
+    "thematic_evidence_resolver",
+    "thematic_evidence_service",
+    "thematic_evidence_views",
+    "policy_evidence_gaps",
     "scenario_clock",
     "evidence_release_service",
     "institutional_context_projection_service",
@@ -385,6 +391,10 @@ def _build_policy_agent_service(
         trace_coordinator=registry.get(
             "y3172_trace_coordinator",
             Y3172TraceCoordinator,
+        ),
+        thematic_evidence_service=registry.get(
+            "thematic_evidence_service",
+            ThematicEvidenceService,
         ),
         audit_service=registry.get(
             "audit_service",
@@ -663,6 +673,36 @@ def install_application_providers(
         "policy_agent_service",
         _build_policy_agent_service,
     )
+    providers.register(
+        "verified_passage_catalog",
+        lambda _registry: __import__("json").loads(
+            _required_file(
+                settings.knowledge_base_root / "passages" / "verified_passage_catalog.json",
+                "verified passage catalog",
+            ).read_text(encoding="utf-8")
+        ),
+    )
+    providers.register(
+        "thematic_evidence_resolver",
+        lambda _registry: ThematicEvidenceService(
+            records_root=settings.knowledge_base_root / "records",
+            gaps_path=_required_file(settings.knowledge_base_root / "gaps" / "policy_gaps.yaml", "policy evidence gaps"),
+            routing_path=_required_file(settings.configuration_root / "thematic_evidence_routing.yaml", "thematic evidence routing"),
+        ),
+    )
+    providers.register(
+        "thematic_evidence_service",
+        lambda registry: registry.get("thematic_evidence_resolver", ThematicEvidenceService),
+    )
+    providers.register(
+        "thematic_evidence_views",
+        lambda registry: registry.get("thematic_evidence_service", ThematicEvidenceService).for_stage("STAGE-1").views,
+    )
+    providers.register(
+        "policy_evidence_gaps",
+        lambda registry: registry.get("thematic_evidence_service", ThematicEvidenceService).for_stage("STAGE-2").gaps,
+    )
+
     providers.register(
         "scenario_clock",
         lambda _registry: _build_scenario_clock(settings),

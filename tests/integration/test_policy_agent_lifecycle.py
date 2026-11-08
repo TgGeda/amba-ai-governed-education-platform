@@ -38,6 +38,9 @@ from amba_ai.services.policy_agent_service import (
     PolicyAgentService,
 )
 from amba_ai.services.policy_kb_service import PolicyKBService
+from amba_ai.services.thematic_evidence_service import (
+    ThematicEvidenceService,
+)
 from amba_ai.standards.y3172_models import (
     PipelineNodeStatus,
     Y3172Node,
@@ -172,6 +175,10 @@ def _agent(
         trace_coordinator=providers.get(
             "y3172_trace_coordinator",
             Y3172TraceCoordinator,
+        ),
+        thematic_evidence_service=providers.get(
+            "thematic_evidence_service",
+            ThematicEvidenceService,
         ),
         audit_service=providers.get(
             "audit_service",
