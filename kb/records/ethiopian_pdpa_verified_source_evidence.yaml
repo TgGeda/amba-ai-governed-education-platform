@@ -1,0 +1,69 @@
+schema_version: "1.0.0"
+evidence_set_id: "AMBA-GOV-VERIFIED-SOURCE-ETH-PDPA-1321-2024"
+evidence_id: "ETH-PDPA-VERIFIED-SOURCE-BOUNDARY"
+source_id: "ETH-PDPA-1321-2024"
+version_id: "1321-2024"
+source_path: "kb/sources/ethiopia/ETH_PDPA_1321_2024.pdf"
+canonical_title: "Personal Data Protection Proclamation No. 1321/2024"
+jurisdiction: "Ethiopia"
+source_class: "primary_legislation"
+binding_level: "primary_legislation"
+artifact_sha256: "f4e1eb0c4a6948d34accc3a93dbe32010af851f6cfb7f4b17a66ba94e2df0bf6"
+artifact_integrity_status: "verified"
+pdf_magic_header_status: "verified"
+activation_status: "verified_source_boundary"
+bilingual_extraction:
+  profile: "ethiopian_bilingual_columns_v1"
+  physical_page_association_preserved: true
+  languages: ["am", "en"]
+  column_mapping:
+    left: "am"
+    right: "en"
+  cross_language_merge_permitted: false
+  translation_equivalence_claimed: false
+verification_status:
+  metadata: "verified"
+  locator: "not_assessed"
+  exact_excerpt: "not_assessed"
+  translation: "not_verified"
+  legal_review: "not_performed"
+  applicability: "unresolved"
+provision_evidence:
+  official_locator: null
+  page_start: null
+  page_end: null
+  exact_source_excerpt: null
+  exact_source_excerpt_sha256: null
+applicability_boundary:
+  regulated_actor: null
+  processing_operation: null
+  applicable_effective_date: null
+  exceptions_reviewed: false
+  applicability_evaluation_completed: false
+eligibility:
+  eligible_for_legal_context: true
+  eligible_for_readiness_evidence: true
+  eligible_for_binding_legal_findings: false
+  eligible_for_project_enforcement: false
+  eligible_for_citation: false
+binding_finding_activation_ready: false
+human_validation_required_for_binding_activation: true
+binding_finding_requirements:
+  - "verified source artifact"
+  - "verified document version"
+  - "exact verified locator"
+  - "exact verified excerpt"
+  - "applicable regulated actor"
+  - "applicable processing operation"
+  - "applicable effective date"
+  - "reviewed exceptions"
+  - "completed applicability evaluation and active binding-evidence status"
+prohibited_claims:
+  legal_review_completed: false
+  official_translation_verified: false
+  specific_actor_applicability_established: false
+  specific_operation_applicability_established: false
+  specific_date_applicability_established: false
+  automatic_legal_violation: false
+  automatic_statutory_block: false
+  earlier_prototype_articles_authoritative: false

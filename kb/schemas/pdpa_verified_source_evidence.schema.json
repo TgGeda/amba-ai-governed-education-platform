@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://amba-gov.local/schemas/pdpa-verified-source-evidence.schema.json",
+  "title": "Amba-Gov Ethiopian PDPA Verified Source Evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "evidence_set_id", "extracted_page_count", "evidence"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "evidence_set_id": {"const": "AMBA-GOV-VERIFIED-SOURCE-ETH-PDPA-1321-2024"},
+    "extracted_page_count": {"type": "integer", "minimum": 1},
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidence_id", "source_id", "version_id", "canonical_title", "jurisdiction",
+        "source_class", "binding_level", "source_path", "artifact_sha256",
+        "artifact_integrity_status", "pdf_magic_header_status", "activation_status",
+        "bilingual_extraction", "verification_status", "provision_evidence",
+        "applicability_boundary", "eligibility", "binding_finding_requirements",
+        "binding_finding_activation_ready", "human_validation_required_for_binding_activation",
+        "prohibited_claims"
+      ],
+      "properties": {
+        "evidence_id": {"const": "ETH-PDPA-VERIFIED-SOURCE-BOUNDARY"},
+        "source_id": {"const": "ETH-PDPA-1321-2024"},
+        "version_id": {"const": "1321-2024"},
+        "canonical_title": {"const": "Personal Data Protection Proclamation No. 1321/2024"},
+        "jurisdiction": {"const": "Ethiopia"},
+        "source_class": {"const": "primary_legislation"},
+        "binding_level": {"const": "primary_legislation"},
+        "source_path": {"const": "kb/sources/ethiopia/ETH_PDPA_1321_2024.pdf"},
+        "artifact_sha256": {"const": "f4e1eb0c4a6948d34accc3a93dbe32010af851f6cfb7f4b17a66ba94e2df0bf6"},
+        "artifact_integrity_status": {"const": "verified"},
+        "pdf_magic_header_status": {"const": "verified"},
+        "activation_status": {"const": "verified_source_boundary"},
+        "bilingual_extraction": {
+          "type": "object", "additionalProperties": false,
+          "required": ["profile", "physical_page_association_preserved", "languages", "column_mapping", "cross_language_merge_permitted", "translation_equivalence_claimed"],
+          "properties": {
+            "profile": {"const": "ethiopian_bilingual_columns_v1"},
+            "physical_page_association_preserved": {"const": true},
+            "languages": {"const": ["am", "en"]},
+            "column_mapping": {
+              "type": "object", "additionalProperties": false,
+              "required": ["left", "right"],
+              "properties": {"left": {"const": "am"}, "right": {"const": "en"}}
+            },
+            "cross_language_merge_permitted": {"const": false},
+            "translation_equivalence_claimed": {"const": false}
+          }
+        },
+        "verification_status": {
+          "type": "object", "additionalProperties": false,
+          "required": ["metadata", "locator", "exact_excerpt", "translation", "legal_review", "applicability"],
+          "properties": {
+            "metadata": {"const": "verified"},
+            "locator": {"const": "not_assessed"},
+            "exact_excerpt": {"const": "not_assessed"},
+            "translation": {"const": "not_verified"},
+            "legal_review": {"const": "not_performed"},
+            "applicability": {"const": "unresolved"}
+          }
+        },
+        "provision_evidence": {
+          "type": "object", "additionalProperties": false,
+          "required": ["official_locator", "page_start", "page_end", "exact_source_excerpt", "exact_source_excerpt_sha256"],
+          "properties": {
+            "official_locator": {"type": "null"}, "page_start": {"type": "null"},
+            "page_end": {"type": "null"}, "exact_source_excerpt": {"type": "null"},
+            "exact_source_excerpt_sha256": {"type": "null"}
+          }
+        },
+        "applicability_boundary": {
+          "type": "object", "additionalProperties": false,
+          "required": ["regulated_actor", "processing_operation", "applicable_effective_date", "exceptions_reviewed", "applicability_evaluation_completed"],
+          "properties": {
+            "regulated_actor": {"type": "null"}, "processing_operation": {"type": "null"},
+            "applicable_effective_date": {"type": "null"}, "exceptions_reviewed": {"const": false},
+            "applicability_evaluation_completed": {"const": false}
+          }
+        },
+        "eligibility": {
+          "type": "object", "additionalProperties": false,
+          "required": ["eligible_for_legal_context", "eligible_for_readiness_evidence", "eligible_for_binding_legal_findings", "eligible_for_project_enforcement", "eligible_for_citation"],
+          "properties": {
+            "eligible_for_legal_context": {"const": true},
+            "eligible_for_readiness_evidence": {"const": true},
+            "eligible_for_binding_legal_findings": {"const": false},
+            "eligible_for_project_enforcement": {"const": false},
+            "eligible_for_citation": {"const": false}
+          }
+        },
+        "binding_finding_requirements": {
+          "const": [
+            "verified source artifact", "verified document version", "exact verified locator",
+            "exact verified excerpt", "applicable regulated actor", "applicable processing operation",
+            "applicable effective date", "reviewed exceptions",
+            "completed applicability evaluation and active binding-evidence status"
+          ]
+        },
+        "binding_finding_activation_ready": {"const": false},
+        "human_validation_required_for_binding_activation": {"const": true},
+        "prohibited_claims": {
+          "type": "object", "additionalProperties": false,
+          "required": ["legal_review_completed", "official_translation_verified", "specific_actor_applicability_established", "specific_operation_applicability_established", "specific_date_applicability_established", "automatic_legal_violation", "automatic_statutory_block", "earlier_prototype_articles_authoritative"],
+          "properties": {
+            "legal_review_completed": {"const": false},
+            "official_translation_verified": {"const": false},
+            "specific_actor_applicability_established": {"const": false},
+            "specific_operation_applicability_established": {"const": false},
+            "specific_date_applicability_established": {"const": false},
+            "automatic_legal_violation": {"const": false},
+            "automatic_statutory_block": {"const": false},
+            "earlier_prototype_articles_authoritative": {"const": false}
+          }
+        }
+      }
+    }
+  }
+}

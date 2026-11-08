@@ -1,0 +1,85 @@
+{
+  "evidence": {
+    "activation_status": "verified_source_boundary",
+    "applicability_boundary": {
+      "applicability_evaluation_completed": false,
+      "applicable_effective_date": null,
+      "exceptions_reviewed": false,
+      "processing_operation": null,
+      "regulated_actor": null
+    },
+    "artifact_integrity_status": "verified",
+    "artifact_sha256": "f4e1eb0c4a6948d34accc3a93dbe32010af851f6cfb7f4b17a66ba94e2df0bf6",
+    "bilingual_extraction": {
+      "column_mapping": {
+        "left": "am",
+        "right": "en"
+      },
+      "cross_language_merge_permitted": false,
+      "languages": [
+        "am",
+        "en"
+      ],
+      "physical_page_association_preserved": true,
+      "profile": "ethiopian_bilingual_columns_v1",
+      "translation_equivalence_claimed": false
+    },
+    "binding_finding_activation_ready": false,
+    "binding_finding_requirements": [
+      "verified source artifact",
+      "verified document version",
+      "exact verified locator",
+      "exact verified excerpt",
+      "applicable regulated actor",
+      "applicable processing operation",
+      "applicable effective date",
+      "reviewed exceptions",
+      "completed applicability evaluation and active binding-evidence status"
+    ],
+    "binding_level": "primary_legislation",
+    "canonical_title": "Personal Data Protection Proclamation No. 1321/2024",
+    "eligibility": {
+      "eligible_for_binding_legal_findings": false,
+      "eligible_for_citation": false,
+      "eligible_for_legal_context": true,
+      "eligible_for_project_enforcement": false,
+      "eligible_for_readiness_evidence": true
+    },
+    "evidence_id": "ETH-PDPA-VERIFIED-SOURCE-BOUNDARY",
+    "human_validation_required_for_binding_activation": true,
+    "jurisdiction": "Ethiopia",
+    "pdf_magic_header_status": "verified",
+    "prohibited_claims": {
+      "automatic_legal_violation": false,
+      "automatic_statutory_block": false,
+      "earlier_prototype_articles_authoritative": false,
+      "legal_review_completed": false,
+      "official_translation_verified": false,
+      "specific_actor_applicability_established": false,
+      "specific_date_applicability_established": false,
+      "specific_operation_applicability_established": false
+    },
+    "provision_evidence": {
+      "exact_source_excerpt": null,
+      "exact_source_excerpt_sha256": null,
+      "official_locator": null,
+      "page_end": null,
+      "page_start": null
+    },
+    "source_class": "primary_legislation",
+    "source_id": "ETH-PDPA-1321-2024",
+    "source_path": "kb/sources/ethiopia/ETH_PDPA_1321_2024.pdf",
+    "verification_status": {
+      "applicability": "unresolved",
+      "exact_excerpt": "not_assessed",
+      "legal_review": "not_performed",
+      "locator": "not_assessed",
+      "metadata": "verified",
+      "translation": "not_verified"
+    },
+    "version_id": "1321-2024"
+  },
+  "evidence_set_id": "AMBA-GOV-VERIFIED-SOURCE-ETH-PDPA-1321-2024",
+  "extracted_page_count": 64,
+  "schema_version": "1.0.0"
+}
