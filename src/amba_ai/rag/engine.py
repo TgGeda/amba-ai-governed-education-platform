@@ -130,7 +130,7 @@ class FaissRAGEngine:
         filtered = {k: v for k, v in data.items() if k in allowed}
         return dto_cls(**filtered)  # type: ignore[call-arg]
 
-    def _ensure_kb_dir() -> None:
+    def _ensure_kb_dir(self) -> None:
         context = self._context(operation="ensure_kb_dir")
         try:
             self.kb_dir.mkdir(parents=True, exist_ok=True)

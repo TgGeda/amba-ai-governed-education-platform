@@ -229,6 +229,17 @@ def _destination_for_operation(
     operation_id: str,
     used_destinations: set[str],
 ) -> str:
+    if operation_id == "targeted_ad_dispatch":
+        destination = registry.require("SYNTHETIC-AD-SINK")
+        if not destination.synthetic:
+            raise ValueError("Targeted-advertising sink must remain synthetic")
+        if destination.registered:
+            raise ValueError(
+                "Targeted-advertising sink must remain unregistered so the "
+                "scenario exercises fail-closed destination enforcement"
+            )
+        return destination.destination_id
+
     matches = tuple(
         item.destination_id
         for item in registry.list_destinations()
