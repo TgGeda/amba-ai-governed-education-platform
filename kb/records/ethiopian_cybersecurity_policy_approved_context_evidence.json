@@ -1,7 +1,14 @@
 {
+  "activation_status": "human_review_approved_for_defined_scope",
   "administering_authority": "Information Network Security Administration",
+  "applicability_status": "unresolved",
+  "approval_method": "active_shared_document_review",
+  "approval_record_id": "AMBA-GOV-ACADEMIC-REVIEW-001",
+  "approval_record_owner": "Birhan Abuhay Jemere",
   "artifact_integrity_status": "verified",
   "artifact_sha256": "624b0db098bff6cd075e92c2fd44e0a082b892a53bb4ea47952fb0850e12c62e",
+  "binding_finding_eligible": false,
+  "binding_finding_status": "requires_project_specific_applicability_review",
   "candidate_count": 9,
   "candidates": [
     {
@@ -323,34 +330,41 @@
   "claim_boundaries": {
     "deterministic_source_locator_established": false,
     "eligible_for_binding_legal_findings": false,
-    "eligible_for_citation": false,
     "eligible_for_policy_context": true,
+    "eligible_for_provision_citation": false,
     "eligible_for_readiness_evidence": true,
+    "eligible_for_source_citation": true,
     "exact_source_excerpt_verified": false,
-    "human_review_required": true,
+    "human_review_required": false,
     "legal_effect": false,
     "national_binding_status": false,
     "source_page_locator_verified": false
   },
+  "contextual_evidence_eligible": true,
   "document_title": "The Federal Democratic Republic of Ethiopia National Cybersecurity Policy",
   "extracted_page_count": 54,
+  "human_review_status": "approved",
   "pdf_magic_header_status": "verified",
   "prohibited_independent_claims": {
+    "aastu_institutional_approval": false,
     "automatic_statutory_block": false,
     "binding_technical_threshold": false,
     "criminal_offence": false,
+    "formal_legal_opinion": false,
     "statutory_penalty": false,
     "valid_guardian_consent": false
   },
-  "promotion_requirements": [
-    "deterministic source locator",
-    "source-derived excerpt",
-    "excerpt SHA-256",
-    "human review"
-  ],
+  "provision_citation_eligible": false,
   "publication_date": "June 2024",
-  "record_set_id": "AMBA-GOV-REVIEW-REQUIRED-ETH-CYBERSECURITY-POLICY-2024",
-  "schema_version": "1.0.0",
+  "record_set_id": "AMBA-GOV-APPROVED-CONTEXT-ETH-CYBERSECURITY-POLICY-2024",
+  "remaining_requirements": [
+    "deterministic source locator for provision-level citation",
+    "exact source excerpt verification for provision-level citation",
+    "project-specific applicability review for binding findings"
+  ],
+  "review_record_status": "active",
+  "schema_version": "2.0.0",
+  "source_citation_eligible": true,
   "source_class": "national_policy",
   "source_id": "ETH-CYBERSECURITY-POLICY-2024",
   "source_path": "kb/sources/ethiopia/ETH_NATIONAL_CYBERSECURITY_POLICY_2024.pdf",

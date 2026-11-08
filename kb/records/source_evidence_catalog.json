@@ -1,0 +1,296 @@
+{
+  "academic_review_records": [
+    {
+      "approval_method": "active_shared_document_review",
+      "approved_passage_count": 90,
+      "evidence": {
+        "email_confirmation_available": true,
+        "reviewer_edits_present": true,
+        "reviewer_identity_visible_in_version_history": true,
+        "type": "active_shared_document",
+        "version_history_location": "Microsoft 365 shared document",
+        "version_history_retained_externally": true
+      },
+      "record_owner": "Birhan Abuhay Jemere",
+      "record_status": "active",
+      "relationship_to_project": "Academic advisor to Birhan Abuhay Jemere",
+      "review_record_id": "AMBA-GOV-ACADEMIC-REVIEW-001",
+      "review_status": "approved",
+      "review_type": "academic_advisor_review",
+      "reviewer_institution": "Addis Ababa Science and Technology University",
+      "reviewer_institution_abbreviation": "AASTU",
+      "reviewer_name": "Asrat Mulatu",
+      "reviewer_role": "Academic Advisor",
+      "reviewer_title": "Professor",
+      "scope_boundary": "Academic advisor approval supports catalog inclusion, citation within recorded boundaries, contextual analysis, and project documentation. It does not constitute AASTU institutional approval, a formal legal opinion, or automatic project-specific legal applicability."
+    }
+  ],
+  "approved_passage_count": 90,
+  "binding_finding_eligible_source_count": 0,
+  "catalog_id": "AMBA-GOV-SOURCE-EVIDENCE-CATALOG",
+  "passage_count": 90,
+  "provision_citation_eligible_source_count": 0,
+  "schema_version": "2.1.0",
+  "source_citation_eligible_count": 9,
+  "source_count": 9,
+  "sources": [
+    {
+      "activation_status": "human_review_approved_for_defined_scope",
+      "approval_record_id": "AMBA-GOV-ACADEMIC-REVIEW-001",
+      "approved_passage_count": 8,
+      "artifact_path": "kb/sources/ethiopia/ETH_NATIONAL_CYBERSECURITY_POLICY_2024.pdf",
+      "artifact_sha256": "624b0db098bff6cd075e92c2fd44e0a082b892a53bb4ea47952fb0850e12c62e",
+      "authority_boundary": [
+        "National policy context; not an independent criminal, penalty, consent, threshold, or statutory-block finding."
+      ],
+      "binding_finding_eligibility": false,
+      "binding_level": "national_policy",
+      "canonical_title": "The Federal Democratic Republic of Ethiopia National Cybersecurity Policy",
+      "contextual_evidence_eligibility": true,
+      "languages": [
+        "en"
+      ],
+      "locator_status": "verified_passages_human_approved",
+      "passage_catalog_path": "kb/passages/verified_passage_catalog.json",
+      "project_purpose": "Ethiopian cybersecurity-policy context for governance, privacy-security balance, resilience, capacity and monitoring.",
+      "provision_citation_eligibility": false,
+      "remaining_review_requirements": [
+        "source-specific applicability review"
+      ],
+      "source_citation_eligibility": true,
+      "source_class": "national_policy",
+      "source_id": "ETH-CYBERSECURITY-POLICY-2024",
+      "verified_passage_count": 8
+    },
+    {
+      "activation_status": "human_review_approved_for_defined_scope",
+      "approval_record_id": "AMBA-GOV-ACADEMIC-REVIEW-001",
+      "approved_passage_count": 9,
+      "artifact_path": "kb/sources/ethiopia/ETH_ECA_QOS_794_2021.pdf",
+      "artifact_sha256": "3c23ba0cfeca1f0fbdf724da211164fb8bbbec75945f16d9740cb112342ea449",
+      "authority_boundary": [
+        "Binding technical use requires confirmation that AMBA-GOV is within the regulated actor, service, technology, locality and measurement scope.",
+        "Human technical validation and applicability review remain required."
+      ],
+      "binding_finding_eligibility": false,
+      "binding_level": "directive",
+      "canonical_title": "Telecommunications Quality of Service Directive No. 794/2021",
+      "contextual_evidence_eligibility": true,
+      "languages": [
+        "en"
+      ],
+      "locator_status": "verified_passages_human_approved",
+      "passage_catalog_path": "kb/passages/verified_passage_catalog.json",
+      "project_purpose": "Binding telecommunications directive providing scoped QoS methods, tables, units and targets for regulated operators and services.",
+      "provision_citation_eligibility": false,
+      "remaining_review_requirements": [
+        "source-specific applicability review",
+        "regulated operator/service/technology/locality confirmation",
+        "measurement reproduction"
+      ],
+      "source_citation_eligibility": true,
+      "source_class": "directive",
+      "source_id": "ETH-ECA-QOS-794-2021",
+      "verified_passage_count": 9
+    },
+    {
+      "activation_status": "human_review_approved_for_defined_scope",
+      "approval_record_id": "AMBA-GOV-ACADEMIC-REVIEW-001",
+      "approved_passage_count": 8,
+      "artifact_path": "kb/sources/ethiopia/ETH_ESDP_VI_2021.pdf",
+      "artifact_sha256": "f77622ff64c29d03d1e090f5c401880e3b8cda6015f6379d2afb707a0a9c7678",
+      "authority_boundary": [
+        "Historical programme for 2020/21–2024/25; do not present as current after 2024/25.",
+        "No verified successor programme identified."
+      ],
+      "binding_finding_eligibility": false,
+      "binding_level": "national_policy",
+      "canonical_title": "Education Sector Development Programme VI",
+      "contextual_evidence_eligibility": true,
+      "languages": [
+        "en"
+      ],
+      "locator_status": "verified_passages_human_approved",
+      "passage_catalog_path": "kb/passages/verified_passage_catalog.json",
+      "project_purpose": "Historically qualified 2020/21-2024/25 education-sector baseline for connectivity, equity, teachers and infrastructure.",
+      "provision_citation_eligibility": false,
+      "remaining_review_requirements": [
+        "source-specific applicability review"
+      ],
+      "source_citation_eligibility": true,
+      "source_class": "sector_strategy",
+      "source_id": "ETH-ESDP-VI-2021",
+      "verified_passage_count": 8
+    },
+    {
+      "activation_status": "human_review_approved_for_defined_scope",
+      "approval_record_id": "AMBA-GOV-ACADEMIC-REVIEW-001",
+      "approved_passage_count": 18,
+      "artifact_path": "kb/sources/ethiopia/ETH_PDPA_1321_2024.pdf",
+      "artifact_sha256": "f4e1eb0c4a6948d34accc3a93dbe32010af851f6cfb7f4b17a66ba94e2df0bf6",
+      "authority_boundary": [
+        "Primary legislation, but project applicability is not automatic.",
+        "English and Amharic columns remain distinct; translation equivalence is not claimed.",
+        "Binding finding requires explicit actor, operation, date, exceptions, legal review and activation decision."
+      ],
+      "binding_finding_eligibility": false,
+      "binding_level": "primary_legislation",
+      "canonical_title": "Personal Data Protection Proclamation No. 1321/2024",
+      "contextual_evidence_eligibility": true,
+      "languages": [
+        "en"
+      ],
+      "locator_status": "verified_passages_human_approved",
+      "passage_catalog_path": "kb/passages/verified_passage_catalog.json",
+      "project_purpose": "Primary Ethiopian legislation for personal-data processing, minors, automated decisions, security, DPIA, logging and accountability.",
+      "provision_citation_eligibility": false,
+      "remaining_review_requirements": [
+        "source-specific applicability review",
+        "legal review",
+        "exception review",
+        "actor and operation confirmation"
+      ],
+      "source_citation_eligibility": true,
+      "source_class": "primary_legislation",
+      "source_id": "ETH-PDPA-1321-2024",
+      "verified_passage_count": 18
+    },
+    {
+      "activation_status": "human_review_approved_for_defined_scope",
+      "approval_record_id": "AMBA-GOV-ACADEMIC-REVIEW-001",
+      "approved_passage_count": 8,
+      "artifact_path": "kb/sources/ethiopia/ETH_STME_POLICY_FULL.pdf",
+      "artifact_sha256": "d5a6fb50ecd5b324d5d0eb1e1cb0eabd1744acd0423ff434127b76b4835e0260",
+      "authority_boundary": [
+        "Formal adoption status remains unverified.",
+        "Use as verified education-policy context, not as an independently binding national rule."
+      ],
+      "binding_finding_eligibility": false,
+      "binding_level": "policy_context",
+      "canonical_title": "Strategic Policy for National Science, Technology and Mathematics Education – Main Document",
+      "contextual_evidence_eligibility": true,
+      "languages": [
+        "en"
+      ],
+      "locator_status": "verified_passages_human_approved",
+      "passage_catalog_path": "kb/passages/verified_passage_catalog.json",
+      "project_purpose": "Education-policy supporting context for curriculum, teacher competence, resources, inclusion and monitoring; adoption unverified.",
+      "provision_citation_eligibility": false,
+      "remaining_review_requirements": [
+        "source-specific applicability review"
+      ],
+      "source_citation_eligibility": true,
+      "source_class": "strategic_policy_supporting_document",
+      "source_id": "ETH-STME-POLICY",
+      "verified_passage_count": 8
+    },
+    {
+      "activation_status": "human_review_approved_for_defined_scope",
+      "approval_record_id": "AMBA-GOV-ACADEMIC-REVIEW-001",
+      "approved_passage_count": 11,
+      "artifact_path": "kb/sources/international/ITU_AI_READINESS_REPORT.pdf",
+      "artifact_sha256": "71191768d46b60778c15f8d62b162aff73a319785cfc31ebf76bb944b0c68273",
+      "authority_boundary": [],
+      "binding_finding_eligibility": false,
+      "binding_level": "technical_framework",
+      "canonical_title": "AI Ready – Analysis Towards a Standardized Readiness Framework, Report 2.0",
+      "contextual_evidence_eligibility": true,
+      "languages": [
+        "en"
+      ],
+      "locator_status": "verified_passages_human_approved",
+      "passage_catalog_path": "kb/passages/verified_passage_catalog.json",
+      "project_purpose": "AMBA-GOV project-level readiness self-evaluation, evidence coverage, gaps and recommendations.",
+      "provision_citation_eligibility": false,
+      "remaining_review_requirements": [
+        "source-specific applicability review"
+      ],
+      "source_citation_eligibility": true,
+      "source_class": "readiness_framework",
+      "source_id": "ITU-AI-READINESS-2.0",
+      "verified_passage_count": 11
+    },
+    {
+      "activation_status": "human_review_approved_for_defined_scope",
+      "approval_record_id": "AMBA-GOV-ACADEMIC-REVIEW-001",
+      "approved_passage_count": 8,
+      "artifact_path": "kb/sources/international/ITU_T_Y3172_2019.pdf",
+      "artifact_sha256": "e42f9a3be3f951d3e19b9007f876f0b389c81b4693f0d8576e18185a1acfe67b",
+      "authority_boundary": [],
+      "binding_finding_eligibility": false,
+      "binding_level": "technical_standard",
+      "canonical_title": "Architectural framework for machine learning in future networks including IMT-2020",
+      "contextual_evidence_eligibility": true,
+      "languages": [
+        "en"
+      ],
+      "locator_status": "verified_passages_human_approved",
+      "passage_catalog_path": "kb/passages/verified_passage_catalog.json",
+      "project_purpose": "Architecture mapping for the ML sandbox, declarative intent, pipeline components and security boundary.",
+      "provision_citation_eligibility": false,
+      "remaining_review_requirements": [
+        "source-specific applicability review"
+      ],
+      "source_citation_eligibility": true,
+      "source_class": "technical_standard",
+      "source_id": "ITU-T-Y3172-2019",
+      "verified_passage_count": 8
+    },
+    {
+      "activation_status": "human_review_approved_for_defined_scope",
+      "approval_record_id": "AMBA-GOV-ACADEMIC-REVIEW-001",
+      "approved_passage_count": 12,
+      "artifact_path": "kb/sources/international/UNESCO_AI_ETHICS_RECOMMENDATION.pdf",
+      "artifact_sha256": "3a93a6006c591bf7600abc55e8beab883b6450b71638fea98148e4b08f005bf7",
+      "authority_boundary": [
+        "International supporting evidence only; no independent Ethiopian legal violation."
+      ],
+      "binding_finding_eligibility": false,
+      "binding_level": "international_guidance",
+      "canonical_title": "Recommendation on the Ethics of Artificial Intelligence",
+      "contextual_evidence_eligibility": true,
+      "languages": [
+        "en"
+      ],
+      "locator_status": "verified_passages_human_approved",
+      "passage_catalog_path": "kb/passages/verified_passage_catalog.json",
+      "project_purpose": "Nonbinding ethical support for educational AI, privacy, oversight, impact assessment and monitoring.",
+      "provision_citation_eligibility": false,
+      "remaining_review_requirements": [
+        "source-specific applicability review"
+      ],
+      "source_citation_eligibility": true,
+      "source_class": "international_recommendation",
+      "source_id": "UNESCO-AI-ETHICS-2021",
+      "verified_passage_count": 12
+    },
+    {
+      "activation_status": "human_review_approved_for_defined_scope",
+      "approval_record_id": "AMBA-GOV-ACADEMIC-REVIEW-001",
+      "approved_passage_count": 8,
+      "artifact_path": "kb/sources/international/UNICEF_AI_CHILDREN_V3_2025.pdf",
+      "artifact_sha256": "1d218b79b894402bda57d97527ef7ea015b0642003ba582d6259b050d0a548ea",
+      "authority_boundary": [
+        "Nonbinding international guidance; does not independently establish an Ethiopian legal violation."
+      ],
+      "binding_finding_eligibility": false,
+      "binding_level": "international_guidance",
+      "canonical_title": "Guidance on AI and Children 3.0",
+      "contextual_evidence_eligibility": true,
+      "languages": [
+        "en"
+      ],
+      "locator_status": "verified_passages_human_approved",
+      "passage_catalog_path": "kb/passages/verified_passage_catalog.json",
+      "project_purpose": "Nonbinding child-centred safeguards, privacy, oversight, inclusion, participation and low-resource operation.",
+      "provision_citation_eligibility": false,
+      "remaining_review_requirements": [
+        "source-specific applicability review"
+      ],
+      "source_citation_eligibility": true,
+      "source_class": "international_guidance",
+      "source_id": "UNICEF-AI-CHILDREN-3.0",
+      "verified_passage_count": 8
+    }
+  ]
+}

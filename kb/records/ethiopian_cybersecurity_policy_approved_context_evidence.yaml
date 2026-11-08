@@ -1,0 +1,339 @@
+activation_status: human_review_approved_for_defined_scope
+administering_authority: Information Network Security Administration
+applicability_status: unresolved
+approval_method: active_shared_document_review
+approval_record_id: AMBA-GOV-ACADEMIC-REVIEW-001
+approval_record_owner: Birhan Abuhay Jemere
+artifact_integrity_status: verified
+artifact_sha256: 624b0db098bff6cd075e92c2fd44e0a082b892a53bb4ea47952fb0850e12c62e
+binding_finding_eligible: false
+binding_finding_status: requires_project_specific_applicability_review
+candidate_count: 9
+candidates:
+- administering_authority: Information Network Security Administration
+  artifact_sha256: 624b0db098bff6cd075e92c2fd44e0a082b892a53bb4ea47952fb0850e12c62e
+  binding_level: national_policy
+  candidate_id: ETH-CYBERSECURITY-POLICY-CYBERSECURITY-GOVERNANCE
+  document_title: The Federal Democratic Republic of Ethiopia National Cybersecurity Policy
+  eligible_for_binding_legal_findings: false
+  eligible_for_citation: false
+  eligible_for_policy_context: true
+  eligible_for_readiness_evidence: true
+  exact_source_excerpt: null
+  exact_source_excerpt_sha256: null
+  human_review_required: true
+  legal_effect: false
+  locator_status: unresolved
+  national_binding_status: false
+  official_locator: null
+  page_end: null
+  page_start: null
+  prohibited_claims:
+    automatic_statutory_block: false
+    binding_technical_threshold: false
+    criminal_offence: false
+    statutory_penalty: false
+    valid_guardian_consent: false
+  publication_date: June 2024
+  record_status: human_review_required
+  reviewed_factual_boundary: The policy may support cybersecurity-governance context and readiness evidence.
+  reviewed_factual_boundary_sha256: 55d37be4549c1ec0f1750379ccced81848e005c61ea4d9d01c710a0cc11dbe74
+  source_class: national_policy
+  source_id: ETH-CYBERSECURITY-POLICY-2024
+  theme: cybersecurity governance
+  version_id: 2024-06
+- administering_authority: Information Network Security Administration
+  artifact_sha256: 624b0db098bff6cd075e92c2fd44e0a082b892a53bb4ea47952fb0850e12c62e
+  binding_level: national_policy
+  candidate_id: ETH-CYBERSECURITY-POLICY-SHARED-RESPONSIBILITY
+  document_title: The Federal Democratic Republic of Ethiopia National Cybersecurity Policy
+  eligible_for_binding_legal_findings: false
+  eligible_for_citation: false
+  eligible_for_policy_context: true
+  eligible_for_readiness_evidence: true
+  exact_source_excerpt: null
+  exact_source_excerpt_sha256: null
+  human_review_required: true
+  legal_effect: false
+  locator_status: unresolved
+  national_binding_status: false
+  official_locator: null
+  page_end: null
+  page_start: null
+  prohibited_claims:
+    automatic_statutory_block: false
+    binding_technical_threshold: false
+    criminal_offence: false
+    statutory_penalty: false
+    valid_guardian_consent: false
+  publication_date: June 2024
+  record_status: human_review_required
+  reviewed_factual_boundary: The policy may support shared-responsibility context and readiness evidence.
+  reviewed_factual_boundary_sha256: 28330ca5b7ac31e73c6516724779428f7aa418e1e42302cab9f7b4a85b03ff60
+  source_class: national_policy
+  source_id: ETH-CYBERSECURITY-POLICY-2024
+  theme: shared responsibility
+  version_id: 2024-06
+- administering_authority: Information Network Security Administration
+  artifact_sha256: 624b0db098bff6cd075e92c2fd44e0a082b892a53bb4ea47952fb0850e12c62e
+  binding_level: national_policy
+  candidate_id: ETH-CYBERSECURITY-POLICY-PRIVACY-SECURITY-BALANCE
+  document_title: The Federal Democratic Republic of Ethiopia National Cybersecurity Policy
+  eligible_for_binding_legal_findings: false
+  eligible_for_citation: false
+  eligible_for_policy_context: true
+  eligible_for_readiness_evidence: true
+  exact_source_excerpt: null
+  exact_source_excerpt_sha256: null
+  human_review_required: true
+  legal_effect: false
+  locator_status: unresolved
+  national_binding_status: false
+  official_locator: null
+  page_end: null
+  page_start: null
+  prohibited_claims:
+    automatic_statutory_block: false
+    binding_technical_threshold: false
+    criminal_offence: false
+    statutory_penalty: false
+    valid_guardian_consent: false
+  publication_date: June 2024
+  record_status: human_review_required
+  reviewed_factual_boundary: The policy may support context about balancing privacy and security.
+  reviewed_factual_boundary_sha256: 95e700f2b1e4fbf05223238775e9511f5b1b14853162f77cf1ec619c210a640f
+  source_class: national_policy
+  source_id: ETH-CYBERSECURITY-POLICY-2024
+  theme: privacy and security balance
+  version_id: 2024-06
+- administering_authority: Information Network Security Administration
+  artifact_sha256: 624b0db098bff6cd075e92c2fd44e0a082b892a53bb4ea47952fb0850e12c62e
+  binding_level: national_policy
+  candidate_id: ETH-CYBERSECURITY-POLICY-DATA-LIFECYCLE-GOVERNANCE
+  document_title: The Federal Democratic Republic of Ethiopia National Cybersecurity Policy
+  eligible_for_binding_legal_findings: false
+  eligible_for_citation: false
+  eligible_for_policy_context: true
+  eligible_for_readiness_evidence: true
+  exact_source_excerpt: null
+  exact_source_excerpt_sha256: null
+  human_review_required: true
+  legal_effect: false
+  locator_status: unresolved
+  national_binding_status: false
+  official_locator: null
+  page_end: null
+  page_start: null
+  prohibited_claims:
+    automatic_statutory_block: false
+    binding_technical_threshold: false
+    criminal_offence: false
+    statutory_penalty: false
+    valid_guardian_consent: false
+  publication_date: June 2024
+  record_status: human_review_required
+  reviewed_factual_boundary: The policy may support data-lifecycle-governance context and readiness evidence.
+  reviewed_factual_boundary_sha256: 5f6b814b2492955a49043357c3b6d6e98f3a345e3dd0dc637df1d61b6ba42b4c
+  source_class: national_policy
+  source_id: ETH-CYBERSECURITY-POLICY-2024
+  theme: data-lifecycle governance
+  version_id: 2024-06
+- administering_authority: Information Network Security Administration
+  artifact_sha256: 624b0db098bff6cd075e92c2fd44e0a082b892a53bb4ea47952fb0850e12c62e
+  binding_level: national_policy
+  candidate_id: ETH-CYBERSECURITY-POLICY-EDUCATION-CAPACITY-BUILDING
+  document_title: The Federal Democratic Republic of Ethiopia National Cybersecurity Policy
+  eligible_for_binding_legal_findings: false
+  eligible_for_citation: false
+  eligible_for_policy_context: true
+  eligible_for_readiness_evidence: true
+  exact_source_excerpt: null
+  exact_source_excerpt_sha256: null
+  human_review_required: true
+  legal_effect: false
+  locator_status: unresolved
+  national_binding_status: false
+  official_locator: null
+  page_end: null
+  page_start: null
+  prohibited_claims:
+    automatic_statutory_block: false
+    binding_technical_threshold: false
+    criminal_offence: false
+    statutory_penalty: false
+    valid_guardian_consent: false
+  publication_date: June 2024
+  record_status: human_review_required
+  reviewed_factual_boundary: The policy may support education and cybersecurity-capacity-building context.
+  reviewed_factual_boundary_sha256: 77f59190c9d09d98f0d3cfef5625d6395a0b36fe2ec200f0c43bafcbdf9361ce
+  source_class: national_policy
+  source_id: ETH-CYBERSECURITY-POLICY-2024
+  theme: education and capacity building
+  version_id: 2024-06
+- administering_authority: Information Network Security Administration
+  artifact_sha256: 624b0db098bff6cd075e92c2fd44e0a082b892a53bb4ea47952fb0850e12c62e
+  binding_level: national_policy
+  candidate_id: ETH-CYBERSECURITY-POLICY-INDIGENOUS-RESEARCH
+  document_title: The Federal Democratic Republic of Ethiopia National Cybersecurity Policy
+  eligible_for_binding_legal_findings: false
+  eligible_for_citation: false
+  eligible_for_policy_context: true
+  eligible_for_readiness_evidence: true
+  exact_source_excerpt: null
+  exact_source_excerpt_sha256: null
+  human_review_required: true
+  legal_effect: false
+  locator_status: unresolved
+  national_binding_status: false
+  official_locator: null
+  page_end: null
+  page_start: null
+  prohibited_claims:
+    automatic_statutory_block: false
+    binding_technical_threshold: false
+    criminal_offence: false
+    statutory_penalty: false
+    valid_guardian_consent: false
+  publication_date: June 2024
+  record_status: human_review_required
+  reviewed_factual_boundary: The policy may support indigenous cybersecurity research context and readiness evidence.
+  reviewed_factual_boundary_sha256: b27ce8cad86b7678ddd96949ce6162dea4c4b0bc7a5dc124080e459f0ef30813
+  source_class: national_policy
+  source_id: ETH-CYBERSECURITY-POLICY-2024
+  theme: indigenous research
+  version_id: 2024-06
+- administering_authority: Information Network Security Administration
+  artifact_sha256: 624b0db098bff6cd075e92c2fd44e0a082b892a53bb4ea47952fb0850e12c62e
+  binding_level: national_policy
+  candidate_id: ETH-CYBERSECURITY-POLICY-CRITICAL-INFRASTRUCTURE-RESILIENCE
+  document_title: The Federal Democratic Republic of Ethiopia National Cybersecurity Policy
+  eligible_for_binding_legal_findings: false
+  eligible_for_citation: false
+  eligible_for_policy_context: true
+  eligible_for_readiness_evidence: true
+  exact_source_excerpt: null
+  exact_source_excerpt_sha256: null
+  human_review_required: true
+  legal_effect: false
+  locator_status: unresolved
+  national_binding_status: false
+  official_locator: null
+  page_end: null
+  page_start: null
+  prohibited_claims:
+    automatic_statutory_block: false
+    binding_technical_threshold: false
+    criminal_offence: false
+    statutory_penalty: false
+    valid_guardian_consent: false
+  publication_date: June 2024
+  record_status: human_review_required
+  reviewed_factual_boundary: The policy may support critical-infrastructure-resilience context and readiness evidence.
+  reviewed_factual_boundary_sha256: 89c409f5769620aa135d7aab6bda654ede1bc2b1f55f801b46526fa83e6c9926
+  source_class: national_policy
+  source_id: ETH-CYBERSECURITY-POLICY-2024
+  theme: critical-infrastructure resilience
+  version_id: 2024-06
+- administering_authority: Information Network Security Administration
+  artifact_sha256: 624b0db098bff6cd075e92c2fd44e0a082b892a53bb4ea47952fb0850e12c62e
+  binding_level: national_policy
+  candidate_id: ETH-CYBERSECURITY-POLICY-INSTITUTIONAL-COORDINATION
+  document_title: The Federal Democratic Republic of Ethiopia National Cybersecurity Policy
+  eligible_for_binding_legal_findings: false
+  eligible_for_citation: false
+  eligible_for_policy_context: true
+  eligible_for_readiness_evidence: true
+  exact_source_excerpt: null
+  exact_source_excerpt_sha256: null
+  human_review_required: true
+  legal_effect: false
+  locator_status: unresolved
+  national_binding_status: false
+  official_locator: null
+  page_end: null
+  page_start: null
+  prohibited_claims:
+    automatic_statutory_block: false
+    binding_technical_threshold: false
+    criminal_offence: false
+    statutory_penalty: false
+    valid_guardian_consent: false
+  publication_date: June 2024
+  record_status: human_review_required
+  reviewed_factual_boundary: The policy may support institutional-coordination context and readiness evidence.
+  reviewed_factual_boundary_sha256: aed1f3349c55a3226a17b7a90259e950e08fd5ac30e7ad361d3ffc631105970a
+  source_class: national_policy
+  source_id: ETH-CYBERSECURITY-POLICY-2024
+  theme: institutional coordination
+  version_id: 2024-06
+- administering_authority: Information Network Security Administration
+  artifact_sha256: 624b0db098bff6cd075e92c2fd44e0a082b892a53bb4ea47952fb0850e12c62e
+  binding_level: national_policy
+  candidate_id: ETH-CYBERSECURITY-POLICY-MONITORING-EVALUATION
+  document_title: The Federal Democratic Republic of Ethiopia National Cybersecurity Policy
+  eligible_for_binding_legal_findings: false
+  eligible_for_citation: false
+  eligible_for_policy_context: true
+  eligible_for_readiness_evidence: true
+  exact_source_excerpt: null
+  exact_source_excerpt_sha256: null
+  human_review_required: true
+  legal_effect: false
+  locator_status: unresolved
+  national_binding_status: false
+  official_locator: null
+  page_end: null
+  page_start: null
+  prohibited_claims:
+    automatic_statutory_block: false
+    binding_technical_threshold: false
+    criminal_offence: false
+    statutory_penalty: false
+    valid_guardian_consent: false
+  publication_date: June 2024
+  record_status: human_review_required
+  reviewed_factual_boundary: The policy may support monitoring-and-evaluation context and readiness evidence.
+  reviewed_factual_boundary_sha256: 061a508cc01350fe58312220b9df3cf359d9142c710f98e8573f4abd09315877
+  source_class: national_policy
+  source_id: ETH-CYBERSECURITY-POLICY-2024
+  theme: monitoring and evaluation
+  version_id: 2024-06
+claim_boundaries:
+  deterministic_source_locator_established: false
+  eligible_for_binding_legal_findings: false
+  eligible_for_policy_context: true
+  eligible_for_provision_citation: false
+  eligible_for_readiness_evidence: true
+  eligible_for_source_citation: true
+  exact_source_excerpt_verified: false
+  human_review_required: false
+  legal_effect: false
+  national_binding_status: false
+  source_page_locator_verified: false
+contextual_evidence_eligible: true
+document_title: The Federal Democratic Republic of Ethiopia National Cybersecurity Policy
+extracted_page_count: 54
+human_review_status: approved
+pdf_magic_header_status: verified
+prohibited_independent_claims:
+  aastu_institutional_approval: false
+  automatic_statutory_block: false
+  binding_technical_threshold: false
+  criminal_offence: false
+  formal_legal_opinion: false
+  statutory_penalty: false
+  valid_guardian_consent: false
+provision_citation_eligible: false
+publication_date: June 2024
+record_set_id: AMBA-GOV-APPROVED-CONTEXT-ETH-CYBERSECURITY-POLICY-2024
+remaining_requirements:
+- deterministic source locator for provision-level citation
+- exact source excerpt verification for provision-level citation
+- project-specific applicability review for binding findings
+review_record_status: active
+schema_version: 2.0.0
+source_citation_eligible: true
+source_class: national_policy
+source_id: ETH-CYBERSECURITY-POLICY-2024
+source_path: kb/sources/ethiopia/ETH_NATIONAL_CYBERSECURITY_POLICY_2024.pdf
+version_id: 2024-06

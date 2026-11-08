@@ -1,0 +1,33 @@
+{
+  "review_record_id": "AMBA-GOV-ACADEMIC-REVIEW-001",
+  "review_type": "academic_advisor_review",
+  "review_status": "approved",
+  "record_status": "active",
+  "reviewer_name": "Asrat Mulatu",
+  "reviewer_title": "Professor",
+  "reviewer_role": "Academic Advisor",
+  "reviewer_institution": "Addis Ababa Science and Technology University",
+  "reviewer_institution_abbreviation": "AASTU",
+  "relationship_to_project": "Academic advisor to Birhan Abuhay Jemere",
+  "approval_method": "active_shared_document_review",
+  "approved_passage_count": 90,
+  "record_owner": "Birhan Abuhay Jemere",
+  "evidence": {
+    "type": "active_shared_document",
+    "version_history_location": "Microsoft 365 shared document",
+    "reviewer_edits_present": true,
+    "reviewer_identity_visible_in_version_history": true,
+    "version_history_retained_externally": true,
+    "email_confirmation_available": true
+  },
+  "scope_boundary": {
+    "catalog_inclusion": true,
+    "source_grounded_retrieval": true,
+    "contextual_analysis": true,
+    "project_documentation": true,
+    "aastu_institutional_approval": false,
+    "formal_legal_opinion": false,
+    "automatic_legal_applicability": false,
+    "automatic_binding_finding": false
+  }
+}

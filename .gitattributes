@@ -1,38 +1,9 @@
-# Normalize text files in Git while preserving platform-specific scripts
-* text=auto
-
-# Source and configuration files use LF in the repository
+# Deterministic text formats
 *.py text eol=lf
+*.json text eol=lf
+*.jsonl text eol=lf
 *.yaml text eol=lf
 *.yml text eol=lf
-*.json text eol=lf
 *.md text eol=lf
 *.txt text eol=lf
-*.csv text eol=lf
-*.sql text eol=lf
-*.toml text eol=lf
-*.ini text eol=lf
-*.qss text eol=lf
-*.sh text eol=lf
-*.sha256 text eol=lf
-*.spec text eol=lf
-
-# Windows command scripts retain CRLF
-*.bat text eol=crlf
 *.cmd text eol=crlf
-
-# Binary files must never undergo line-ending conversion
-*.png binary
-*.jpg binary
-*.jpeg binary
-*.gif binary
-*.ico binary
-*.icns binary
-*.pdf binary
-*.zip binary
-*.docx binary
-*.pptx binary
-*.xlsx binary
-*.db binary
-*.sqlite binary
-*.sqlite3 binary

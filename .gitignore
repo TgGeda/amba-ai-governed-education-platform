@@ -163,3 +163,6 @@ execution_numbered.txt
 
 agent_input/
 implementation_context_*.txt
+
+# Local migration backups
+migration_backups/

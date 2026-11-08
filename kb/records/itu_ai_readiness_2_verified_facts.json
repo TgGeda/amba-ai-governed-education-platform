@@ -214,5 +214,19 @@
     "dimension": "methodology_unresolved",
     "factor": "methodology_unresolved",
     "metric": "methodology_unresolved"
-  }
+  },
+  "human_review_status": "approved",
+  "approval_record_id": "AMBA-GOV-ACADEMIC-REVIEW-001",
+  "approval_method": "active_shared_document_review",
+  "review_record_status": "active",
+  "approval_record_owner": "Birhan Abuhay Jemere",
+  "activation_status": "human_review_approved_for_defined_scope",
+  "source_citation_eligible": true,
+  "contextual_evidence_eligible": true,
+  "provision_citation_eligible": false,
+  "binding_finding_eligible": false,
+  "binding_finding_status": "requires_project_specific_applicability_review",
+  "national_ai_readiness_score": null,
+  "national_binding_status": false,
+  "legal_effect": false
 }

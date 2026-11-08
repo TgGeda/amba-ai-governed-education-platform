@@ -1,17 +1,17 @@
-schema_version: "1.0.0"
-evidence_set_id: "AMBA-GOV-VERIFIED-SOURCE-ETH-ECA-QOS-794-2021"
-evidence_id: "ETH-ECA-QOS-VERIFIED-SOURCE-BOUNDARY"
-source_id: "ETH-ECA-QOS-794-2021"
-version_id: "794-2021"
-source_path: "kb/sources/ethiopia/ETH_ECA_QOS_794_2021.pdf"
-canonical_title: "Telecommunications Quality of Service Directive No. 794/2021"
-source_class: "directive"
-binding_level: "directive"
-artifact_sha256: "3c23ba0cfeca1f0fbdf724da211164fb8bbbec75945f16d9740cb112342ea449"
-artifact_integrity_status: "verified"
-pdf_magic_header_status: "verified"
-activation_status: "verified_source_boundary"
-locator_verification_status: "not_assessed"
+schema_version: 1.0.0
+evidence_set_id: AMBA-GOV-VERIFIED-SOURCE-ETH-ECA-QOS-794-2021
+evidence_id: ETH-ECA-QOS-VERIFIED-SOURCE-BOUNDARY
+source_id: ETH-ECA-QOS-794-2021
+version_id: 794-2021
+source_path: kb/sources/ethiopia/ETH_ECA_QOS_794_2021.pdf
+canonical_title: Telecommunications Quality of Service Directive No. 794/2021
+source_class: directive
+binding_level: directive
+artifact_sha256: 3c23ba0cfeca1f0fbdf724da211164fb8bbbec75945f16d9740cb112342ea449
+artifact_integrity_status: verified
+pdf_magic_header_status: verified
+activation_status: human_review_approved_for_defined_scope
+locator_verification_status: not_assessed
 official_locator: null
 page_start: null
 page_end: null
@@ -43,13 +43,24 @@ threshold_claims:
 threshold_activation_ready: false
 human_validation_required_for_threshold_activation: true
 threshold_activation_requirements:
-  - "exact clause or table locator"
-  - "exact excerpt or table cells"
-  - "verified unit"
-  - "regulated service"
-  - "regulated actor"
-  - "measurement method"
-  - "applicable date"
-  - "verified table headers and conditions"
-  - "excerpt or table-cell SHA-256"
-  - "human validation"
+- exact clause or table locator
+- exact excerpt or table cells
+- verified unit
+- regulated service
+- regulated actor
+- measurement method
+- applicable date
+- verified table headers and conditions
+- excerpt or table-cell SHA-256
+- human validation
+human_review_status: approved
+approval_record_id: AMBA-GOV-ACADEMIC-REVIEW-001
+approval_method: active_shared_document_review
+review_record_status: active
+approval_record_owner: Birhan Abuhay Jemere
+source_citation_eligible: true
+contextual_evidence_eligible: true
+provision_citation_eligible: false
+binding_finding_eligible: false
+binding_finding_status: requires_project_specific_applicability_review
+applicability_status: unresolved

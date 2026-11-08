@@ -1,16 +1,16 @@
-schema_version: "1.0.0"
-evidence_set_id: "AMBA-GOV-VERIFIED-CONTEXT-ETH-STME"
-source_id: "ETH-STME-POLICY"
-version_id: "undated-main-document"
-source_path: "kb/sources/ethiopia/ETH_STME_POLICY_FULL.pdf"
-artifact_sha256: "d5a6fb50ecd5b324d5d0eb1e1cb0eabd1744acd0423ff434127b76b4835e0260"
-document_title: "Strategic Policy for National Science, Technology and Mathematics Education"
-document_subtitle: "Main Document"
-source_class: "strategic_policy_supporting_document"
-binding_level: "policy_context"
-formal_adoption_status: "unverified"
-activation_status: "verified_context_boundary"
-locator_verification_status: "not_assessed"
+schema_version: 1.0.0
+evidence_set_id: AMBA-GOV-VERIFIED-CONTEXT-ETH-STME
+source_id: ETH-STME-POLICY
+version_id: undated-main-document
+source_path: kb/sources/ethiopia/ETH_STME_POLICY_FULL.pdf
+artifact_sha256: d5a6fb50ecd5b324d5d0eb1e1cb0eabd1744acd0423ff434127b76b4835e0260
+document_title: Strategic Policy for National Science, Technology and Mathematics Education
+document_subtitle: Main Document
+source_class: strategic_policy_supporting_document
+binding_level: policy_context
+formal_adoption_status: unverified
+activation_status: human_review_approved_for_defined_scope
+locator_verification_status: not_assessed
 eligible_for_policy_context: true
 eligible_for_readiness_evidence: true
 eligible_for_binding_findings: false
@@ -23,15 +23,32 @@ exact_source_excerpt_verified: false
 source_page_locator_verified: false
 human_validation_required_for_locator_activation: true
 activation_requirements:
-  - "deterministic source locator"
-  - "source-derived excerpt"
-  - "excerpt SHA-256"
-  - "human validation"
+- deterministic source locator
+- source-derived excerpt
+- excerpt SHA-256
+- human validation
 evidence:
-  - {evidence_id: "ETH-STME-CONTEXT-STEM-EDUCATION-CONTEXT", theme: "science, technology, and mathematics education context"}
-  - {evidence_id: "ETH-STME-CONTEXT-CURRICULUM-REFORM", theme: "curriculum-reform context"}
-  - {evidence_id: "ETH-STME-CONTEXT-TEACHER-DEVELOPMENT", theme: "teacher-development context"}
-  - {evidence_id: "ETH-STME-CONTEXT-EDUCATIONAL-RESOURCES", theme: "educational-resource analysis"}
-  - {evidence_id: "ETH-STME-CONTEXT-INCLUSION", theme: "inclusion"}
-  - {evidence_id: "ETH-STME-CONTEXT-MONITORING-EVALUATION", theme: "monitoring and evaluation"}
-  - {evidence_id: "ETH-STME-CONTEXT-STAKEHOLDER-PARTNERSHIPS", theme: "stakeholder partnerships"}
+- evidence_id: ETH-STME-CONTEXT-STEM-EDUCATION-CONTEXT
+  theme: science, technology, and mathematics education context
+- evidence_id: ETH-STME-CONTEXT-CURRICULUM-REFORM
+  theme: curriculum-reform context
+- evidence_id: ETH-STME-CONTEXT-TEACHER-DEVELOPMENT
+  theme: teacher-development context
+- evidence_id: ETH-STME-CONTEXT-EDUCATIONAL-RESOURCES
+  theme: educational-resource analysis
+- evidence_id: ETH-STME-CONTEXT-INCLUSION
+  theme: inclusion
+- evidence_id: ETH-STME-CONTEXT-MONITORING-EVALUATION
+  theme: monitoring and evaluation
+- evidence_id: ETH-STME-CONTEXT-STAKEHOLDER-PARTNERSHIPS
+  theme: stakeholder partnerships
+human_review_status: approved
+approval_record_id: AMBA-GOV-ACADEMIC-REVIEW-001
+approval_method: active_shared_document_review
+review_record_status: active
+approval_record_owner: Birhan Abuhay Jemere
+source_citation_eligible: true
+contextual_evidence_eligible: true
+provision_citation_eligible: false
+binding_finding_eligible: false
+binding_finding_status: requires_project_specific_applicability_review

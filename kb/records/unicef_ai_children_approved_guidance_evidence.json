@@ -1,5 +1,12 @@
 {
+  "activation_status": "human_review_approved_for_defined_scope",
+  "approval_method": "active_shared_document_review",
+  "approval_record_id": "AMBA-GOV-ACADEMIC-REVIEW-001",
+  "approval_record_owner": "Birhan Abuhay Jemere",
+  "artifact_integrity_status": "verified",
   "artifact_sha256": "1d218b79b894402bda57d97527ef7ea015b0642003ba582d6259b050d0a548ea",
+  "binding_finding_eligible": false,
+  "binding_finding_status": "requires_project_specific_applicability_review",
   "candidate_count": 8,
   "candidates": [
     {
@@ -214,24 +221,41 @@
   "claim_boundaries": {
     "deterministic_source_locator_established": false,
     "eligible_for_binding_findings": false,
-    "eligible_for_citation": false,
+    "eligible_for_provision_citation": false,
+    "eligible_for_source_citation": true,
     "exact_source_excerpt_verified": false,
-    "human_review_required": true,
+    "human_review_required": false,
     "independent_ethiopian_legal_violation": false,
     "international_supporting_evidence_only": true,
+    "legal_effect": false,
     "national_binding_status": false,
     "source_page_locator_verified": false
   },
+  "contextual_evidence_eligible": true,
   "document_title": "Guidance on AI and Children 3.0",
-  "promotion_requirements": [
-    "deterministic source locator",
-    "source-derived excerpt",
-    "excerpt SHA-256",
-    "human review"
-  ],
+  "human_review_status": "approved",
+  "legal_effect": false,
+  "national_binding_status": false,
+  "pdf_magic_header_status": "verified",
+  "prohibited_claims": {
+    "aastu_institutional_approval": false,
+    "automatic_project_authorization": false,
+    "automatic_project_block": false,
+    "ethiopian_legislation": false,
+    "ethiopian_regulatory_approval": false,
+    "formal_legal_opinion": false
+  },
+  "provision_citation_eligible": false,
   "publication_date": "December 2025",
-  "record_set_id": "AMBA-GOV-REVIEW-REQUIRED-UNICEF-AI-CHILDREN-3.0",
-  "schema_version": "1.0.0",
+  "record_set_id": "AMBA-GOV-APPROVED-GUIDANCE-UNICEF-AI-CHILDREN-3.0",
+  "remaining_requirements": [
+    "deterministic source locator for provision-level citation",
+    "exact source excerpt verification for provision-level citation",
+    "project-specific applicability review for binding findings"
+  ],
+  "review_record_status": "active",
+  "schema_version": "2.0.0",
+  "source_citation_eligible": true,
   "source_class": "international_guidance",
   "source_id": "UNICEF-AI-CHILDREN-3.0",
   "source_path": "kb/sources/international/UNICEF_AI_CHILDREN_V3_2025.pdf",

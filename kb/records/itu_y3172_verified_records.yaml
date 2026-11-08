@@ -1,13 +1,13 @@
-schema_version: "1.0.0"
-record_set_id: "AMBA-GOV-VERIFIED-ITU-Y3172-2019"
-source_id: "ITU-T-Y3172-2019"
-source_path: "kb/sources/international/ITU_T_Y3172_2019.pdf"
-artifact_sha256: "e42f9a3be3f951d3e19b9007f876f0b389c81b4693f0d8576e18185a1acfe67b"
-document_title: "Architectural framework for machine learning in future networks including IMT-2020"
-edition: "1.0"
-approval_date: "2019-06-22"
-study_group: "13"
-persistent_identifier: "11.1002/1000/13894"
+schema_version: 1.0.0
+record_set_id: AMBA-GOV-VERIFIED-ITU-Y3172-2019
+source_id: ITU-T-Y3172-2019
+source_path: kb/sources/international/ITU_T_Y3172_2019.pdf
+artifact_sha256: e42f9a3be3f951d3e19b9007f876f0b389c81b4693f0d8576e18185a1acfe67b
+document_title: Architectural framework for machine learning in future networks including IMT-2020
+edition: '1.0'
+approval_date: '2019-06-22'
+study_group: '13'
+persistent_identifier: 11.1002/1000/13894
 authority_boundary:
   architecture_mapping: true
   ethiopian_legal_authority: false
@@ -16,28 +16,54 @@ authority_boundary:
   audit_inherently_required: false
   readiness_scoring_inherently_part_of_y3172: false
 records:
-  - record_id: "ITU-Y3172-ML-SANDBOX-DEFINITION"
-    version_id: "1.0"
-    locator: "Clause 3.2.6"
-    locator_verification_status: "verified_structural"
-    statement: "Clause 3.2.6 defines the ML sandbox."
-  - record_id: "ITU-Y3172-DECLARATIVE-ML-SPECIFICATION"
-    version_id: "1.0"
-    locator: "Clause 7.4"
-    locator_verification_status: "verified_structural"
-    statement: "Clause 7.4 addresses declarative ML application specifications and ML intent."
-  - record_id: "ITU-Y3172-ML-PIPELINE-COMPONENTS"
-    version_id: "1.0"
-    locator: "Clause 8.1"
-    locator_verification_status: "verified_structural"
-    statement: "The required ML pipeline is SRC -> C -> PP -> M -> P -> D -> SINK."
-  - record_id: "ITU-Y3172-ARCHITECTURE-SANDBOX-COMPONENTS"
-    version_id: "1.0"
-    locator: "Clauses 8.1 and 8.2"
-    locator_verification_status: "verified_structural"
-    statement: "Clauses 8.1 and 8.2 address architectural and sandbox components."
-  - record_id: "ITU-Y3172-SECURITY-CONSIDERATIONS"
-    version_id: "1.0"
-    locator: "Clause 9"
-    locator_verification_status: "verified_structural"
-    statement: "Clause 9 contains security considerations."
+- record_id: ITU-Y3172-ML-SANDBOX-DEFINITION
+  version_id: '1.0'
+  locator: Clause 3.2.6
+  locator_verification_status: verified_structural
+  statement: Clause 3.2.6 defines the ML sandbox.
+  human_review_status: approved
+  approval_record_id: AMBA-GOV-ACADEMIC-REVIEW-001
+- record_id: ITU-Y3172-DECLARATIVE-ML-SPECIFICATION
+  version_id: '1.0'
+  locator: Clause 7.4
+  locator_verification_status: verified_structural
+  statement: Clause 7.4 addresses declarative ML application specifications and ML intent.
+  human_review_status: approved
+  approval_record_id: AMBA-GOV-ACADEMIC-REVIEW-001
+- record_id: ITU-Y3172-ML-PIPELINE-COMPONENTS
+  version_id: '1.0'
+  locator: Clause 8.1
+  locator_verification_status: verified_structural
+  statement: The required ML pipeline is SRC -> C -> PP -> M -> P -> D -> SINK.
+  human_review_status: approved
+  approval_record_id: AMBA-GOV-ACADEMIC-REVIEW-001
+- record_id: ITU-Y3172-ARCHITECTURE-SANDBOX-COMPONENTS
+  version_id: '1.0'
+  locator: Clauses 8.1 and 8.2
+  locator_verification_status: verified_structural
+  statement: Clauses 8.1 and 8.2 address architectural and sandbox components.
+  human_review_status: approved
+  approval_record_id: AMBA-GOV-ACADEMIC-REVIEW-001
+- record_id: ITU-Y3172-SECURITY-CONSIDERATIONS
+  version_id: '1.0'
+  locator: Clause 9
+  locator_verification_status: verified_structural
+  statement: Clause 9 contains security considerations.
+  human_review_status: approved
+  approval_record_id: AMBA-GOV-ACADEMIC-REVIEW-001
+human_review_status: approved
+approval_record_id: AMBA-GOV-ACADEMIC-REVIEW-001
+approval_method: active_shared_document_review
+review_record_status: active
+approval_record_owner: Birhan Abuhay Jemere
+activation_status: human_review_approved_for_defined_scope
+source_citation_eligible: true
+contextual_evidence_eligible: true
+provision_citation_eligible: false
+binding_finding_eligible: false
+binding_finding_status: requires_project_specific_applicability_review
+mapping_type: application_level_interpreted_mapping
+formal_y3172_conformance: false
+itu_certification: false
+national_binding_status: false
+legal_effect: false
