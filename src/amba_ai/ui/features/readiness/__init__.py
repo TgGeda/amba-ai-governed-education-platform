@@ -1,2 +1,3 @@
 from .readiness_widget import ReadinessWidget
-__all__=['ReadinessWidget']
+from .readiness_manager import ReadinessManager
+__all__=['ReadinessWidget','ReadinessManager']

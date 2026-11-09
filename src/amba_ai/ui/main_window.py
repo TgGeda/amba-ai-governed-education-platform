@@ -37,6 +37,7 @@ from amba_ai.ui.features.notes import NotesWidget
 from amba_ai.ui.features.study import StudyWidget
 from amba_ai.ui.features.summarizer import SummarizerWidget
 from amba_ai.ui.features.tutor import TutorWidget
+from amba_ai.ui.features.governance.main_window_integration import install_submission_workspaces
 
 try:
     from amba_ai.ui.ambient_overlay import AmbientOverlay
@@ -99,6 +100,7 @@ class MainWindow(QMainWindow):
         self.library_widget.refresh_documents()
         self._update_contextual_actions()
         self._update_global_status("Ready. Offline-first mode enabled.", "INFO")
+        install_submission_workspaces(self)
 
     def _load_settings(self) -> None:
         self.settings = QSettings("AmbaAI", "AmbaAIApp")

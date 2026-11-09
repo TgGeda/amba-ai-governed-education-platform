@@ -1,0 +1,8 @@
+QWidget#ReadinessWorkspace { background:#f5f7fb; color:#172033; }
+QLabel[status="demonstrated"] { color:#166534; font-weight:700; }
+QLabel[status="partially_demonstrated"] { color:#1d4ed8; font-weight:700; }
+QLabel[status="not_demonstrated"] { color:#b91c1c; font-weight:700; }
+QLabel[status="insufficient_evidence"], QLabel[status="unresolved"] { color:#92400e; font-weight:700; }
+QLabel[status="not_assessed"], QLabel[status="not_applicable"] { color:#596273; font-weight:700; }
+QProgressBar { border:1px solid #cbd5e1; border-radius:7px; text-align:center; height:24px; }
+QProgressBar::chunk { background:#2563eb; border-radius:6px; }
