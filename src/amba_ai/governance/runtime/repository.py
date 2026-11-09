@@ -46,4 +46,3 @@ class RuntimeGovernanceRepository:
  def chunk_allowed(self,chunk_id:int,operation:str)->bool:
   with self._connect() as c:r=c.execute('SELECT indexing_permitted,generation_eligible,operations_json,review_status FROM runtime_chunk_governance WHERE chunk_id=?',(chunk_id,)).fetchone()
   return bool(r and r['indexing_permitted'] and r['generation_eligible'] and r['review_status']=='approved' and operation in set(json.loads(r['operations_json'])))
-

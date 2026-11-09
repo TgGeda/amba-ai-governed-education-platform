@@ -38,4 +38,3 @@ class ChunkGovernanceDecision:
 @dataclass(frozen=True)
 class GovernedRetrievalResult:
     hits:tuple[Any,...]; excluded_chunk_ids:tuple[int,...]; applied_controls:tuple[str,...]; evidence_ids:tuple[str,...]; gaps:tuple[str,...]; governance_receipt_id:str
-

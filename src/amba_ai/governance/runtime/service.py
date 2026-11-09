@@ -68,4 +68,3 @@ class RuntimeEducationGovernanceService:
   returned_ids=[int(item.get('chunk_id') if isinstance(item,dict) else getattr(item,'chunk_id')) for item in kept]
   rid=self.repository.receipt('retrieval_filtered',{'document_id':document_id,'operation':operation,'returned_chunk_ids':returned_ids,'excluded_chunk_ids':excluded},document_id,operation)
   return GovernedRetrievalResult(tuple(kept),tuple(excluded),('chunk_allowlist','operation_filter'),(),(),rid)
-
