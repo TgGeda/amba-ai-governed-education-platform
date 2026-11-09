@@ -35,6 +35,7 @@ def test_windows_launcher_is_portable_and_uses_venv_directly() -> None:
     launcher = (ROOT / "run_amba.bat").read_text(encoding="utf-8")
     assert 'cd /d "%~dp0"' in launcher
     assert 'F:\\AmbaAI\\amba_ai_project' not in launcher
+    assert 'set "QT_QPA_PLATFORM="' in launcher
     assert 'set "PYTHONPATH=%CD%\\src"' in launcher
     assert '".venv\\Scripts\\python.exe" -m amba_ai.main' in launcher
     assert "activate" not in launcher.lower()

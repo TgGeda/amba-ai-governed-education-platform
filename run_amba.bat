@@ -8,8 +8,11 @@ if not exist ".venv\Scripts\python.exe" (
   exit /b 1
 )
 
+set "QT_QPA_PLATFORM="
 set "PYTHONPATH=%CD%\src"
+
 ".venv\Scripts\python.exe" -m amba_ai.main
 set "EXIT_CODE=%ERRORLEVEL%"
+
 if not "%EXIT_CODE%"=="0" pause
 exit /b %EXIT_CODE%
