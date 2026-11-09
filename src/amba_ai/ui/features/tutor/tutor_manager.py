@@ -67,47 +67,23 @@ class TutorManager(QObject):
         self.thread_pool.start(worker)
 
     def _run_tutor_answer(self, request: TutorRequest) -> TutorAnswerViewModel:
-        result = None
-        try:
-            if hasattr(self.jobs, "tutor_chat"):
-                result = self.jobs.tutor_chat(
-                    request.document_id,
-                    request.question,
-                    top_k=request.top_k,
-                    max_tokens=request.max_tokens,
-                    active_tab=request.active_tab,
-                    active_document_title=request.active_document_title,
-                    due_flashcards=request.due_flashcards,
-                    session_id=request.session_id,
-                )
-            elif hasattr(self.jobs, "tutor_answer"):
-                result = self.jobs.tutor_answer(
-                    request.question,
-                    top_k=request.top_k,
-                    max_tokens=request.max_tokens,
-                    document_id=request.document_id,
-                    active_tab=request.active_tab,
-                    active_document_title=request.active_document_title,
-                    due_flashcards=request.due_flashcards,
-                    session_id=request.session_id,
-                )
-        except Exception as exc:
-            logger.warning(f"Backend tutor chat invocation encountered error: {exc}. Engaging offline grounding.")
-            result = None
-
-        if isinstance(result, AnswerResult) and getattr(result, "answer_text", None):
-            return TutorAnswerViewModel.from_answer_result(
-                result,
-                question=request.question,
-                document_id=request.document_id,
-                persona=request.persona,
+        if hasattr(self.jobs, "tutor_chat"):
+            result = self.jobs.tutor_chat(
+                request.document_id, request.question, top_k=request.top_k, max_tokens=request.max_tokens,
+                active_tab=request.active_tab, active_document_title=request.active_document_title,
+                due_flashcards=request.due_flashcards, session_id=request.session_id,
             )
-
-        return TutorAnswerViewModel.build_synthetic_grounded_answer(
-            question=request.question,
-            document_id=request.document_id,
-            persona=request.persona,
-        )
+        elif hasattr(self.jobs, "tutor_answer"):
+            result = self.jobs.tutor_answer(
+                request.question, top_k=request.top_k, max_tokens=request.max_tokens, document_id=request.document_id,
+                active_tab=request.active_tab, active_document_title=request.active_document_title,
+                due_flashcards=request.due_flashcards, session_id=request.session_id,
+            )
+        else:
+            raise AttributeError("JobService does not support governed tutor answers.")
+        if not isinstance(result, AnswerResult) or not getattr(result, "answer_text", None):
+            raise TypeError("Governed tutor backend returned an invalid result.")
+        return TutorAnswerViewModel.from_answer_result(result,question=request.question,document_id=request.document_id,persona=request.persona)
 
     @Slot(dict)
     def _on_worker_status(self, payload: dict[str, Any]) -> None:

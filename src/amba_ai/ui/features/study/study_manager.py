@@ -67,27 +67,15 @@ class StudyManager(QObject):
         self.thread_pool.start(worker)
 
     def _run_study_assets(self, request: StudyGenerationRequest) -> StudyAssetsViewModel:
-        try:
-            result = self.jobs.generate_study_assets(
-                document_id=request.document_id,
-                force=request.force,
-                flashcard_count=request.flashcard_count,
-                mcq_count=request.mcq_count,
-            )
-        except Exception as exc:
-            logger.warning(f"Backend study pack synthesis fallback triggered: {exc}")
-            result = None
-
-        if isinstance(result, StudyAssetsResult):
-            return StudyAssetsViewModel.from_study_assets_result(result)
-
-        return StudyAssetsViewModel.from_study_assets_result(
-            StudyAssetsResult(
-                metadata={"document_id": request.document_id, "fallback": True, "cached": False},
-                flashcards=[],
-                mcqs=[],
-            )
+        result = self.jobs.generate_study_assets(
+            document_id=request.document_id,
+            force=request.force,
+            flashcard_count=request.flashcard_count,
+            mcq_count=request.mcq_count,
         )
+        if not isinstance(result, StudyAssetsResult):
+            raise TypeError("Governed study backend returned an invalid result.")
+        return StudyAssetsViewModel.from_study_assets_result(result)
 
     @Slot(dict)
     def _on_worker_status(self, payload: dict[str, Any]) -> None:

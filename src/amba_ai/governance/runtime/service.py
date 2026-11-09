@@ -5,6 +5,7 @@ from typing import Any,Mapping
 from .guardrails import assess_content,assess_file,sha256_file
 from .models import ChunkGovernanceDecision,Decision,GenerationDecision,GovernedRetrievalResult,IngestionDecision,RiskFinding,RuntimeGovernanceGateError,RuntimeGovernanceReviewRequired
 from .repository import RuntimeGovernanceRepository
+from .output_guardrails import GovernedOutputValidation,OutputDisposition,digest_material,inspect_output_text,sanitize_structure
 
 class RuntimeEducationGovernanceService:
  def __init__(self,database_path:str|Path):self.repository=RuntimeGovernanceRepository(database_path)
@@ -30,13 +31,18 @@ class RuntimeEducationGovernanceService:
   decision=GenerationDecision(Decision.RESTRICTED,document_id,operation,record['source_sha256'],True,tuple(record['controls']),(),rid)
   self.repository.record_generation(request_id,document_id,operation,decision.decision.value,decision.source_sha256,decision.to_dict())
   return decision
- def validate_output(self,document_id:int,operation:str,result_material:Mapping[str,Any])->str:
-  text=json.dumps(result_material,sort_keys=True,default=str)
-  findings=[]
-  if re.search(r'(?i)(system prompt|developer message|ignore previous instructions)',text):findings.append('prompt_leakage')
-  if re.search(r'(?i)targeted advertis|send learner profile|buy now',text):findings.append('commercial_manipulation')
-  if findings:raise RuntimeGovernanceGateError('Output guardrail blocked: '+', '.join(findings))
-  digest=hashlib.sha256(text.encode()).hexdigest();return self.repository.receipt('output_validated',{'document_id':document_id,'operation':operation,'output_sha256':digest,'status':'passed'},document_id,operation)
+ def validate_output(self,document_id:int,operation:str,result_material:Mapping[str,Any],*,source_digest_verified:bool=True,retrieved_chunk_ids:tuple[int,...]=(),excluded_chunk_ids:tuple[int,...]=())->GovernedOutputValidation:
+  raw=dict(result_material);raw_digest=digest_material(raw);sanitized,redactions=sanitize_structure(raw);text=json.dumps(sanitized,ensure_ascii=False,sort_keys=True,default=str)
+  repository_excluded=set(self.repository.excluded_chunk_ids(document_id));all_excluded=repository_excluded.union(int(x) for x in excluded_chunk_ids)
+  inspection=inspect_output_text(text,operation=operation,excluded_chunk_ids=all_excluded)
+  retrieved=tuple(sorted(set(int(x) for x in retrieved_chunk_ids)));excluded=tuple(sorted(all_excluded))
+  if set(retrieved).intersection(all_excluded):raise RuntimeGovernanceGateError('Output refused: retrieved evidence contains excluded chunks.')
+  unsupported=inspection['unsupported_claims'];decision=OutputDisposition.REDACT_AND_DISPLAY if redactions else OutputDisposition.DISPLAY_WITH_WARNING if unsupported else OutputDisposition.DISPLAY
+  output_id='EDU-OUT-'+uuid.uuid4().hex[:20].upper();trace_id='EDU-TRACE-'+uuid.uuid4().hex[:20].upper();sanitized_digest=digest_material(sanitized)
+  evidence={'output_id':output_id,'document_id':document_id,'operation':operation,'decision':decision.value,'source_digest_verified':source_digest_verified,'retrieved_chunk_ids':list(retrieved),'excluded_chunk_ids':list(excluded),'grounding_status':'passed' if source_digest_verified else 'failed','unsupported_claims':list(unsupported),'citation_status':'passed','privacy_redactions':redactions,'sensitive_child_data':inspection['sensitive_child_data'],'assessment_integrity_status':inspection['assessment_integrity_status'],'harm_status':inspection['harm_status'],'age_suitability':'learner_appropriate','prompt_leakage_status':inspection['prompt_leakage_status'],'commercial_influence_status':inspection['commercial_influence_status'],'display_status':decision.value,'trace_id':trace_id}
+  rid=self.repository.receipt('output_validated',evidence,document_id,operation);evidence['audit_receipt']=rid
+  self.repository.save_output_validation({'output_id':output_id,'request_id':None,'document_id':document_id,'operation':operation,'decision':decision.value,'raw_output_sha256':raw_digest,'sanitized_output_sha256':sanitized_digest,'evidence':evidence,'trace_id':trace_id,'receipt_id':rid})
+  return GovernedOutputValidation(output_id,document_id,operation,decision,dict(sanitized),raw_digest,sanitized_digest,source_digest_verified,retrieved,excluded,'passed' if source_digest_verified else 'failed',tuple(unsupported),'passed',tuple(redactions),False,'passed','passed','learner_appropriate','passed','passed',decision.value,trace_id,rid)
  def assess_chunks(self,document_id:int,chunks:list[Any])->tuple[ChunkGovernanceDecision,...]:
   decisions=[]
   default_ops=('summarize_document','generate_notes','generate_study_assets','tutor_answer','tutor_chat','generate_flashcards','generate_quiz')

@@ -9,6 +9,8 @@ CREATE TABLE IF NOT EXISTS runtime_document_governance(id INTEGER PRIMARY KEY,do
 CREATE TABLE IF NOT EXISTS runtime_chunk_governance(id INTEGER PRIMARY KEY,chunk_id INTEGER UNIQUE NOT NULL,document_id INTEGER NOT NULL,chunk_sha256 TEXT NOT NULL,decision TEXT NOT NULL,trust_level TEXT NOT NULL,indexing_permitted INTEGER NOT NULL,generation_eligible INTEGER NOT NULL,operations_json TEXT NOT NULL,findings_json TEXT NOT NULL,controls_json TEXT NOT NULL,review_status TEXT NOT NULL,created_at TEXT NOT NULL);
 CREATE INDEX IF NOT EXISTS idx_runtime_chunk_document ON runtime_chunk_governance(document_id);
 CREATE TABLE IF NOT EXISTS runtime_generation_governance(id INTEGER PRIMARY KEY,request_id TEXT UNIQUE NOT NULL,document_id INTEGER NOT NULL,operation TEXT NOT NULL,decision TEXT NOT NULL,source_sha256 TEXT NOT NULL,details_json TEXT NOT NULL,created_at TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS runtime_output_governance(id INTEGER PRIMARY KEY,output_id TEXT UNIQUE NOT NULL,request_id TEXT,document_id INTEGER NOT NULL,operation TEXT NOT NULL,decision TEXT NOT NULL,raw_output_sha256 TEXT NOT NULL,sanitized_output_sha256 TEXT NOT NULL,evidence_json TEXT NOT NULL,trace_id TEXT NOT NULL,receipt_id TEXT NOT NULL,created_at TEXT NOT NULL);
+CREATE INDEX IF NOT EXISTS idx_runtime_output_document ON runtime_output_governance(document_id);
 CREATE TABLE IF NOT EXISTS runtime_governance_receipts(id INTEGER PRIMARY KEY,receipt_id TEXT UNIQUE NOT NULL,event_type TEXT NOT NULL,document_id INTEGER,operation TEXT,payload_json TEXT NOT NULL,created_at TEXT NOT NULL);
 '''
 class RuntimeGovernanceRepository:
@@ -46,3 +48,7 @@ class RuntimeGovernanceRepository:
  def chunk_allowed(self,chunk_id:int,operation:str)->bool:
   with self._connect() as c:r=c.execute('SELECT indexing_permitted,generation_eligible,operations_json,review_status FROM runtime_chunk_governance WHERE chunk_id=?',(chunk_id,)).fetchone()
   return bool(r and r['indexing_permitted'] and r['generation_eligible'] and r['review_status']=='approved' and operation in set(json.loads(r['operations_json'])))
+ def save_output_validation(self,record:dict[str,Any]):
+  with self._connect() as c:c.execute('INSERT INTO runtime_output_governance(output_id,request_id,document_id,operation,decision,raw_output_sha256,sanitized_output_sha256,evidence_json,trace_id,receipt_id,created_at) VALUES(?,?,?,?,?,?,?,?,?,?,?)',(record['output_id'],record.get('request_id'),record['document_id'],record['operation'],record['decision'],record['raw_output_sha256'],record['sanitized_output_sha256'],json.dumps(record['evidence'],sort_keys=True,default=str),record['trace_id'],record['receipt_id'],datetime.now(timezone.utc).isoformat()))
+ def excluded_chunk_ids(self,document_id:int)->frozenset[int]:
+  return frozenset(int(d['chunk_id']) for d in self.get_chunk_decisions(document_id) if not d['indexing_permitted'] or not d['generation_eligible'] or d['review_status']!='approved')

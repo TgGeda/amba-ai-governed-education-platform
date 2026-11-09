@@ -1,3 +1,4 @@
+from .output_guardrails import GovernedOutputValidation,OutputDisposition
 from .models import ChunkGovernanceDecision,Decision,GenerationDecision,GovernedRetrievalResult,IngestionDecision,RiskFinding,RuntimeGovernanceError,RuntimeGovernanceGateError,RuntimeGovernanceReviewRequired
 from .service import RuntimeEducationGovernanceService
-__all__=['ChunkGovernanceDecision','GovernedRetrievalResult','Decision','GenerationDecision','IngestionDecision','RiskFinding','RuntimeGovernanceError','RuntimeGovernanceGateError','RuntimeGovernanceReviewRequired','RuntimeEducationGovernanceService']
+__all__=['GovernedOutputValidation','OutputDisposition','ChunkGovernanceDecision','GovernedRetrievalResult','Decision','GenerationDecision','IngestionDecision','RiskFinding','RuntimeGovernanceError','RuntimeGovernanceGateError','RuntimeGovernanceReviewRequired','RuntimeEducationGovernanceService']

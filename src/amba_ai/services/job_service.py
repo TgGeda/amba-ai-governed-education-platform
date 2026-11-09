@@ -686,19 +686,47 @@ class JobService:
         invocation: Any | None,
         result_material: dict[str, Any],
         result_metadata: dict[str, Any],
-    ) -> None:
+    ) -> dict[str, Any]:
         document_id = result_metadata.get("document_id")
-        operation = getattr(invocation, "method_name", None) if invocation is not None else None
-        if document_id is not None and operation and self.runtime_governance is not None:
-            self.runtime_governance.validate_output(int(document_id), str(operation), result_material)
+        operation = getattr(invocation, "method_name", None) if invocation is not None else str(result_metadata.get("operation") or "runtime_output")
+        governed_material = dict(result_material)
+        if document_id is not None and self.runtime_governance is not None:
+            validation = self.runtime_governance.validate_output(
+                int(document_id),
+                str(operation),
+                governed_material,
+                source_digest_verified=True,
+                retrieved_chunk_ids=tuple(result_metadata.get("retrieved_chunk_ids") or ()),
+                excluded_chunk_ids=tuple(result_metadata.get("excluded_chunk_ids") or ()),
+            )
+            governed_material = dict(validation.sanitized_material)
+            result_metadata["runtime_output_governance"] = validation.evidence()
         if invocation is None:
-            return
+            return governed_material
         completion = self.governance_coordinator.complete(
             invocation=invocation,
             result_material=result_material,
             result_metadata=result_metadata,
         )
         completion.require_delivery_acknowledged()
+        return governed_material
+
+    @staticmethod
+    def _summary_from_material(original: SummaryResult, material: dict[str, Any]) -> SummaryResult:
+        metadata = {**dict(original.metadata), **dict(material.get("metadata") or {})}
+        return SummaryResult(markdown_notes=str(material.get("markdown_notes") or original.markdown_notes),model_name=original.model_name,tokens_used=original.tokens_used,metadata=metadata)
+
+    @staticmethod
+    def _answer_from_material(original: AnswerResult, material: dict[str, Any]) -> AnswerResult:
+        metadata = {**dict(original.metadata), **dict(material.get("metadata") or {})}
+        return AnswerResult(answer_text=str(material.get("answer_text") or original.answer_text),sources=list(material.get("sources") or original.sources),model_name=original.model_name,metadata=metadata)
+
+    @staticmethod
+    def _assets_from_material(original: StudyAssetsResult, material: dict[str, Any]) -> StudyAssetsResult:
+        cards=[Flashcard(**item) if isinstance(item,dict) else item for item in material.get("flashcards",[])]
+        mcqs=[MCQ(**item) if isinstance(item,dict) else item for item in material.get("mcqs",[])]
+        metadata={**dict(original.metadata), **dict(material.get("metadata") or {})}
+        return StudyAssetsResult(flashcards=cards,mcqs=mcqs,metadata=metadata)
 
     @staticmethod
     def _answer_material(answer: AnswerResult) -> dict[str, Any]:
@@ -763,7 +791,7 @@ class JobService:
                             "text_length": len(doc.raw_text or ""),
                         },
                     )
-                    self._complete_job_governance(
+                    governed_material = self._complete_job_governance(
                         invocation=invocation,
                         result_material=self._summary_material(result),
                         result_metadata={
@@ -774,7 +802,7 @@ class JobService:
                             "document_id": document_id,
                         },
                     )
-                    return result
+                    return self._summary_from_material(result, governed_material)
             try:
                 summary = self.content_delivery.generate_study_notes(
                     raw_text=doc.raw_text, title=doc.title
@@ -809,7 +837,7 @@ class JobService:
                     "created_at": self._now_iso(),
                 },
             )
-            self._complete_job_governance(
+            governed_material = self._complete_job_governance(
                 invocation=invocation,
                 result_material=self._summary_material(candidate),
                 result_metadata={
@@ -820,6 +848,7 @@ class JobService:
                     "document_id": document_id,
                 },
             )
+            candidate = self._summary_from_material(candidate, governed_material)
             if force:
                 self._delete_existing_summaries(document_id)
             summary_id = self.db.insert_summary(
@@ -901,7 +930,7 @@ class JobService:
                         "created_at": self._now_iso(),
                     },
                 )
-                self._complete_job_governance(
+                governed_material = self._complete_job_governance(
                     invocation=invocation,
                     result_material=self._assets_material(result),
                     result_metadata={
@@ -911,7 +940,7 @@ class JobService:
                         "document_id": document_id,
                     },
                 )
-                return result
+                return self._assets_from_material(result, governed_material)
             try:
                 result = self.content_delivery.generate_study_assets(
                     raw_text=doc.raw_text,
@@ -953,7 +982,7 @@ class JobService:
                         mcq_count=mcq_count,
                         reason=f"{type(exc).__name__}: {exc}",
                     )
-            self._complete_job_governance(
+            governed_material = self._complete_job_governance(
                 invocation=invocation,
                 result_material=self._assets_material(result),
                 result_metadata={
@@ -964,6 +993,7 @@ class JobService:
                     "model_name": result.metadata.get("model_name", structured_model),
                 },
             )
+            result = self._assets_from_material(result, governed_material)
             if force:
                 self._delete_existing_study_assets(document_id)
             self.db.insert_flashcards(document_id, result.flashcards)
@@ -982,8 +1012,8 @@ class JobService:
         invocation: Any | None,
         answer: AnswerResult,
         document_id: int | None,
-    ) -> None:
-        self._complete_job_governance(
+    ) -> AnswerResult:
+        governed_material = self._complete_job_governance(
             invocation=invocation,
             result_material=self._answer_material(answer),
             result_metadata={
@@ -994,6 +1024,7 @@ class JobService:
                 "model_name": answer.model_name,
             },
         )
+        return self._answer_from_material(answer, governed_material)
 
     def tutor_answer(
         self,
@@ -1067,7 +1098,7 @@ class JobService:
                             "citations": getattr(grounded, "citations", []),
                         },
                     )
-                    self._authorize_answer_delivery(
+                    answer = self._authorize_answer_delivery(
                         invocation=invocation,
                         answer=answer,
                         document_id=document_id,
@@ -1133,7 +1164,7 @@ class JobService:
                     reason=f"{type(exc).__name__}: {exc}",
                     model_name=model_name,
                 )
-                self._authorize_answer_delivery(
+                answer = self._authorize_answer_delivery(
                     invocation=invocation,
                     answer=answer,
                     document_id=document_id,
@@ -1164,7 +1195,7 @@ class JobService:
                 },
             )
 
-            self._authorize_answer_delivery(
+            answer = self._authorize_answer_delivery(
                 invocation=invocation,
                 answer=answer,
                 document_id=document_id,
@@ -1319,7 +1350,7 @@ class JobService:
             model_name=get_model_for_task("tutor_chat"),
             metadata={"document_id": document_id, "streamed": True},
         )
-        self._authorize_answer_delivery(
+        answer = self._authorize_answer_delivery(
             invocation=invocation,
             answer=answer,
             document_id=document_id,
@@ -1341,7 +1372,10 @@ class JobService:
                     "sources_count": len(answer.sources),
                 },
             )
-        yield from tokens
+        if answer.answer_text == full_answer:
+            yield from tokens
+        else:
+            yield answer.answer_text
 
     def _prepare_rag_index(self, context: dict[str, Any]) -> None:
         rag_index = getattr(self.rag, "index", None)
