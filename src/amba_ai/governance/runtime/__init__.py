@@ -1,3 +1,3 @@
-from .models import Decision,GenerationDecision,IngestionDecision,RiskFinding,RuntimeGovernanceError,RuntimeGovernanceGateError,RuntimeGovernanceReviewRequired
+from .models import ChunkGovernanceDecision,Decision,GenerationDecision,GovernedRetrievalResult,IngestionDecision,RiskFinding,RuntimeGovernanceError,RuntimeGovernanceGateError,RuntimeGovernanceReviewRequired
 from .service import RuntimeEducationGovernanceService
-__all__=['Decision','GenerationDecision','IngestionDecision','RiskFinding','RuntimeGovernanceError','RuntimeGovernanceGateError','RuntimeGovernanceReviewRequired','RuntimeEducationGovernanceService']
+__all__=['ChunkGovernanceDecision','GovernedRetrievalResult','Decision','GenerationDecision','IngestionDecision','RiskFinding','RuntimeGovernanceError','RuntimeGovernanceGateError','RuntimeGovernanceReviewRequired','RuntimeEducationGovernanceService']

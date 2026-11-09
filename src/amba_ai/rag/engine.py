@@ -573,12 +573,15 @@ class FaissRAGEngine:
             cur = conn.execute("SELECT 1 FROM rag_chunks WHERE document_id = ? LIMIT 1", (document_id,))
             return cur.fetchone() is not None
 
-    def index_document(self, document_id: int) -> None:
+    def index_document(self, document_id: int, *, permitted_chunk_ids: Collection[int] | None = None) -> None:
         context = self._context(operation="index_document", document_id=document_id)
 
         with self._rw_lock:
             try:
                 chunks = self._fetch_chunks_for_document(document_id)
+                if permitted_chunk_ids is not None:
+                    allow = frozenset(int(value) for value in permitted_chunk_ids)
+                    chunks = [chunk for chunk in chunks if chunk.chunk_id is not None and int(chunk.chunk_id) in allow]
                 if not chunks:
                     logger.info("No chunks found for document indexing", extra={"context": context})
                     return

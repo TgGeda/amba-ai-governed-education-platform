@@ -541,11 +541,17 @@ class JobService:
                 document_id=document_id,
                 chunks=chunks,
             )
+            stage = "govern_chunks"
+            persisted_chunks = list(self.db.get_chunks(document_id)) if chunks else []
+            chunk_decisions = self.runtime_governance.assess_chunks(document_id, persisted_chunks) if persisted_chunks else ()
+            permitted_chunk_ids = frozenset(
+                decision.chunk_id for decision in chunk_decisions if decision.indexing_permitted
+            )
 
             if chunks and runtime_decision.permits_indexing:
                 stage = "index_document"
                 try:
-                    self.rag.index_document(document_id)
+                    self.rag.index_document(document_id, permitted_chunk_ids=permitted_chunk_ids)
                     rag_indexed = True
                     index_status = "indexed"
                 except Exception as exc:
@@ -1038,7 +1044,7 @@ class JobService:
             self._prepare_rag_index(context)
 
             pipeline = self._get_rag_pipeline(document_id=document_id)
-            if pipeline is not None and hasattr(pipeline, "answer"):
+            if self.runtime_governance is None and pipeline is not None and hasattr(pipeline, "answer"):
                 try:
                     from amba_ai.rag.models import RetrievalQuery
                     query = RetrievalQuery(
@@ -1076,7 +1082,7 @@ class JobService:
                         extra={"context": {**context, "error": str(pipeline_exc)}},
                     )
 
-            retrieved_hits = self._rag_search(clean_question, top_k=top_k)
+            retrieved_hits = self._rag_search(clean_question, top_k=top_k, document_id=document_id, operation="tutor_answer")
             retrieved_context_text = self._format_rag_hits(retrieved_hits)
             relevant_memory = self.memory.get_relevant_history_text(
                 clean_question,
@@ -1271,7 +1277,7 @@ class JobService:
             question=clean_question,
         )
         self._prepare_rag_index(context)
-        hits = self._rag_search(clean_question, top_k=top_k)
+        hits = self._rag_search(clean_question, top_k=top_k, document_id=document_id, operation="tutor_answer_stream")
         relevant_memory = self.memory.get_relevant_history_text(
             clean_question, k=3, session_id=session
         )
@@ -1354,17 +1360,29 @@ class JobService:
         elif hasattr(self.rag, "rebuild_from_source_documents"):
             self.rag.rebuild_from_source_documents()
 
-    def _rag_search(self, question: str, *, top_k: int) -> list[Any]:
+    def _rag_search(
+        self,
+        question: str,
+        *,
+        top_k: int,
+        document_id: int | None = None,
+        operation: str = "tutor_answer",
+    ) -> list[Any]:
         if hasattr(self.rag, "search"):
-            return list(self.rag.search(question, top_k=top_k))
-
-        if hasattr(self.rag, "retrieve"):
-            return list(self.rag.retrieve(question, top_k=top_k))
-
-        raise RAGError(
-            "RAG engine does not expose search or retrieve.",
-            context={"operation": "rag_search"},
-        )
+            hits = list(self.rag.search(question, top_k=top_k))
+        elif hasattr(self.rag, "retrieve"):
+            hits = list(self.rag.retrieve(question, top_k=top_k))
+        else:
+            raise RAGError(
+                "RAG engine does not expose search or retrieve.",
+                context={"operation": "rag_search"},
+            )
+        if self.runtime_governance is None:
+            return hits
+        if document_id is None:
+            raise RuntimeGovernanceGateError("Governed retrieval requires an explicit document_id.")
+        governed = self.runtime_governance.filter_retrieval(int(document_id), operation, hits)
+        return list(governed.hits)
 
     def _format_rag_hits(self, hits: list[Any]) -> str:
         if not hits:

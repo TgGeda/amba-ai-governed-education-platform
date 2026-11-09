@@ -29,3 +29,13 @@ class GenerationDecision:
     def requires_review(self)->bool:return self.decision is Decision.REVIEW
     def to_dict(self)->dict[str,Any]:
         d=asdict(self); d['decision']=self.decision.value; return d
+@dataclass(frozen=True)
+class ChunkGovernanceDecision:
+    chunk_id:int; document_id:int; chunk_sha256:str; decision:Decision; trust_level:str; indexing_permitted:bool; generation_eligible:bool; operations_permitted:tuple[str,...]=(); findings:tuple[RiskFinding,...]=(); controls:tuple[str,...]=(); review_status:str='approved'
+    def to_dict(self)->dict[str,Any]:
+        d=asdict(self); d['decision']=self.decision.value; return d
+
+@dataclass(frozen=True)
+class GovernedRetrievalResult:
+    hits:tuple[Any,...]; excluded_chunk_ids:tuple[int,...]; applied_controls:tuple[str,...]; evidence_ids:tuple[str,...]; gaps:tuple[str,...]; governance_receipt_id:str
+
