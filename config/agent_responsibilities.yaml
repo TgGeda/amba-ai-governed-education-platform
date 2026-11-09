@@ -1,0 +1,307 @@
+schema_version: 1.0.0
+architecture_id: AMBA-GOV-AGENT-ARCHITECTURE-001
+architecture_type: bounded_multi_agent_governance_system
+agents:
+- agent_id: EVIDENCE-AGENT
+  name: Evidence Agent
+  responsibility: Resolve academically approved passage-level evidence, thematic interpretations, explicit gaps, and limitations
+    without inventing authority.
+  implementation_files:
+  - src/amba_ai/services/policy_kb_service.py
+  - src/amba_ai/governance/thematic_evidence.py
+  - src/amba_ai/services/thematic_evidence_service.py
+  - src/amba_ai/governance/verified_stme_context_evidence.py
+  inputs:
+  - event facts
+  - scenario stage
+  - policy query
+  - approved passage catalog
+  outputs:
+  - approved passage IDs
+  - thematic views
+  - evidence gaps
+  - limitations
+  interactions:
+    consumes_from:
+    - scenario runner
+    - verified passage catalog
+    produces_for:
+    - policy governance agent
+    - trace and audit subsystem
+  fail_closed_behavior:
+  - No approved support produces an evidence gap
+  - No gap becomes a citation
+  - No passage becomes a binding finding
+  reusable_core:
+  - passage resolution
+  - source provenance
+  - citation eligibility
+  - evidence-gap generation
+  domain_specific_configuration:
+  - approved sources
+  - themes
+  - policy mappings
+  education_example: Student-data governance
+  agriculture_example: Farmer-data sharing
+  finance_example: Consumer-credit governance
+- agent_id: INSTITUTIONAL-ASSESSMENT-AGENTS
+  name: Institutional Assessment Agents
+  responsibility: Produce independent observations from mandate-bounded recipient projections without recommendation, approval,
+    execution, or distribution authority.
+  implementation_files:
+  - src/amba_ai/institutional/assessors/base.py
+  - src/amba_ai/institutional/assessors/consumer_protection_assessor.py
+  - src/amba_ai/institutional/assessors/data_protection_assessor.py
+  - src/amba_ai/institutional/assessors/education_assessor.py
+  - src/amba_ai/institutional/registry.py
+  - src/amba_ai/institutional/context_projection.py
+  inputs:
+  - recipient projection
+  - institutional mandate
+  - scenario context
+  outputs:
+  - assessment IDs
+  - assessed fact IDs
+  - observations
+  - unresolved questions
+  interactions:
+    consumes_from:
+    - evidence release
+    - projection service
+    produces_for:
+    - coordination agent
+  fail_closed_behavior:
+  - Out-of-mandate facts are not assessed
+  - Missing eligible facts produce unresolved questions
+  - Assessors cannot execute or recommend
+  reusable_core:
+  - mandate isolation
+  - observation model
+  - assessment provenance
+  domain_specific_configuration:
+  - institutional mandates
+  - assessor rules
+  education_example: Education authority and child-rights assessment
+  agriculture_example: Agriculture ministry and cooperative assessment
+  finance_example: Central bank and consumer-protection assessment
+- agent_id: COORDINATION-AGENT
+  name: Coordination Agent
+  responsibility: Coordinate institutional assessments while preserving conflicts and unresolved questions as auditable objects.
+  implementation_files:
+  - src/amba_ai/institutional/coordination.py
+  inputs:
+  - institutional assessments
+  - mandates
+  - confidence states
+  outputs:
+  - coordinated observations
+  - preserved conflicts
+  - unresolved questions
+  interactions:
+    consumes_from:
+    - institutional assessment agents
+    produces_for:
+    - policy governance agent
+    - trace and audit subsystem
+  fail_closed_behavior:
+  - Material disagreement is preserved
+  - Unsupported consensus is not manufactured
+  reusable_core:
+  - assessment aggregation
+  - conflict preservation
+  - provenance
+  domain_specific_configuration:
+  - conflict taxonomy
+  - institutional composition
+  education_example: Reconcile school, rights, and data-protection views
+  agriculture_example: Reconcile ministry, cooperative, and privacy views
+  finance_example: Reconcile regulator, lender, and consumer views
+- agent_id: POLICY-GOVERNANCE-AGENT
+  name: Policy Governance Agent
+  responsibility: Produce deterministic recommendations from facts, coordination, approved evidence, operations, and destinations.
+  implementation_files:
+  - src/amba_ai/services/policy_agent_service.py
+  - src/amba_ai/governance/evaluators.py
+  inputs:
+  - event
+  - coordinated assessments
+  - approved passages
+  - evidence gaps
+  - operation
+  - destination
+  outputs:
+  - recommendation
+  - approval requirement
+  - execution request
+  - limitations
+  interactions:
+    consumes_from:
+    - coordination agent
+    - evidence agent
+    produces_for:
+    - human approval gate
+    - execution agent
+    - trace and audit subsystem
+  fail_closed_behavior:
+  - Insufficient evidence remains unresolved
+  - Recommendation does not authorize execution
+  - Invalid operation or destination is rejected
+  reusable_core:
+  - evaluator registry
+  - recommendation model
+  - deterministic governance bundle
+  domain_specific_configuration:
+  - operations
+  - evaluators
+  - authorization rules
+  - destinations
+  education_example: Classroom exercise governance
+  agriculture_example: Farmer advisory governance
+  finance_example: Credit recommendation governance
+- agent_id: HUMAN-APPROVAL-GATE
+  name: Human Approval Gate
+  responsibility: Gate approval-sensitive operations using explicit decision identities or a review queue.
+  implementation_files:
+  - src/amba_ai/governance/approvals.py
+  - src/amba_ai/services/execution_service.py
+  inputs:
+  - recommendation
+  - approval requirement
+  - approval decision ID
+  outputs:
+  - decision reference
+  - review queue receipt
+  - execution eligibility
+  interactions:
+    consumes_from:
+    - policy governance agent
+    - authorized reviewer
+    produces_for:
+    - execution agent
+  fail_closed_behavior:
+  - Required approval without a decision is queued
+  - Execution state is not used to infer approval
+  reusable_core:
+  - approval requirement
+  - decision reference
+  - review queue
+  domain_specific_configuration:
+  - review roles
+  - thresholds
+  - escalation policy
+  education_example: Sensitive student-data approval
+  agriculture_example: Farmer-data sharing approval
+  finance_example: High-impact credit exception review
+- agent_id: EXECUTION-AGENT
+  name: Execution Agent
+  responsibility: Execute only registered, authorized, idempotent operations or produce a review or refusal result.
+  implementation_files:
+  - src/amba_ai/services/execution_service.py
+  - src/amba_ai/governance/execution.py
+  inputs:
+  - execution request
+  - recommendation
+  - approval decision
+  - operation registry
+  - destination registry
+  outputs:
+  - execution receipt
+  - review queue receipt
+  - not-attempted result
+  interactions:
+    consumes_from:
+    - human approval gate
+    - policy governance agent
+    produces_for:
+    - distribution agent
+    - trace and audit subsystem
+  fail_closed_behavior:
+  - Conflicting idempotency digest is rejected
+  - Unregistered operation or destination does not execute
+  - Missing approval does not execute
+  reusable_core:
+  - idempotency
+  - authorization enforcement
+  - receipt model
+  domain_specific_configuration:
+  - operation adapters
+  - destination adapters
+  education_example: Deliver classroom exercise
+  agriculture_example: Deliver farmer advisory
+  finance_example: Issue governed consumer notice
+- agent_id: DISTRIBUTION-AGENT
+  name: Distribution Agent
+  responsibility: Control whether an execution result may be delivered to a registered destination and record prevented delivery.
+  implementation_files:
+  - src/amba_ai/services/distribution_service.py
+  - src/amba_ai/governance/distribution.py
+  inputs:
+  - execution result
+  - destination identity
+  - distribution policy
+  outputs:
+  - distribution effect
+  - acknowledgment when eligible
+  - prevention record
+  interactions:
+    consumes_from:
+    - execution agent
+    produces_for:
+    - trace and audit subsystem
+  fail_closed_behavior:
+  - Unregistered destination is prevented
+  - Failed or not-attempted execution is not distributed
+  reusable_core:
+  - destination enforcement
+  - delivery effect
+  - acknowledgment model
+  domain_specific_configuration:
+  - registered destinations
+  - channel adapters
+  education_example: Teacher or learner interface delivery
+  agriculture_example: Cooperative or extension-service delivery
+  finance_example: Consumer notification delivery
+- agent_id: TRACE-AUDIT-SUBSYSTEM
+  name: Trace and Audit Subsystem
+  responsibility: Bind component activity, evidence identities, decisions, execution outcomes, and prior audit state into
+    verifiable traces and hashes.
+  implementation_files:
+  - src/amba_ai/standards/y3172_trace_coordinator.py
+  - src/amba_ai/services/audit_service.py
+  - src/amba_ai/governance/audit.py
+  inputs:
+  - facts
+  - assessments
+  - conflicts
+  - passages
+  - gaps
+  - recommendation
+  - execution
+  - distribution
+  outputs:
+  - Y.3172-oriented trace
+  - audit event
+  - payload hash
+  - previous hash
+  - block hash
+  - verification result
+  interactions:
+    consumes_from:
+    - all runtime agents
+    produces_for:
+    - UI
+    - submission artifacts
+    - integrity verifier
+  fail_closed_behavior:
+  - Hash mismatch invalidates verification
+  - Missing runtime identity prevents complete trace claims
+  reusable_core:
+  - trace graph
+  - hash-linked audit
+  - integrity verification
+  domain_specific_configuration:
+  - component mapping
+  - event payload schema
+  education_example: Trace student-data governance decision
+  agriculture_example: Trace advisory and data-sharing decision
+  finance_example: Trace consumer-credit governance decision

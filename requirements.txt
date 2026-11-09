@@ -111,3 +111,4 @@ xlsxwriter==3.2.9
 yarl==1.24.2
 pypdf==7.0.0
 jsonschema==4.26.0
+chardet==5.2.0
