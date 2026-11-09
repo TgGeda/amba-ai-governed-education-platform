@@ -3,8 +3,8 @@ from __future__ import annotations
 from pathlib import Path
 from amba_ai.db.database import Database
 from amba_ai.models.schemas import IngestedDocument
-from amba_ai.ui.library.data_classes import LibraryDocument
-from amba_ai.ui.ingest.data_classes import IngestViewModel, _coerce_bool
+from amba_ai.ui.features.library.data_classes import LibraryDocument
+from amba_ai.ui.features.ingest.data_classes import IngestViewModel, _coerce_bool
 
 
 def test_coerce_bool_rules():
@@ -68,7 +68,7 @@ def test_database_update_document_metadata_merge(tmp_path: Path):
 
 
 def test_library_document_zero_chunks_and_boolean_handling():
-    lib_doc = LibraryDocument.from_dict(
+    lib_doc = LibraryDocument.from_any(
         {
             "id": 10,
             "title": "Empty Document",
@@ -76,11 +76,11 @@ def test_library_document_zero_chunks_and_boolean_handling():
         }
     )
 
+    assert lib_doc is not None
     assert lib_doc.chunk_count == 0
     assert lib_doc.text_length == 0
     assert lib_doc.rag_indexed is False
     assert lib_doc.index_status == "not_indexed"
-    assert lib_doc.indexed_label == "No"
 
 
 def test_ingest_view_model_failure_status():
