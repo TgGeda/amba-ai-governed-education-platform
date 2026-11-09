@@ -44,6 +44,7 @@ from amba_ai.models.schemas import (
 from amba_ai.rag.engine import FaissRAGEngine
 from amba_ai.services.content_delivery_service import ContentDeliveryService
 from amba_ai.services.model_service import ModelService
+from amba_ai.governance.runtime import RuntimeEducationGovernanceService, RuntimeGovernanceGateError, RuntimeGovernanceReviewRequired
 from amba_ai.services.job_governance import (
     JobGovernanceContext,
     JobGovernanceCoordinator,
@@ -66,8 +67,13 @@ class JobService:
         model_service: ModelService | None = None,
         content_delivery_service: ContentDeliveryService | None = None,
         governance_coordinator: JobGovernanceCoordinator | None = None,
+        runtime_governance: RuntimeEducationGovernanceService | None = None,
     ) -> None:
         self.db = db or Database()
+        database_path = getattr(self.db, "path", None)
+        self.runtime_governance = runtime_governance
+        if self.runtime_governance is None and database_path is not None:
+            self.runtime_governance = RuntimeEducationGovernanceService(database_path)
         self._rag_engine = rag_engine
         self._rag_pipeline_factory = rag_pipeline_factory
         self.memory = memory_manager or VectorInfiniteMemory()
@@ -509,11 +515,20 @@ class JobService:
 
         try:
             stage = "extract"
+            if self.runtime_governance is None:
+                raise IngestionError("Runtime education governance is not configured for ingestion.", context=context)
+            self.runtime_governance.preflight_file(path)
             doc = ingest_path(path, whisper_model=WHISPER_MODEL)
             raw_text = doc.raw_text or ""
+            stage = "govern_ingestion"
+            runtime_decision = self.runtime_governance.assess_ingestion(path, raw_text)
+            if not runtime_decision.permits_persistence:
+                raise IngestionError("Runtime education governance refused persistence.", context={**context, "decision": runtime_decision.to_dict()})
 
             stage = "insert_document"
             document_id = self._insert_document(doc)
+            self.runtime_governance.record_document(document_id, runtime_decision)
+            self.db.update_document_metadata(document_id, {"runtime_governance": runtime_decision.to_dict()})
 
             stage = "chunk_text"
             chunks = chunk_text(
@@ -527,7 +542,7 @@ class JobService:
                 chunks=chunks,
             )
 
-            if chunks:
+            if chunks and runtime_decision.permits_indexing:
                 stage = "index_document"
                 try:
                     self.rag.index_document(document_id)
@@ -646,6 +661,11 @@ class JobService:
         input_metadata: dict[str, Any],
         governance_context: JobGovernanceContext | None,
     ) -> Any | None:
+        document_id = input_metadata.get("document_id")
+        if document_id is not None and self.runtime_governance is not None:
+            doc = self._get_document_or_raise(int(document_id))
+            source_path = str(doc.get("source_path") or "") if isinstance(doc, dict) else str(getattr(doc, "source_path", ""))
+            self.runtime_governance.authorize_generation(int(document_id), method_name, source_path or None)
         if self.governance_coordinator is None:
             return None
         return self.governance_coordinator.begin(
@@ -661,6 +681,10 @@ class JobService:
         result_material: dict[str, Any],
         result_metadata: dict[str, Any],
     ) -> None:
+        document_id = result_metadata.get("document_id")
+        operation = getattr(invocation, "method_name", None) if invocation is not None else None
+        if document_id is not None and operation and self.runtime_governance is not None:
+            self.runtime_governance.validate_output(int(document_id), str(operation), result_material)
         if invocation is None:
             return
         completion = self.governance_coordinator.complete(

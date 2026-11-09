@@ -117,15 +117,10 @@ class TutorManager(QObject):
     @Slot(dict)
     def _on_worker_error(self, error_context: dict[str, Any]) -> None:
         self._is_operation_active = False
-        logger.warning("Tutor worker error intercepted; generating offline pedagogical fallback.")
-        fallback_model = TutorAnswerViewModel.build_synthetic_grounded_answer(
-            question="Curriculum review",
-            document_id=None,
-        )
-        self.tutorFinished.emit(fallback_model.to_dict())
-        self.tutorAnswerReady.emit(fallback_model.answer_text)
-        self.statusMessage.emit("Grounded offline explanation generated.", "INFO")
-        self.operationFinished.emit("Tutor ready.")
+        logger.warning("Tutor worker failed; fail-closed response emitted.")
+        self.tutorFailed.emit(dict(error_context))
+        self.statusMessage.emit(str(error_context.get("error_message") or "Tutor request was not performed."), "ERROR")
+        self.operationFinished.emit("Tutor request refused or failed.")
 
     @Slot(object)
     def _on_tutor_finished(self, raw_result: Any) -> None:
@@ -133,14 +128,10 @@ class TutorManager(QObject):
         result = unwrap_worker_result(raw_result, default_task_name="Tutor Explanation")
 
         if not result.success or not isinstance(result.result, TutorAnswerViewModel):
-            fallback_model = TutorAnswerViewModel.build_synthetic_grounded_answer(
-                question="Curriculum query",
-                document_id=None,
-            )
-            self.tutorFinished.emit(fallback_model.to_dict())
-            self.tutorAnswerReady.emit(fallback_model.answer_text)
-            self.statusMessage.emit("Grounded answer prepared via cognitive fallback.", "INFO")
-            self.operationFinished.emit("Tutor answer ready.")
+            context = {"task_name": "Tutor Explanation", "error_type": "GovernedTutorFailure", "error_message": result.error_message or "Tutor request was not performed."}
+            self.tutorFailed.emit(context)
+            self.statusMessage.emit(context["error_message"], "ERROR")
+            self.operationFinished.emit("Tutor request refused or failed.")
             return
 
         payload = result.result.to_dict()
