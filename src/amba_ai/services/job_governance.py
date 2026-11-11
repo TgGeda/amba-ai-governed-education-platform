@@ -1,4 +1,5 @@
 from __future__ import annotations
+from amba_ai.governance.learning_output_contracts import learning_result_allowed_fields, normalize_learning_result_metadata
 
 from collections.abc import Mapping
 from dataclasses import dataclass
@@ -1184,6 +1185,9 @@ def _safe_metadata(
     allowed: frozenset[str],
     field_name: str,
 ) -> dict[str, Any]:
+    if field_name == "result_metadata":
+        value = normalize_learning_result_metadata(value)
+        allowed = frozenset(allowed) | learning_result_allowed_fields(value)
     if not isinstance(value, Mapping):
         raise TypeError(
             f"{field_name} must be a mapping"

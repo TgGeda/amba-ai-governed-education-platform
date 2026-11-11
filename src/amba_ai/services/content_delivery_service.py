@@ -471,6 +471,10 @@ class ContentDeliveryService:
         )
         return SummarySemanticValidator.validate(result)
 
+    def _validated_extractive_fallback(self, text: str, title: str, *, document_id: int | None, source_name: str, reason: str) -> SummaryResult:
+        fallback = self.fallback_generator.extractive_notes(text, title, document_id=document_id, source_name=source_name, reason=reason)
+        return SummarySemanticValidator.validate(normalize_summary_structure(fallback))
+
     def generate_study_notes(
         self,
         raw_text: str,
@@ -496,12 +500,9 @@ class ContentDeliveryService:
         if not self.circuit_breaker.allow_request():
             self.metrics.record_fallback()
             logger.warning("Circuit breaker OPEN; utilizing safe extractive synthesis")
-            return self.fallback_generator.extractive_notes(
-                bounded_text,
-                bounded_title,
-                document_id=document_id,
-                source_name=effective_source,
-                reason="circuit_breaker_open",
+            return self._validated_extractive_fallback(
+                bounded_text, bounded_title, document_id=document_id,
+                source_name=effective_source, reason="circuit_breaker_open",
             )
 
         source_annotation = (
@@ -533,12 +534,9 @@ class ContentDeliveryService:
                 "Primary summary LLM transport failed; fallback invoked",
                 extra={"context": {"error": str(exc)}},
             )
-            return self.fallback_generator.extractive_notes(
-                bounded_text,
-                bounded_title,
-                document_id=document_id,
-                source_name=effective_source,
-                reason=f"transport_failure: {exc}",
+            return self._validated_extractive_fallback(
+                bounded_text, bounded_title, document_id=document_id,
+                source_name=effective_source, reason=f"transport_failure: {exc}",
             )
 
         raw_result = SummaryResult(
@@ -578,13 +576,10 @@ class ContentDeliveryService:
                     "Format repair failed; invoking deterministic extractive fallback",
                     extra={"context": {"validation_error": str(val_err), "repair_error": str(repair_err)}},
                 )
-                return self.fallback_generator.extractive_notes(
-                    bounded_text,
-                    bounded_title,
-                    document_id=document_id,
-                    source_name=effective_source,
-                    reason=f"validation_failure: {val_err}",
-                )
+                return self._validated_extractive_fallback(
+                bounded_text, bounded_title, document_id=document_id,
+                source_name=effective_source, reason=f"validation_failure: {val_err}",
+            )
 
     def summarize_document(
         self,

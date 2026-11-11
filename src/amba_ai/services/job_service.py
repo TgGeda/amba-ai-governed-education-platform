@@ -983,7 +983,7 @@ class JobService:
                 self._delete_existing_summaries(document_id)
             envelope = self.result_delivery.envelope_from_result(candidate)
             summary_id = self.result_delivery.deliver(
-                envelope, "notes_persistence", db=self.db
+                envelope, "summary_persistence", db=self.db
             ).value
             result = SummaryResult(
                 markdown_notes=candidate.markdown_notes,
