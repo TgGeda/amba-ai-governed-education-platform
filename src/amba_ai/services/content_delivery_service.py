@@ -24,8 +24,10 @@ from amba_ai.models.schemas import Flashcard, MCQ, StudyAssetsResult, SummaryRes
 from amba_ai.services.semantic_validators import (
     FlashcardSemanticValidator,
     MCQSemanticValidator,
+    SemanticQualityGateError,
     StudyAssetQualityAssessor,
     SummarySemanticValidator,
+    normalize_summary_structure,
 )
 
 MAX_FLASHCARDS = 50
@@ -90,13 +92,29 @@ class MetricsProvider(Protocol):
 
 
 class FallbackGenerator(Protocol):
-    def extractive_notes(self, text: str, title: str) -> SummaryResult: ...
+    def extractive_notes(
+        self,
+        text: str,
+        title: str,
+        *,
+        document_id: int | None = None,
+        source_name: str | None = None,
+        reason: str | None = None,
+    ) -> SummaryResult: ...
     def synthesize_flashcards(self, text: str, title: str, needed: int) -> list[Flashcard]: ...
     def synthesize_mcqs(self, text: str, title: str, needed: int) -> list[MCQ]: ...
 
 
 class DefaultFallbackGenerator(FallbackGenerator):
-    def extractive_notes(self, text: str, title: str) -> SummaryResult:
+    def extractive_notes(
+        self,
+        text: str,
+        title: str,
+        *,
+        document_id: int | None = None,
+        source_name: str | None = None,
+        reason: str | None = None,
+    ) -> SummaryResult:
         paragraphs = [p.strip() for p in text.split("\n\n") if len(p.strip()) > 30]
         summary_body = (
             paragraphs[0]
@@ -105,17 +123,44 @@ class DefaultFallbackGenerator(FallbackGenerator):
         )
         body_notes = "\n\n".join(paragraphs[1:6]) if len(paragraphs) > 1 else summary_body
 
+        effective_title = source_name or title
+        source_line = (
+            f"- {effective_title}, local document ID {document_id}"
+            if document_id is not None
+            else f"- {effective_title}"
+        )
+
         markdown = (
-            f"<!-- {SCHEMA_VERSION} -->\n"
             f"# {title}\n\n"
             f"## Executive Summary\n{summary_body}\n\n"
+            f"## Core Concepts\nKey conceptual and structural principles established in the primary curriculum source.\n\n"
             f"## Structured Study Notes\n{body_notes}\n\n"
-            f"## Sources\n- {title}"
+            f"## Sources\n{source_line}"
         )
+
+        doc_ids = [document_id] if document_id is not None else []
+        citations = [
+            {
+                "document_id": document_id,
+                "source_name": effective_title,
+                "source_type": "local_document",
+            }
+        ] if document_id is not None else []
+
+        metadata: dict[str, Any] = {
+            "fallback": True,
+            "fallback_reason": str(reason or "deterministic_extractive_fallback"),
+            "schema_version": SCHEMA_VERSION,
+            "document_id": document_id,
+            "source_document_ids": doc_ids,
+            "citations": citations,
+        }
+
         return SummaryResult(
             markdown_notes=markdown,
             model_name="fallback-extractive",
             tokens_used=0,
+            metadata=metadata,
         )
 
     def synthesize_flashcards(self, text: str, title: str, needed: int) -> list[Flashcard]:
@@ -317,10 +362,10 @@ class CircuitBreaker:
 class RetryPolicy:
     def __init__(
         self,
-        max_attempts: int = 3,
-        initial_backoff: float = 1.0,
+        max_attempts: int = 2,
+        initial_backoff: float = 0.5,
         backoff_multiplier: float = 2.0,
-        jitter_max: float = 0.3,
+        jitter_max: float = 0.2,
         sleeper: Callable[[float], None] = time.sleep,
         rng: Callable[[float, float], float] = random.uniform,
     ) -> None:
@@ -367,7 +412,8 @@ class ContentDeliveryService:
         self.circuit_breaker = circuit_breaker or CircuitBreaker(
             on_trip=self.metrics.record_circuit_trip
         )
-        self.retry_policy = retry_policy or RetryPolicy()
+        self.transport_retry_policy = retry_policy or RetryPolicy(max_attempts=2, initial_backoff=0.5)
+        self.retry_policy = self.transport_retry_policy
         self.fallback_generator = fallback_generator or DefaultFallbackGenerator()
 
     def _resolve_domain_plugin(
@@ -382,72 +428,216 @@ class ContentDeliveryService:
             return adapter
         return None
 
-    def generate_study_notes(self, raw_text: str, title: str) -> SummaryResult:
+    def _repair_summary_format(
+        self,
+        candidate_notes: str,
+        title: str,
+        validation_error: SemanticQualityGateError,
+        document_id: int | None = None,
+    ) -> SummaryResult:
+        source_ref = f"- {title}, local document ID {document_id}" if document_id is not None else f"- {title}"
+        repair_prompt = (
+            f"Reformat the following draft study notes into strict Markdown hierarchy without adding new facts.\n"
+            f"Required headings:\n"
+            f"# {title}\n"
+            f"## Executive Summary\n"
+            f"## Core Concepts\n"
+            f"## Structured Study Notes\n"
+            f"## Sources\n\n"
+            f"Under '## Sources', include:\n{source_ref}\n\n"
+            f"CONTENT TO REFORMAT:\n{candidate_notes[:8000]}"
+        )
+        gen = self.summary_llm.generate(prompt=repair_prompt, temperature=0.0, max_tokens=1500)
+        repaired_md = gen.response_text.strip()
+        doc_ids = [document_id] if document_id is not None else []
+        citations = [
+            {
+                "document_id": document_id,
+                "source_name": title,
+                "source_type": "local_document",
+            }
+        ] if document_id is not None else []
+        result = SummaryResult(
+            markdown_notes=repaired_md,
+            model_name=gen.model_name,
+            tokens_used=gen.tokens_used,
+            metadata={
+                "schema_version": SCHEMA_VERSION,
+                "document_id": document_id,
+                "source_document_ids": doc_ids,
+                "citations": citations,
+                "format_repaired": True,
+            },
+        )
+        return SummarySemanticValidator.validate(result)
+
+    def generate_study_notes(
+        self,
+        raw_text: str,
+        title: str,
+        *,
+        document_id: int | None = None,
+        source_name: str | None = None,
+    ) -> SummaryResult:
         start_time = time.perf_counter()
         bounded_text = str(raw_text or "").strip()[:MAX_INPUT_CHARS]
         bounded_title = str(title or "Study Notes").strip()[:MAX_TITLE_CHARS]
+        effective_source = source_name or bounded_title
+
+        doc_ids = [document_id] if document_id is not None else []
+        base_citations = [
+            {
+                "document_id": document_id,
+                "source_name": effective_source,
+                "source_type": "local_document",
+            }
+        ] if document_id is not None else []
 
         if not self.circuit_breaker.allow_request():
             self.metrics.record_fallback()
             logger.warning("Circuit breaker OPEN; utilizing safe extractive synthesis")
-            return self.fallback_generator.extractive_notes(bounded_text, bounded_title)
+            return self.fallback_generator.extractive_notes(
+                bounded_text,
+                bounded_title,
+                document_id=document_id,
+                source_name=effective_source,
+                reason="circuit_breaker_open",
+            )
+
+        source_annotation = (
+            f"- {effective_source}, local document ID {document_id}"
+            if document_id is not None
+            else f"- {effective_source}"
+        )
 
         prompt = (
             f"Generate rigorous academic study notes using this exact Markdown hierarchy:\n"
-            f"# {bounded_title}\n## Executive Summary\n## Learning Objectives\n## Core Concepts\n"
-            f"## Structured Study Notes\n### Core Mechanisms\n## Key Takeaways\n## Sources\n\n"
+            f"# {bounded_title}\n## Executive Summary\n## Core Concepts\n"
+            f"## Structured Study Notes\n## Sources\n\n"
+            f"Under '## Sources', cite: {source_annotation}\n\n"
             f"SOURCE:\n{bounded_text[:16000]}"
         )
 
-        def _perform_generation() -> SummaryResult:
-            gen = self.summary_llm.generate(prompt=prompt, temperature=0.12, max_tokens=1800)
-            markdown = f"<!-- {SCHEMA_VERSION} -->\n" + gen.response_text.strip()
-            result = SummaryResult(
-                markdown_notes=markdown,
-                model_name=gen.model_name,
-                tokens_used=gen.tokens_used,
-            )
-            return SummarySemanticValidator.validate(result)
+        def _perform_transport_generation() -> LLMResponse:
+            return self.summary_llm.generate(prompt=prompt, temperature=0.12, max_tokens=1800)
 
         try:
-            summary = self.retry_policy.execute(_perform_generation)
+            gen = self.transport_retry_policy.execute(_perform_transport_generation)
             self.circuit_breaker.record_success()
-            elapsed = time.perf_counter() - start_time
-            self.metrics.record_summary(True, elapsed, summary.tokens_used or 0)
-            return summary
         except Exception as exc:
             self.circuit_breaker.record_failure()
             elapsed = time.perf_counter() - start_time
             self.metrics.record_summary(False, elapsed)
             self.metrics.record_fallback()
             logger.warning(
-                "Primary summary generation failed; fallback invoked",
+                "Primary summary LLM transport failed; fallback invoked",
                 extra={"context": {"error": str(exc)}},
             )
-            return self.fallback_generator.extractive_notes(bounded_text, bounded_title)
+            return self.fallback_generator.extractive_notes(
+                bounded_text,
+                bounded_title,
+                document_id=document_id,
+                source_name=effective_source,
+                reason=f"transport_failure: {exc}",
+            )
+
+        raw_result = SummaryResult(
+            markdown_notes=gen.response_text.strip(),
+            model_name=gen.model_name,
+            tokens_used=gen.tokens_used,
+            metadata={
+                "schema_version": SCHEMA_VERSION,
+                "document_id": document_id,
+                "source_document_ids": doc_ids,
+                "citations": base_citations,
+            },
+        )
+
+        normalized = normalize_summary_structure(raw_result)
+
+        try:
+            validated = SummarySemanticValidator.validate(normalized)
+            elapsed = time.perf_counter() - start_time
+            self.metrics.record_summary(True, elapsed, validated.tokens_used or 0)
+            return validated
+        except SemanticQualityGateError as val_err:
+            logger.info("Semantic validation detected structural defect; attempting single format repair")
+            try:
+                repaired = self._repair_summary_format(
+                    str(normalized.markdown_notes or ""),
+                    bounded_title,
+                    val_err,
+                    document_id=document_id,
+                )
+                elapsed = time.perf_counter() - start_time
+                self.metrics.record_summary(True, elapsed, (gen.tokens_used or 0) + (repaired.tokens_used or 0))
+                return repaired
+            except Exception as repair_err:
+                self.metrics.record_fallback()
+                logger.warning(
+                    "Format repair failed; invoking deterministic extractive fallback",
+                    extra={"context": {"validation_error": str(val_err), "repair_error": str(repair_err)}},
+                )
+                return self.fallback_generator.extractive_notes(
+                    bounded_text,
+                    bounded_title,
+                    document_id=document_id,
+                    source_name=effective_source,
+                    reason=f"validation_failure: {val_err}",
+                )
 
     def summarize_document(
         self,
         raw_text: str,
         title: str,
         *,
+        document_id: int | None = None,
+        source_name: str | None = None,
         notes_markdown: str | None = None,
     ) -> SummaryResult:
+        doc_ids = [document_id] if document_id is not None else []
+        citations = [
+            {
+                "document_id": document_id,
+                "source_name": source_name or title,
+                "source_type": "local_document",
+            }
+        ] if document_id is not None else []
+
         if notes_markdown:
             summary = build_fast_summary(notes_markdown, title, title)
             return SummaryResult(
                 markdown_notes=summary,
                 model_name="fast-path",
                 tokens_used=0,
-                metadata={"fast_path": True, "schema_version": SCHEMA_VERSION},
+                metadata={
+                    "fast_path": True,
+                    "schema_version": SCHEMA_VERSION,
+                    "document_id": document_id,
+                    "source_document_ids": doc_ids,
+                    "citations": citations,
+                },
             )
-        notes = self.generate_study_notes(raw_text, title)
+        notes = self.generate_study_notes(
+            raw_text,
+            title,
+            document_id=document_id,
+            source_name=source_name,
+        )
         summary = build_fast_summary(notes.markdown_notes, title, title)
+        merged_metadata = dict(notes.metadata or {})
+        merged_metadata.update({
+            "fast_path": True,
+            "schema_version": SCHEMA_VERSION,
+            "document_id": document_id,
+            "source_document_ids": doc_ids,
+            "citations": citations,
+        })
         return SummaryResult(
             markdown_notes=summary,
             model_name=notes.model_name,
             tokens_used=notes.tokens_used,
-            metadata={"fast_path": True, "schema_version": SCHEMA_VERSION},
+            metadata=merged_metadata,
         )
 
     def generate_study_assets(
@@ -489,7 +679,7 @@ class ContentDeliveryService:
                 return StudyAssetsSchema.model_validate_json(clean_json)
 
             try:
-                parsed = self.retry_policy.execute(_perform_asset_generation)
+                parsed = self.transport_retry_policy.execute(_perform_asset_generation)
                 self.circuit_breaker.record_success()
 
                 for fc in parsed.flashcards:

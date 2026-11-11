@@ -300,3 +300,14 @@ submission/                     reproduction, demo, and report source documents
 ## License and review gates
 
 The project intentionally keeps the software-license readiness metric pending until an owner-approved license file is present. It also keeps the representative-review metric pending until a real representative review is completed and accepted. These boundaries must not be bypassed for presentation purposes.
+
+## Governed learning evidence chain
+
+Workstream 13 adds one immutable correlation context and a digest-linked, privacy-safe evidence chain from user action through authorization, source digest, chunk decisions, index revision, retrieval, generation, output validation, sink delivery or prevention, trace completion, and verified audit evidence.
+
+Authoritative artifacts:
+
+- `submission/artifacts/governed_learning_evidence_chain.json`
+- `submission/governed_learning_evidence_chain.md`
+
+The artifacts contain identifiers, SHA-256 digests, dispositions, decisions, and receipt IDs. They do not retain raw source text, raw chunks, raw model candidates, learner identifiers, or private local paths.

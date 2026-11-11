@@ -61,7 +61,7 @@ class FlashcardViewModel:
     source_ref: str = "Verified Grounded Material"
     concept: str = "Core Concept"
     code_snippet: str = ""
-    language: str = "bash"
+    language: str = "text"
     difficulty: str = "Medium"
 
     def to_dict(self) -> dict[str, Any]:
@@ -78,58 +78,44 @@ class FlashcardViewModel:
             raw_q = str(value.get("question") or "")
             raw_a = str(value.get("answer") or "")
             source = str(value.get("source_ref") or "Verified Grounded Material")
-            concept = str(value.get("concept") or value.get("category") or "CLI Security")
+            concept = str(value.get("concept") or value.get("category") or "Curriculum Concept")
             code = str(value.get("code_snippet") or value.get("code") or "")
             diff = str(value.get("difficulty") or "Medium")
         else:
             raw_q = str(getattr(value, "question", "") or "")
             raw_a = str(getattr(value, "answer", "") or "")
             source = str(getattr(value, "source_ref", None) or "Verified Grounded Material")
-            concept = str(getattr(value, "concept", None) or getattr(value, "category", "") or "CLI Security")
+            concept = str(getattr(value, "concept", None) or getattr(value, "category", "") or "Curriculum Concept")
             code = str(getattr(value, "code_snippet", "") or getattr(value, "code", "") or "")
             diff = str(getattr(value, "difficulty", "") or "Medium")
 
         q = _clean_study_text(raw_q)
         a = _clean_study_text(raw_a)
 
+        detected_lang = "text"
         if not code:
-            code_match = re.search(r"(curl\s+-[^\n]+|cat\s+[^\n]+|diff\s+<[^\n]+|jq\s+['\"][^\n]+['\"]|jq\s+[^\n]+)", a)
+            code_match = re.search(r"```([a-zA-Z0-9_-]*)\n(.*?)```", a, flags=re.DOTALL)
             if code_match:
-                code = code_match.group(1).strip()
+                detected_lang = code_match.group(1).strip() or "text"
+                code = code_match.group(2).strip()
             else:
-                code_match_q = re.search(r"(curl\s+-[^\n]+|cat\s+[^\n]+|diff\s+<[^\n]+|jq\s+['\"][^\n]+['\"])", q)
+                code_match_q = re.search(r"```([a-zA-Z0-9_-]*)\n(.*?)```", q, flags=re.DOTALL)
                 if code_match_q:
-                    code = code_match_q.group(1).strip()
+                    detected_lang = code_match_q.group(1).strip() or "text"
+                    code = code_match_q.group(2).strip()
 
-        if "What is the designated learning focus for concept" in q or "What key principle does the material establish regarding" in q:
-            if "curl" in q or "api" in q.lower() or "curl" in a:
-                q = "How do you extract specific user attributes (id, email, admin flag) from an API JSON response?"
-                a = "Pipe the API response directly into jq and reconstruct an object with targeted fields: curl -s https://api.target.com/v1/users | jq '.[] | {id, email, admin: .is_admin}'"
-                concept = "API Intelligence"
-                code = "curl -s https://api.target.com/v1/users | jq '.[] | {id, email, admin: .is_admin}'"
-            elif "strings" in q or "secret" in q.lower() or "token" in q.lower() or "strings" in a:
-                q = "How can you recursively hunt for auth tokens or API keys inside large JSON logs?"
-                a = "Use recursive descent `..` combined with `strings` and `select(test(...))` with an entropy regex to locate credentials."
-                concept = "Threat Hunting"
-                code = "cat log.json | jq '.. | strings | select(test(\"[A-Za-z0-9_-]{20,}\"))'"
-            elif "diff" in q or "config" in q.lower() or "diff" in a:
-                q = "How do you compare two JSON configurations while preventing false positives caused by unordered keys?"
-                a = "Use bash process substitution with jq's sorted keys flag (`jq -S .`) to normalize both files before running diff."
-                concept = "Integrity Verification"
-                code = "diff <(jq -S . config_old.json) <(jq -S . config_new.json)"
-            elif "beautiful" in q.lower() or "real-life" in q.lower() or "bottom line" in a.lower():
-                q = "What core automation value does jq provide in security analysis and penetration testing?"
-                a = "jq enables fast, deterministic command-line extraction, log threat hunting, and config diffing without fragile string parsing."
-                concept = "CLI Automation"
-                code = "jq -S . target.json"
+        if not q:
+            q = f"What core principle is established in section {fallback_index} of {source}?"
+        if not a:
+            a = f"Consult {source} for detailed examination and active recall guidance."
 
         return cls(
             question=q,
             answer=a,
             source_ref=_clean_study_text(source),
-            concept=concept.strip() or "Security Automation",
+            concept=concept.strip() or "Core Learning Concept",
             code_snippet=code.strip(),
-            language="bash",
+            language=detected_lang,
             difficulty=diff,
         )
 
@@ -143,7 +129,7 @@ class MCQViewModel:
     source_ref: str = "Verified Grounded Material"
     concept: str = "Knowledge Assessment"
     code_snippet: str = ""
-    language: str = "bash"
+    language: str = "text"
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -177,59 +163,36 @@ class MCQViewModel:
         correct = _clean_study_text(correct)
         exp = _clean_study_text(exp)
 
-        if "Which proposition represents the verified finding" in q or len(clean_choices) < 2 or any("[Page 1]" in c for c in clean_choices):
-            if fallback_index % 3 == 1:
-                q = "When analyzing an authentication API response, which jq expression correctly projects only the user ID, email, and administrator status?"
-                code = "curl -s https://api.target.com/v1/users | jq '...'"
-                clean_choices = [
-                    "jq '.[] | {id, email, admin: .is_admin}'",
-                    "jq 'select(.admin == true)'",
-                    "jq '.users[] | print(id, email)'",
-                    "jq 'keys | grep admin'",
-                ]
-                correct = "jq '.[] | {id, email, admin: .is_admin}'"
-                exp = "The expression '.[] | {id, email, admin: .is_admin}' iterates over elements and maps specified keys into a concise JSON dictionary."
-                concept = "API Payload Filtering"
-            elif fallback_index % 3 == 2:
-                q = "Which combination of jq filters allows an analyst to locate high-entropy tokens and leaked secrets within unstructured nested logs?"
-                code = "cat audit.json | jq '...'"
-                clean_choices = [
-                    ".. | strings | select(test(\"[A-Za-z0-9_-]{20,}\"))",
-                    "keys[] | select(length > 20)",
-                    "grep -rn 'token' log.json",
-                    ".[] | map(.secrets)",
-                ]
-                correct = ".. | strings | select(test(\"[A-Za-z0-9_-]{20,}\"))"
-                exp = "The '..' operator recursively traverses all JSON leaves, 'strings' narrows input to text values, and 'test' filters with a regular expression."
-                concept = "Secret Extraction"
-            else:
-                q = "Why is the `-S` flag essential when comparing two JSON configuration files using Unix diff?"
-                code = "diff <(jq -S . config_old.json) <(jq -S . config_new.json)"
-                clean_choices = [
-                    "It sorts object keys alphabetically, preventing false diff positives from key reordering",
-                    "It encrypts sensitive token values before displaying differences",
-                    "It strips whitespace and compresses JSON into a single line",
-                    "It validates the configuration schema against OpenAPI specs",
-                ]
-                correct = "It sorts object keys alphabetically, preventing false diff positives from key reordering"
-                exp = "Standard JSON objects are unordered. The -S flag orders keys deterministically so that structural equality can be cleanly evaluated by diff."
-                concept = "Configuration Diffing"
+        detected_lang = "text"
+        if not code:
+            code_match = re.search(r"```([a-zA-Z0-9_-]*)\n(.*?)```", q, flags=re.DOTALL)
+            if code_match:
+                detected_lang = code_match.group(1).strip() or "text"
+                code = code_match.group(2).strip()
 
-        if correct not in clean_choices and clean_choices:
-            clean_choices[0] = correct
+        if not q:
+            q = f"Which proposition represents the primary conclusion for lesson topic {fallback_index}?"
+        if not correct:
+            correct = clean_choices[0] if clean_choices else "Verified principle documented in source curriculum."
+
+        if correct not in clean_choices:
+            clean_choices.insert(0, correct)
 
         while len(clean_choices) < 4:
-            clean_choices.append(f"Alternative validation pipeline {len(clean_choices) + 1}")
+            clean_choices.append(f"Alternative curriculum interpretation {len(clean_choices) + 1}")
+
+        if not exp:
+            exp = f"Based directly on verified learning objectives in {source}."
 
         return cls(
             question=q,
             choices=clean_choices[:4],
             correct_answer=correct,
-            explanation=exp or "Refer to the source lesson for verified command syntax and implementation rationale.",
+            explanation=exp,
             source_ref=_clean_study_text(source),
-            concept=concept.strip() or "Security Automation",
+            concept=concept.strip() or "Curriculum Assessment",
             code_snippet=code.strip(),
-            language="bash",
+            language=detected_lang,
         )
 
 
@@ -273,9 +236,9 @@ class StudyAssetsViewModel:
         ]
 
         if not flashcards:
-            flashcards = cls._build_default_flashcards()
+            flashcards = cls._build_default_flashcards(document_id)
         if not mcqs:
-            mcqs = cls._build_default_mcqs()
+            mcqs = cls._build_default_mcqs(document_id)
 
         return cls(
             document_id=document_id,
@@ -287,79 +250,61 @@ class StudyAssetsViewModel:
         )
 
     @staticmethod
-    def _build_default_flashcards() -> list[FlashcardViewModel]:
+    def _build_default_flashcards(document_id: int = 0) -> list[FlashcardViewModel]:
+        source_name = f"Curriculum Document #{document_id}" if document_id else "Verified Curriculum Material"
         return [
             FlashcardViewModel(
-                question="How do you parse specific API attributes (id, email, admin flag) using jq in a security recon workflow?",
-                answer="Stream response JSON into jq and format a custom sub-object: curl -s https://api.target.com/v1/users | jq '.[] | {id, email, admin: .is_admin}'",
-                concept="API Intelligence",
-                code_snippet="curl -s https://api.target.com/v1/users | jq '.[] | {id, email, admin: .is_admin}'",
+                question=f"What is the foundational objective established in {source_name}?",
+                answer="Understanding and applying the core concepts defined in the primary lesson.",
+                source_ref=source_name,
+                concept="Curriculum Foundation",
                 difficulty="Easy",
             ),
             FlashcardViewModel(
-                question="What jq filter pattern recursively searches JSON log trees for authentication tokens and high-entropy strings?",
-                answer="Combine recursive traversal '..' with type filtering 'strings' and regular expression validation 'select(test(...))'.",
-                concept="Threat Hunting",
-                code_snippet="cat log.json | jq '.. | strings | select(test(\"[A-Za-z0-9_-]{20,}\"))'",
+                question=f"How should key principles from {source_name} be systematically reviewed?",
+                answer="Through spaced repetition, active recall cards, and interactive scenario questions.",
+                source_ref=source_name,
+                concept="Pedagogical Method",
                 difficulty="Medium",
             ),
             FlashcardViewModel(
-                question="How can an administrator detect configuration tampering between two JSON files without false positives from key reordering?",
-                answer="Normalize both files by alphabetically sorting object keys with 'jq -S .' inside bash process substitution.",
-                concept="Integrity Auditing",
-                code_snippet="diff <(jq -S . config_old.json) <(jq -S . config_new.json)",
+                question=f"What constitutes verified evidence when answering examination questions on this unit?",
+                answer="Direct factual citations grounded in the authorized syllabus text.",
+                source_ref=source_name,
+                concept="Evidence & Grounding",
                 difficulty="Hard",
-            ),
-            FlashcardViewModel(
-                question="What makes jq superior to grep or awk when handling JSON data in production pipelines?",
-                answer="jq understands nested JSON semantics, escapes, arrays, and types natively, preventing parse errors caused by formatting changes or multiline values.",
-                concept="CLI Engineering",
-                code_snippet="jq -e .status config.json",
-                difficulty="Easy",
             ),
         ]
 
     @staticmethod
-    def _build_default_mcqs() -> list[MCQViewModel]:
+    def _build_default_mcqs(document_id: int = 0) -> list[MCQViewModel]:
+        source_name = f"Curriculum Document #{document_id}" if document_id else "Verified Curriculum Material"
         return [
             MCQViewModel(
-                question="Which command extracts user records from an endpoint and projects only ID, email, and admin rights into compact JSON?",
+                question=f"Which proposition represents the primary verified finding in {source_name}?",
                 choices=[
-                    "curl -s https://api.target.com/v1/users | jq '.[] | {id, email, admin: .is_admin}'",
-                    "curl -s https://api.target.com/v1/users | jq '.users.id'",
-                    "curl -s https://api.target.com/v1/users | grep -E 'id|email|admin'",
-                    "curl -s https://api.target.com/v1/users | jq 'filter(.is_admin)'",
+                    "The curriculum establishes validated analytical principles for active learning.",
+                    "No structured framework is provided for the subject matter.",
+                    "Learning outcomes are evaluated without reference to source material.",
+                    "The subject material relies solely on external ungrounded conjecture.",
                 ],
-                correct_answer="curl -s https://api.target.com/v1/users | jq '.[] | {id, email, admin: .is_admin}'",
-                explanation="The expression '.[] | {id, email, admin: .is_admin}' iterates across each item in the array and constructs a dictionary with the specified attributes.",
-                concept="API Intelligence",
-                code_snippet="curl -s https://api.target.com/v1/users | jq '.[] | {id, email, admin: .is_admin}'",
+                correct_answer="The curriculum establishes validated analytical principles for active learning.",
+                explanation=f"The primary text in {source_name} defines validated instructional guidelines.",
+                source_ref=source_name,
+                concept="Knowledge Verification",
             ),
             MCQViewModel(
-                question="To find potential API keys and tokens in a large JSON file, which jq command searches all string values with regex matching?",
+                question="What is the most effective study strategy for mastering new conceptual definitions?",
                 choices=[
-                    "cat log.json | jq '.. | strings | select(test(\"[A-Za-z0-9_-]{20,}\"))'",
-                    "cat log.json | jq 'select(.token != null)'",
-                    "cat log.json | jq 'keys[] | search(\"token\")'",
-                    "cat log.json | jq '.[] | find_secrets()'",
+                    "Active recall paired with spaced self-assessment questions",
+                    "Passive single-pass reading without revision",
+                    "Relying exclusively on unverified online summaries",
+                    "Memorizing disconnected keywords without their context",
                 ],
-                correct_answer="cat log.json | jq '.. | strings | select(test(\"[A-Za-z0-9_-]{20,}\"))'",
-                explanation="The '..' operator descends into all child elements, 'strings' filters for string data types, and 'select(test(...))' executes the regex predicate.",
-                concept="Threat Hunting",
-                code_snippet="cat log.json | jq '.. | strings | select(test(\"[A-Za-z0-9_-]{20,}\"))'",
-            ),
-            MCQViewModel(
-                question="What is the primary function of the `-S` option when invoking `jq -S .` in a diff command?",
-                choices=[
-                    "Sorts keys of all JSON objects alphabetically to eliminate false positives in diffing",
-                    "Silences standard output warnings and error messages",
-                    "Streams output in chunks to reduce memory footprint on large files",
-                    "Strictly validates the document against a JSON Schema file",
-                ],
-                correct_answer="Sorts keys of all JSON objects alphabetically to eliminate false positives in diffing",
-                explanation="Because dictionary keys in JSON are mathematically unordered, key permutation produces misleading textual diffs unless sorted with -S beforehand.",
-                concept="Integrity Auditing",
-                code_snippet="diff <(jq -S . config_old.json) <(jq -S . config_new.json)",
+                correct_answer="Active recall paired with spaced self-assessment questions",
+                explanation="Evidence-based learning science confirms active retrieval reinforces retention.",
+                source_ref=source_name,
+                concept="Study Methodology",
             ),
         ]
 

@@ -1,44 +1,117 @@
-schema_version: "1.0.0"
-
+schema_version: 1.0.0
 destination_rules:
-  unknown_destination: "configuration_failure"
-  unregistered_destination: "block"
-  operation_not_allowed: "block"
-  empty_destination: "configuration_failure"
+  unknown_destination: configuration_failure
+  unregistered_destination: block
+  operation_not_allowed: block
+  empty_destination: configuration_failure
   wildcard_operations_allowed: false
-
 destinations:
   SYNTHETIC-TEACHER-UI:
-    destination_class: "educational"
+    destination_class: educational
     registered: true
     synthetic: true
     allowed_operations:
-      - "classroom_exercise_telemetry"
-      - "classroom_instruction_delivery"
-
+    - classroom_exercise_telemetry
+    - classroom_instruction_delivery
   SYNTHETIC-LEARNER-UI:
-    destination_class: "educational"
+    destination_class: educational
     registered: true
     synthetic: true
     allowed_operations:
-      - "classroom_instruction_delivery"
-
+    - classroom_instruction_delivery
   SYNTHETIC-REVIEW-QUEUE:
-    destination_class: "administrative_review"
+    destination_class: administrative_review
     registered: true
     synthetic: true
     allowed_operations:
-      - "commercial_purchase_request"
-
+    - commercial_purchase_request
   SYNTHETIC-VENDOR-REVIEW:
-    destination_class: "administrative_review"
+    destination_class: administrative_review
     registered: true
     synthetic: true
     allowed_operations:
-      - "commercial_purchase_request"
-
+    - commercial_purchase_request
   SYNTHETIC-AD-SINK:
-    destination_class: "commercial_advertising"
+    destination_class: commercial_advertising
     registered: false
     synthetic: true
     allowed_operations: []
+  desktop.library:
+    destination_class: educational
+    registered: true
+    synthetic: false
+    allowed_operations:
+    - learning.document.ingest
+    - learning.document.replace
+    - learning.document.delete
+  internal.retrieval:
+    destination_class: internal_retrieval
+    registered: true
+    synthetic: false
+    allowed_operations:
+    - learning.document.index
+    - learning.tutor.retrieve
+  desktop.tutor:
+    destination_class: educational
+    registered: true
+    synthetic: false
+    allowed_operations:
+    - learning.tutor.answer
+  desktop.summary:
+    destination_class: educational
+    registered: true
+    synthetic: false
+    allowed_operations:
+    - learning.summary.generate
+  desktop.notes:
+    destination_class: educational
+    registered: true
+    synthetic: false
+    allowed_operations:
+    - learning.notes.generate
+  desktop.study:
+    destination_class: educational
+    registered: true
+    synthetic: false
+    allowed_operations:
+    - learning.flashcards.generate
+    - learning.quiz.generate
+  local.export:
+    destination_class: local_export
+    registered: true
+    synthetic: false
+    allowed_operations:
+    - learning.content.export
+  local.clipboard:
+    destination_class: local_clipboard
+    registered: true
+    synthetic: false
+    allowed_operations:
+    - learning.content.copy
+  review.queue:
+    destination_class: administrative_review
+    registered: true
+    synthetic: false
+    allowed_operations:
+    - learning.document.ingest
+    - learning.document.index
+    - learning.document.replace
+    - learning.document.delete
+    - learning.tutor.retrieve
+    - learning.tutor.answer
+    - learning.summary.generate
+    - learning.notes.generate
+    - learning.flashcards.generate
+    - learning.quiz.generate
+    - learning.content.export
+    - learning.content.copy
+    - learning.review.decide
+    - learning.output.revoke
+  audit.ledger:
+    destination_class: audit
+    registered: true
+    synthetic: false
+    allowed_operations:
+    - learning.document.delete
+    - learning.review.decide
+    - learning.output.revoke

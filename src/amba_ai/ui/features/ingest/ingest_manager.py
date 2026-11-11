@@ -25,6 +25,7 @@ class IngestManager(QObject):
         self.jobs = job_service
         self.thread_pool = QThreadPool.globalInstance()
         self._is_operation_active = False
+        self._failure_emitted = False
         self._equity_profile: dict[str, Any] = {}
 
     @Slot(dict)
@@ -52,6 +53,7 @@ class IngestManager(QObject):
             return
 
         self._is_operation_active = True
+        self._failure_emitted = False
         self.ingestionStarted.emit(request.path)
         self.operationStarted.emit("Ingesting learning material...")
 
@@ -75,6 +77,9 @@ class IngestManager(QObject):
     @Slot(dict)
     def _on_worker_error(self, error_context: dict[str, Any]) -> None:
         self._is_operation_active = False
+        if self._failure_emitted:
+            return
+        self._failure_emitted = True
         logger.warning("Ingest worker emitted error", extra={"context": error_context})
         message = str(error_context.get("error_message") or "Ingestion error.")
         self.ingestionFailed.emit(error_context)
@@ -87,6 +92,9 @@ class IngestManager(QObject):
         result = unwrap_worker_result(raw_result, default_task_name="Ingest File")
 
         if not result.success:
+            if self._failure_emitted:
+                return
+            self._failure_emitted = True
             context = {
                 "task_name": result.task_name,
                 "error_message": result.error_message or "File ingestion failed.",
@@ -108,6 +116,18 @@ class IngestManager(QObject):
             self.operationFinished.emit("Ingestion failed.")
             return
 
+        receipt_id = str((result.result.metadata or {}).get("ingestion_receipt_id") or "")
+        if not receipt_id:
+            context = {
+                "task_name": result.task_name,
+                "error_type": "MissingIngestionReceipt",
+                "error_message": "Governed ingestion completed without a receipt.",
+            }
+            self.ingestionFailed.emit(context)
+            self.statusMessage.emit(context["error_message"], "ERROR")
+            self.operationFinished.emit("Ingestion failed.")
+            return
+
         view_model = IngestViewModel.from_ingested_result(result.result)
         payload = view_model.to_dict()
 
@@ -115,7 +135,9 @@ class IngestManager(QObject):
         if view_model.document_id > 0:
             self.documentIngested.emit(view_model.document_id)
 
-        self.statusMessage.emit("Document ingested successfully.", "INFO")
+        self.statusMessage.emit(
+            f"Document ingested successfully. Receipt: {receipt_id}", "INFO"
+        )
         self.operationFinished.emit("Document ingested successfully.")
 
     def cleanup_before_close(self) -> None:

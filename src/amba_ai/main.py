@@ -437,6 +437,7 @@ def run_app(args: CliArgs) -> int:
 
         from PySide6.QtWidgets import QApplication
         from amba_ai.ui.main_window import MainWindow
+        from amba_ai.application.bootstrap import create_desktop_services
 
         logger.info("Creating QApplication", extra={"context": context})
 
@@ -450,7 +451,10 @@ def run_app(args: CliArgs) -> int:
 
         logger.info("Creating main window", extra={"context": context})
 
-        window = MainWindow()
+        bootstrap = create_desktop_services(project_root=_project_root())
+        bootstrap.application.start()
+        window = MainWindow(bootstrap.services)
+        app.aboutToQuit.connect(bootstrap.close)
         window.show()
 
         logger.info("Main window created successfully", extra={"context": context})

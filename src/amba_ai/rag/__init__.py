@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from .chunk_adapter import ChunkAdapter
 from .chunking import SemanticChunker
 from .context import ContextAssembler
 from .engine import FaissRAGEngine
@@ -13,7 +14,6 @@ from .models import (
 )
 from .pipeline import ProductionRAGPipeline
 from .reranking import LexicalSemanticReranker
-from .retrieved_chunk_compat import ChunkAdapter, install_retrieved_chunk_compat
 from .source_control import SourceControl
 
 __all__ = [
@@ -31,6 +31,5 @@ __all__ = [
     "RetrievalQuery",
     "SemanticChunker",
     "SourceControl",
-    "install_retrieved_chunk_compat",
     "reciprocal_rank_fusion",
 ]

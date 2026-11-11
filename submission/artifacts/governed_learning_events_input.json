@@ -1,0 +1,39 @@
+{
+  "execution_context": {
+    "correlation_id": "EDU-CORR-DEMO-001",
+    "session_id": "SESSION-DEMO-001",
+    "principal_id": "SYNTHETIC-LEARNER-01",
+    "operation_id": "learning.tutor.answer",
+    "document_id": 1,
+    "runtime_request_id": "EDU-REQUEST-DEMO-001",
+    "trace_id": "EDU-TRACE-DEMO-001"
+  },
+  "scenario_ids": ["A", "B", "C", "D"],
+  "audit_verified": true,
+  "test_matrix": {
+    "test_application_composition.py": "One shared service graph",
+    "test_governed_document_ingestion.py": "Upload through governed indexed corpus",
+    "test_governed_index_rebuild.py": "Recovery preserves exclusions",
+    "test_governed_hybrid_retrieval.py": "FAISS and BM25 use one allowlist",
+    "test_governed_tutor_answer.py": "Tutor request through governed delivery",
+    "test_governance_review_lifecycle.py": "Approve, redact, reject, and revoke",
+    "test_governed_document_deletion.py": "Deletion and tombstone",
+    "test_policy_evidence_pipeline.py": "Policy authority and provenance",
+    "test_learning_governance_scenarios.py": "Real product learning scenarios",
+    "test_complete_governed_learning_chain.py": "Full user-action-to-audit chain"
+  },
+  "events": [
+    {"event_type": "user_action", "details": {"status": "requested"}},
+    {"event_type": "operation_authorization", "details": {"decision": "authorized", "receipt_id": "AUTH-DEMO-001"}},
+    {"event_type": "source_digest_verified", "details": {"source_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}},
+    {"event_type": "chunk_decisions_recorded", "details": {"chunk_ids": [1], "approved_chunk_ids": [1], "excluded_chunk_ids": []}},
+    {"event_type": "index_revision_published", "details": {"revision_id": "REV-DEMO-001", "approved_chunk_ids": [1]}},
+    {"event_type": "retrieval_receipt_created", "details": {"retrieval_receipt": "RET-DEMO-001", "retrieved_chunk_ids": [1]}},
+    {"event_type": "generation_requested", "details": {"generation_request_id": "GEN-DEMO-001"}},
+    {"event_type": "output_validated", "details": {"output_id": "OUT-DEMO-001", "sanitized_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "disposition": "display"}},
+    {"event_type": "sink_receipt_created", "details": {"sink_name": "tutor_display", "receipt_id": "SINK-DEMO-001", "sanitized_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"}},
+    {"event_type": "distribution_completed_or_prevented", "details": {"status": "completed", "receipt_id": "DIST-DEMO-001"}},
+    {"event_type": "trace_completed", "details": {"receipt_id": "TRACE-DEMO-001"}},
+    {"event_type": "audit_block_verified", "details": {"audit_receipt": "AUDIT-DEMO-001", "status": "verified"}}
+  ]
+}

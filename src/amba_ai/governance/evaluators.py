@@ -505,6 +505,18 @@ class CitationIntegrityEvaluator(_BaseEvaluator):
 
     def evaluate(self, event, operation, record_registry) -> PolicyFinding:
         fid = self._begin("find_cit", event, operation, record_registry)
+        if event.payload.get("governance_phase") == "pre_generation":
+            return _finding(
+                finding_id=fid,
+                event=event,
+                evaluator_id=self.evaluator_id,
+                code="CITATION_NOT_YET_AVAILABLE",
+                severity=FindingSeverity.INFO,
+                verdict=PolicyVerdict.NOT_APPLICABLE,
+                rationale="Citation integrity is evaluated after governed generation.",
+                sufficiency=EvidenceSufficiency.NOT_APPLICABLE,
+                details={"governance_phase": "pre_generation"},
+            )
         citations = event.payload.get("citations")
         if citations is None or citations == () or citations == []:
             return _finding(
@@ -615,6 +627,18 @@ class ContentSafetyEvaluator(_BaseEvaluator):
 
     def evaluate(self, event, operation, record_registry) -> PolicyFinding:
         fid = self._begin("find_safety", event, operation, record_registry)
+        if event.payload.get("governance_phase") == "pre_generation":
+            return _finding(
+                finding_id=fid,
+                event=event,
+                evaluator_id=self.evaluator_id,
+                code="CONTENT_SAFETY_NOT_YET_AVAILABLE",
+                severity=FindingSeverity.INFO,
+                verdict=PolicyVerdict.NOT_APPLICABLE,
+                rationale="Generated-content safety is evaluated after governed generation.",
+                sufficiency=EvidenceSufficiency.NOT_APPLICABLE,
+                details={"governance_phase": "pre_generation"},
+            )
         if self._checker is None:
             return _finding(
                 finding_id=fid, event=event, evaluator_id=self.evaluator_id,

@@ -7,6 +7,7 @@ from PySide6.QtCore import QObject, QThreadPool, Signal, Slot
 from amba_ai.logger import logger
 from amba_ai.models.schemas import StudyAssetsResult
 from amba_ai.services.job_service import JobService
+from amba_ai.ui.governance_context import desktop_governance_context
 from .data_classes import StudyAssetsViewModel, StudyGenerationRequest
 from amba_ai.ui.workers import FunctionWorker, unwrap_worker_result
 
@@ -15,6 +16,7 @@ class StudyManager(QObject):
     studyStarted = Signal(str)
     studyFinished = Signal(dict)
     studyFailed = Signal(dict)
+    studyHeld = Signal(dict)
     studyAssetsGenerated = Signal(int)
     statusMessage = Signal(str, str)
     operationStarted = Signal(str)
@@ -62,6 +64,7 @@ class StudyManager(QObject):
         )
         worker.signals.finished.connect(self._on_study_finished)
         worker.signals.error.connect(self._on_worker_error)
+        worker.signals.held.connect(self._on_worker_held)
         worker.signals.status.connect(self._on_worker_status)
 
         self.thread_pool.start(worker)
@@ -72,7 +75,12 @@ class StudyManager(QObject):
             force=request.force,
             flashcard_count=request.flashcard_count,
             mcq_count=request.mcq_count,
+            governance_context=desktop_governance_context(
+                "generate_study_assets",
+                document_id=request.document_id,
+            ),
         )
+        result = self.jobs.require_governed_result(result)
         if not isinstance(result, StudyAssetsResult):
             raise TypeError("Governed study backend returned an invalid result.")
         return StudyAssetsViewModel.from_study_assets_result(result)
@@ -81,6 +89,16 @@ class StudyManager(QObject):
     def _on_worker_status(self, payload: dict[str, Any]) -> None:
         message = str(payload.get("message") or payload.get("stage") or "Synthesizing curriculum assets...")
         self.statusMessage.emit(message, "INFO")
+
+    @Slot(dict)
+    def _on_worker_held(self, hold_context: dict[str, Any]) -> None:
+        self._is_operation_active = False
+        logger.info("Study operation held for governance review", extra={"context": hold_context})
+        receipt = hold_context.get("review_queue_receipt") or hold_context.get("event_id") or "pending"
+        message = f"Study asset synthesis held for governance review (receipt: {receipt})."
+        self.studyHeld.emit(hold_context)
+        self.statusMessage.emit(message, "WARNING")
+        self.operationFinished.emit("Study asset synthesis held for review.")
 
     @Slot(dict)
     def _on_worker_error(self, error_context: dict[str, Any]) -> None:

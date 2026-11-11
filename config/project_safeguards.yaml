@@ -1,0 +1,34 @@
+schema_version: "1.0.0"
+policy_id: "AMBA-PROJECT-SAFEGUARDS"
+policy_version: "1.0.0"
+authority: "AmbaAI project governance"
+scope: "Synthetic offline educational processing and delivery controls"
+binding_level: "project_control"
+national_binding_status: false
+synthetic_only: true
+legal_effect: false
+controls:
+  educational_processing:
+    locator: "Project safeguards / educational processing"
+    rule: "Synthetic learner content may be processed only for configured local educational operations, without commercial SDK execution or legal effect."
+  restricted_destinations:
+    locator: "Project safeguards / restricted destinations"
+    rule: "Governed learning results may be delivered only to registered operation-eligible local destinations; unknown, unregistered, or ineligible destinations must fail closed."
+  commercial_purchases:
+    locator: "Project safeguards / commercial purchases"
+    rule: "Commercial purchase requests and positive synthetic purchase amounts are held under project controls and cannot complete automatically."
+  targeted_advertising:
+    locator: "Project safeguards / targeted advertising"
+    rule: "Targeted advertising and profiling-based advertising are prohibited in the synthetic educational environment."
+  human_review:
+    locator: "Project safeguards / human review"
+    rule: "Protected review, revocation, and supersession decisions require the configured human approval role."
+  evidence_integrity:
+    locator: "Project safeguards / evidence integrity"
+    rule: "Governance evidence must retain verified identities, deterministic digests, and fail-closed integrity checks."
+  readiness_separation:
+    locator: "Project safeguards / readiness separation"
+    rule: "Readiness assessment evidence is separate from runtime authorization and cannot independently authorize execution."
+  synthetic_scope:
+    locator: "Project safeguards / synthetic scope"
+    rule: "Project fixtures and demonstrations are synthetic only, have no legal effect, and cannot be represented as national binding findings."

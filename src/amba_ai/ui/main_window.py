@@ -21,6 +21,7 @@ from PySide6.QtWidgets import (
 )
 
 from amba_ai.compute.edge_slm import OllamaClient
+from amba_ai.application.service_container import ApplicationServices
 from amba_ai.core.agent_bridge import AgentBridge
 from amba_ai.core.agent_orchestrator import AgentOrchestrator
 from amba_ai.core.context_tracker import ContextTracker
@@ -37,6 +38,7 @@ from amba_ai.ui.features.notes import NotesWidget
 from amba_ai.ui.features.study import StudyWidget
 from amba_ai.ui.features.summarizer import SummarizerWidget
 from amba_ai.ui.features.tutor import TutorWidget
+from amba_ai.ui.features.governance_review import GovernanceReviewWidget
 from amba_ai.ui.features.governance.main_window_integration import install_submission_workspaces
 
 try:
@@ -77,8 +79,12 @@ class MainWindow(QMainWindow):
     documentChanged = Signal(int)
     equityProfileChanged = Signal(dict)
 
-    def __init__(self) -> None:
+    def __init__(self, services: ApplicationServices) -> None:
         super().__init__()
+        if not isinstance(services, ApplicationServices):
+            raise TypeError("services must be an ApplicationServices")
+        self.services = services
+        self.job_service = services.job_service
 
         self._load_settings()
         self._setup_services()
@@ -132,8 +138,8 @@ class MainWindow(QMainWindow):
         self._is_cleaned_up = False
 
     def _setup_services(self) -> None:
-        self.db = Database()
-        self.jobs = JobService(self.db)
+        self.db = self.services.database
+        self.jobs = self.services.job_service
 
     def _setup_core_components(self) -> None:
         self.setWindowTitle(self.tr("AmbaAI Offline Study Assistant"))
@@ -168,6 +174,11 @@ class MainWindow(QMainWindow):
         self.study_widget = StudyWidget(self.settings, self.jobs, self)
         self.tutor_widget = TutorWidget(self.settings, self.jobs, self)
         self.equity_switch_widget = EquitySwitchWidget(self.settings, self.jobs, self)
+        self.governance_review_widget = GovernanceReviewWidget(
+            self.settings,
+            self.services,
+            self,
+        )
 
         for widget in self._module_widgets():
             widget.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
@@ -179,6 +190,7 @@ class MainWindow(QMainWindow):
         self.tabs.addTab(self.study_widget, icon("study-pack"), self.tr("Study"))
         self.tabs.addTab(self.tutor_widget, icon("tutor"), self.tr("Tutor"))
         self.tabs.addTab(self.equity_switch_widget, icon("equity-switch"), self.tr("Equity Switch"))
+        self.tabs.addTab(self.governance_review_widget, icon("check"), self.tr("Teacher Review"))
 
     def _setup_actions(self) -> None:
         self.upload_action = QAction(icon("ingest"), self.tr("&Upload Learning File..."), self)
@@ -242,6 +254,9 @@ class MainWindow(QMainWindow):
         self.show_equity_tab_action = QAction(icon("equity-switch"), self.tr("Show Equity Switch"), self)
         self.show_equity_tab_action.triggered.connect(lambda: self.tabs.setCurrentWidget(self.equity_switch_widget))
 
+        self.show_governance_review_tab_action = QAction(icon("check"), self.tr("Show Teacher Review"), self)
+        self.show_governance_review_tab_action.triggered.connect(lambda: self.tabs.setCurrentWidget(self.governance_review_widget))
+
         self.shortcuts_action = QAction(icon("keyboard"), self.tr("Keyboard &Shortcuts..."), self)
         self.shortcuts_action.setShortcut(QKeySequence("Ctrl+/"))
         self.shortcuts_action.setToolTip(self.tr("Show the list of keyboard shortcut combinations"))
@@ -288,6 +303,7 @@ class MainWindow(QMainWindow):
         view_menu.addAction(self.show_study_tab_action)
         view_menu.addAction(self.show_tutor_tab_action)
         view_menu.addAction(self.show_equity_tab_action)
+        view_menu.addAction(self.show_governance_review_tab_action)
         view_menu.addSeparator()
 
         self.theme_menu = view_menu.addMenu(icon("settings"), self.tr("Themes"))
@@ -333,6 +349,7 @@ class MainWindow(QMainWindow):
         self.learning_workflow_toolbar.addAction(self.show_study_tab_action)
         self.learning_workflow_toolbar.addAction(self.show_tutor_tab_action)
         self.learning_workflow_toolbar.addAction(self.show_equity_tab_action)
+        self.learning_workflow_toolbar.addAction(self.show_governance_review_tab_action)
         self.addToolBar(Qt.ToolBarArea.TopToolBarArea, self.learning_workflow_toolbar)
 
         view_menu.addAction(self.quick_access_toolbar.toggleViewAction())
@@ -401,6 +418,7 @@ class MainWindow(QMainWindow):
         self.documentChanged.connect(self.notes_widget.set_document)
         self.documentChanged.connect(self.study_widget.set_document)
         self.documentChanged.connect(self.tutor_widget.set_document)
+        self.documentChanged.connect(self.governance_review_widget.set_document)
 
         self.equityProfileChanged.connect(self.ingest_widget.apply_equity_profile)
         self.equityProfileChanged.connect(self.summarizer_widget.apply_equity_profile)
@@ -417,6 +435,7 @@ class MainWindow(QMainWindow):
             self.study_widget,
             self.tutor_widget,
             self.equity_switch_widget,
+            self.governance_review_widget,
         ]
 
     def _load_styles(self) -> None:
@@ -442,14 +461,9 @@ class MainWindow(QMainWindow):
                 },
             )
 
-            self.context_tracker = ContextTracker(
-                location="Debre Tabor, Ethiopia",
-                timezone_name="Africa/Addis_Ababa",
-                active_tab="Unknown",
-            )
-
-            self.memory_manager = MemoryManager()
-            self.llm = OllamaClient()
+            self.context_tracker = self.services.context_tracker
+            self.memory_manager = self.services.memory_service
+            self.llm = self.services.model_service.get_client_for_task("tutor_chat")
 
             self.orchestrator = AgentOrchestrator(
                 llm=self.llm,
@@ -688,6 +702,9 @@ class MainWindow(QMainWindow):
             "equity": self.equity_switch_widget,
             "equity_switch": self.equity_switch_widget,
             "view_equity_switch": self.equity_switch_widget,
+            "teacher_review": self.governance_review_widget,
+            "governance_review": self.governance_review_widget,
+            "view_governance_review": self.governance_review_widget,
         }
 
         widget = tab_map.get(target)
@@ -839,6 +856,8 @@ class MainWindow(QMainWindow):
             return "view_tutor"
         if widget is self.equity_switch_widget:
             return "view_equity_switch"
+        if widget is self.governance_review_widget:
+            return "view_governance_review"
         return "unknown"
 
     def _update_context_from_current_ui(self) -> None:
@@ -941,6 +960,7 @@ class MainWindow(QMainWindow):
         self.tabs.setTabText(self.tabs.indexOf(self.study_widget), self.tr("Study"))
         self.tabs.setTabText(self.tabs.indexOf(self.tutor_widget), self.tr("Tutor"))
         self.tabs.setTabText(self.tabs.indexOf(self.equity_switch_widget), self.tr("Equity Switch"))
+        self.tabs.setTabText(self.tabs.indexOf(self.governance_review_widget), self.tr("Teacher Review"))
 
         for widget in self._module_widgets():
             if hasattr(widget, "retranslateUi"):
@@ -1128,6 +1148,8 @@ class MainWindow(QMainWindow):
         for widget in self._module_widgets():
             try:
                 widget.setStyleSheet("")
+                if hasattr(widget, "apply_feature_style"):
+                    widget.apply_feature_style()
             except Exception:
                 logger.warning(
                     "Failed to clear module stylesheet override",

@@ -10,18 +10,19 @@ import shutil
 import sqlite3
 import threading
 import time
-from typing import Any, Literal, Sequence, TypeVar
+from typing import Any, Callable, Collection, Literal, Sequence, TypeVar
 
 import faiss
 import numpy as np
 from sentence_transformers import SentenceTransformer
 
-from amba_ai.compute.edge_slm import OllamaClient
 from amba_ai.config import EMBEDDING_MODEL_NAME, PERSONAL_KB_DIR
 from amba_ai.db.database import Database
-from amba_ai.exceptions import ModelUnavailableError, RAGError
+from amba_ai.exceptions import RAGError
 from amba_ai.logger import logger
-from amba_ai.models.schemas import AnswerResult, RetrievedChunk
+from amba_ai.models.schemas import RetrievedChunk
+from amba_ai.rag.index_policy import IndexRebuildPolicy, IndexRebuildResult
+from amba_ai.rag.corpus_revision import RetrievalCorpusCache
 
 SimilarityMetric = Literal["cosine", "dot"]
 T = TypeVar("T")
@@ -61,12 +62,15 @@ class FaissRAGEngine:
         *,
         similarity_metric: SimilarityMetric = "cosine",
         auto_rebuild_on_mismatch: bool = True,
+        rebuild_policy_provider: Callable[[], IndexRebuildPolicy | None] | None = None,
     ) -> None:
         self.db = db
         self.kb_dir = Path(kb_dir)
         self.embedding_model_name = embedding_model_name
         self.similarity_metric = similarity_metric
         self.auto_rebuild_on_mismatch = auto_rebuild_on_mismatch
+        self.rebuild_policy_provider = rebuild_policy_provider
+        self.corpus_cache = RetrievalCorpusCache()
 
         self._rw_lock = threading.RLock()
         self.index_path = self.kb_dir / self.INDEX_FILENAME
@@ -274,6 +278,14 @@ class FaissRAGEngine:
             logger.exception("Index integrity validation failed", extra={"context": context})
             raise RAGError("Index integrity validation failed.", context=context) from exc
 
+    def _rebuild_after_recovery_failure(self) -> IndexRebuildResult:
+        policy = (
+            self.rebuild_policy_provider()
+            if self.rebuild_policy_provider is not None
+            else None
+        )
+        return self.rebuild_from_source_documents(policy=policy)
+
     def load_or_create(self) -> None:
         context = self._context(operation="load_or_create")
 
@@ -304,7 +316,7 @@ class FaissRAGEngine:
                             "FAISS validation failed; rebuilding from primary document store",
                             extra={"context": context},
                         )
-                        self.rebuild_from_source_documents()
+                        self._rebuild_after_recovery_failure()
                         return
                     raise
 
@@ -316,7 +328,7 @@ class FaissRAGEngine:
                             "Attempting full reconstruction after index load failure",
                             extra={"context": error_context},
                         )
-                        self.rebuild_from_source_documents()
+                        self._rebuild_after_recovery_failure()
                         return
                     raise RAGError("Failed to load FAISS index.", context=error_context) from exc
 
@@ -568,6 +580,18 @@ class FaissRAGEngine:
             logger.exception("Failed to list document IDs from database", extra={"context": context})
             raise RAGError("Failed to list document IDs from database.", context=context) from exc
 
+    def _invalidate_corpus_cache(self) -> None:
+        cache = getattr(self, "corpus_cache", None)
+        if cache is not None:
+            cache.invalidate()
+
+    def indexed_chunk_ids(self) -> frozenset[int]:
+        with self._get_connection() as conn:
+            rows = conn.execute(
+                "SELECT chunk_id FROM rag_chunks WHERE chunk_id IS NOT NULL"
+            ).fetchall()
+        return frozenset(int(row["chunk_id"]) for row in rows)
+
     def has_document(self, document_id: int) -> bool:
         with self._get_connection() as conn:
             cur = conn.execute("SELECT 1 FROM rag_chunks WHERE document_id = ? LIMIT 1", (document_id,))
@@ -609,6 +633,7 @@ class FaissRAGEngine:
                 ids_array = np.array(inserted_ids, dtype=np.int64)
                 index.add_with_ids(vectors, ids_array)
                 self.save()
+                self._invalidate_corpus_cache()
 
                 logger.info(
                     "Document indexed incrementally",
@@ -637,6 +662,7 @@ class FaissRAGEngine:
                     ids_array = np.array(ids_to_remove, dtype=np.int64)
                     self.index.remove_ids(ids_array)
                     self.save()
+                self._invalidate_corpus_cache()
 
                 logger.info(
                     "Document removed from index and metadata store",
@@ -648,52 +674,139 @@ class FaissRAGEngine:
                 logger.exception("Document removal failed", extra={"context": context})
                 raise RAGError("Document removal failed.", context=context) from exc
 
-    def rebuild_from_source_documents(self) -> None:
+    def rebuild_from_source_documents(
+        self,
+        *,
+        policy: IndexRebuildPolicy | None = None,
+    ) -> IndexRebuildResult:
         context = self._context(operation="rebuild_from_source_documents")
 
         with self._rw_lock:
             try:
-                with self._get_connection() as conn:
-                    conn.execute("DELETE FROM rag_chunks;")
-
-                self.index = self._create_base_index()
-
-                doc_ids = self._list_document_ids()
-                for did in doc_ids:
-                    chunks = self._fetch_chunks_for_document(did)
-                    if not chunks:
-                        continue
-
-                    texts_to_embed = [c.text for c in chunks]
-                    vectors = self.embed(texts_to_embed)
-                    now = time.time()
-
-                    with self._get_connection() as conn:
-                        cur = conn.cursor()
-                        inserted_ids: list[int] = []
-                        for c in chunks:
-                            cur.execute(
-                                """
-                                INSERT INTO rag_chunks (chunk_id, document_id, text, source_ref, text_hash, created_at)
-                                VALUES (?, ?, ?, ?, ?, ?)
-                                """,
-                                (c.chunk_id, c.document_id, c.text, c.source_ref, self._hash_text(c.text), now),
-                            )
-                            inserted_ids.append(int(cur.lastrowid))
-
-                    ids_array = np.array(inserted_ids, dtype=np.int64)
-                    self.index.add_with_ids(vectors, ids_array)
-
-                self.save()
-                logger.info(
-                    "RAG engine fully rebuilt from source documents",
-                    extra={"context": self._context(operation="rebuild_success", document_count=len(doc_ids))},
+                document_ids = tuple(sorted(self._list_document_ids()))
+                missing_document_ids = (
+                    policy.missing_documents(document_ids)
+                    if policy is not None
+                    else ()
                 )
+                if (
+                    policy is not None
+                    and policy.require_complete_allowlists
+                    and missing_document_ids
+                ):
+                    raise RAGError(
+                        "Governed index rebuild refused: document allowlists are incomplete.",
+                        context={
+                            **context,
+                            "missing_document_ids": list(missing_document_ids),
+                        },
+                    )
+
+                included_records: list[_ChunkRecord] = []
+                excluded_chunk_ids: list[int] = []
+                for document_id in document_ids:
+                    chunks = self._fetch_chunks_for_document(document_id)
+                    permitted = (
+                        policy.permitted_for(document_id)
+                        if policy is not None
+                        else None
+                    )
+                    if permitted is None:
+                        included_records.extend(chunks)
+                        continue
+                    for chunk in chunks:
+                        if chunk.chunk_id is None:
+                            continue
+                        chunk_id = int(chunk.chunk_id)
+                        if chunk_id in permitted:
+                            effective_text = policy.effective_text_for(chunk_id, chunk.text)
+                            included_records.append(
+                                _ChunkRecord(
+                                    chunk_id=chunk.chunk_id,
+                                    document_id=chunk.document_id,
+                                    text=effective_text,
+                                    source_ref=chunk.source_ref,
+                                )
+                            )
+                        else:
+                            excluded_chunk_ids.append(chunk_id)
+
+                new_index = self._create_base_index()
+                new_rows: list[tuple[_ChunkRecord, int]] = []
+                indexed_chunk_ids: list[int] = []
+                vectors = (
+                    self.embed([record.text for record in included_records])
+                    if included_records
+                    else np.empty((0, self.embedding_dim), dtype="float32")
+                )
+                now = time.time()
+
+                with self._get_connection() as conn:
+                    conn.execute("DELETE FROM rag_chunks")
+                    cursor = conn.cursor()
+                    faiss_ids: list[int] = []
+                    for record in included_records:
+                        cursor.execute(
+                            """
+                            INSERT INTO rag_chunks
+                                (chunk_id, document_id, text, source_ref, text_hash, created_at)
+                            VALUES (?, ?, ?, ?, ?, ?)
+                            """,
+                            (
+                                record.chunk_id,
+                                record.document_id,
+                                record.text,
+                                record.source_ref,
+                                self._hash_text(record.text),
+                                now,
+                            ),
+                        )
+                        faiss_id = int(cursor.lastrowid)
+                        faiss_ids.append(faiss_id)
+                        new_rows.append((record, faiss_id))
+                        if record.chunk_id is not None:
+                            indexed_chunk_ids.append(int(record.chunk_id))
+
+                if new_rows:
+                    new_index.add_with_ids(
+                        vectors,
+                        np.array([row_id for _record, row_id in new_rows], dtype=np.int64),
+                    )
+                self.index = new_index
+                self.save()
+                self._invalidate_corpus_cache()
+
+                result = IndexRebuildResult(
+                    operation=(policy.operation if policy is not None else "legacy_rebuild"),
+                    document_ids=document_ids,
+                    indexed_chunk_ids=tuple(sorted(indexed_chunk_ids)),
+                    excluded_chunk_ids=tuple(sorted(set(excluded_chunk_ids))),
+                    missing_document_ids=missing_document_ids,
+                )
+                logger.info(
+                    "RAG engine fully rebuilt from governed source documents",
+                    extra={
+                        "context": self._context(
+                            operation="rebuild_success",
+                            document_count=len(document_ids),
+                            indexed_chunk_count=result.indexed_count,
+                            excluded_chunk_count=result.excluded_count,
+                            governed=policy is not None,
+                        )
+                    },
+                )
+                return result
             except RAGError:
                 raise
             except Exception as exc:
-                logger.exception("Rebuilding RAG engine from sources failed", extra={"context": context})
-                raise RAGError("Rebuilding RAG engine from sources failed.", context=context) from exc
+                logger.exception(
+                    "Rebuilding RAG engine from sources failed",
+                    extra={"context": context},
+                )
+                raise RAGError(
+                    "Rebuilding RAG engine from sources failed.",
+                    context=context,
+                ) from exc
 
     @staticmethod
     def normalize_query(query: str) -> str:
@@ -794,146 +907,3 @@ class FaissRAGEngine:
         except Exception as exc:
             logger.exception("RAG search failed", extra={"context": context})
             raise RAGError("RAG search failed.", context=context) from exc
-
-    @staticmethod
-    def _summarize_context_for_prompt(
-        hits: Sequence[RetrievedChunk],
-        *,
-        max_chars_per_hit: int = 1_500,
-    ) -> str:
-        sections: list[str] = []
-        for hit in hits:
-            source = hit.source_ref or f"document:{getattr(hit, 'document_id', getattr(hit, 'doc_id', 'unknown'))}"
-            text = hit.text.strip()
-            if len(text) > max_chars_per_hit:
-                text = text[:max_chars_per_hit].rsplit(" ", 1)[0].strip() + "..."
-            sections.append(f"[Source: {source} | score={hit.score:.3f}]\n{text}")
-        return "\n\n".join(sections).strip()
-
-    @staticmethod
-    def _unique_sources(hits: Sequence[RetrievedChunk]) -> list[str]:
-        return list(dict.fromkeys(hit.source_ref for hit in hits if hit.source_ref))
-
-    def answer(
-        self,
-        question: str,
-        llm: OllamaClient | None = None,
-        *,
-        top_k: int = 5,
-        min_similarity: float = DEFAULT_MIN_SIMILARITY,
-        max_tokens: int = 1200,
-    ) -> AnswerResult:
-        cleaned_question = question.strip()
-        context = self._context(
-            operation="answer",
-            question=cleaned_question,
-            top_k=top_k,
-            min_similarity=min_similarity,
-        )
-
-        if not cleaned_question:
-            raise RAGError("Question must be non-empty.", context={**context, "error_type": "validation_error"})
-
-        client = llm or OllamaClient()
-
-        try:
-            client.healthcheck()
-
-            hits = self.search(cleaned_question, top_k=top_k, min_similarity=min_similarity)
-            retrieved_context = self._summarize_context_for_prompt(hits)
-            sources = self._unique_sources(hits)
-            avg_score = round(sum(h.score for h in hits) / len(hits), 4) if hits else 0.0
-
-            prompt = f"""
-Answer the student question using only the retrieved context.
-
-If the answer is not in the context, say exactly:
-"I could not find enough information in the uploaded study materials."
-
-Rules:
-- Be accurate and concise.
-- Cite source anchors inline when possible.
-- Do not invent facts.
-- If multiple sources support the answer, mention them.
-
-Question:
-{cleaned_question}
-
-Retrieved Context:
-{retrieved_context if retrieved_context else "No relevant context retrieved."}
-""".strip()
-
-            logger.info(
-                "RAG answer generation started",
-                extra={
-                    "context": {
-                        **context,
-                        "context_length": len(retrieved_context),
-                        "hits_count": len(hits),
-                        "avg_score": avg_score,
-                        "model": client.model,
-                        "tokens_requested": max_tokens,
-                    }
-                },
-            )
-
-            generation = client.generate(
-                prompt=prompt,
-                system="You are AmbaAI Tutor. Be accurate, helpful, and cite source anchors.",
-                temperature=0.1,
-                max_tokens=max_tokens,
-            )
-
-            result = self._build_dto(
-                AnswerResult,
-                {
-                    "answer_text": generation.response_text,
-                    "sources": sources,
-                    "model_name": generation.model_name,
-                    "metadata": {
-                        "query_length": len(cleaned_question),
-                        "hits_count": len(hits),
-                        "avg_score": avg_score,
-                        "top_k": top_k,
-                        "min_similarity": min_similarity,
-                        "context_length": len(retrieved_context),
-                        "tokens_used": generation.tokens_used,
-                        "llm_metadata": generation.metadata,
-                    },
-                },
-            )
-
-            logger.info(
-                "RAG answer generation completed",
-                extra={
-                    "context": {
-                        **context,
-                        "answer_length": len(generation.response_text),
-                        "sources_count": len(sources),
-                        "hits_count": len(hits),
-                        "avg_score": avg_score,
-                        "model_name": generation.model_name,
-                        "tokens_used": generation.tokens_used,
-                    }
-                },
-            )
-
-            return result
-
-        except ModelUnavailableError:
-            raise
-        except RAGError:
-            raise
-        except Exception as exc:
-            logger.exception("RAG answer generation failed", extra={"context": context})
-            raise RAGError("RAG answer generation failed.", context=context) from exc
-
-
-try:
-    from amba_ai.rag.retrieved_chunk_compat import (
-        install_retrieved_chunk_compat as _install_retrieved_chunk_compat,
-    )
-
-    _install_retrieved_chunk_compat(FaissRAGEngine)
-except ImportError:
-    pass

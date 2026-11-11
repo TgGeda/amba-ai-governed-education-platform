@@ -39,6 +39,9 @@ class SummaryMode(str, Enum):
         return cls.DETAILED
 
 
+SummarizerMode = SummaryMode
+
+
 @dataclass(frozen=True)
 class SummarizerRequest:
     document_id: int
@@ -100,17 +103,13 @@ class ParsedLessonBundle:
             source_badge = f"Page {page_match.group(1)}"
             raw = re.sub(r"\[Page\s*\d+\]\s*", "", raw, flags=re.IGNORECASE).strip()
 
-        title = str(meta.get("title") or "")
+        title = str(meta.get("title") or "").strip()
         if not title:
-            first_line = raw.split("\n")[0].strip()
+            first_line = raw.split("\n")[0].strip() if raw else ""
             if first_line.startswith("#"):
                 title = first_line.lstrip("#").strip()
             else:
-                title_match = re.search(r"^(.*?)(?:The\s+jq\s+utility|is\s+not\s+just|\.|\n|$)", raw, flags=re.IGNORECASE)
-                if title_match:
-                    title = title_match.group(1).strip()
-        if not title:
-            title = "Command-Line Safety & Parsing"
+                title = "Curriculum Study Material"
 
         cleaned_text = re.sub(r"^#+\s*.*?\n", "", raw).strip()
 
@@ -120,108 +119,118 @@ class ParsedLessonBundle:
             bottom_line = bl_match.group(1).strip()
             cleaned_text = cleaned_text[:bl_match.start()] + cleaned_text[bl_match.end():]
 
-        intro_match = re.search(r"^(.*?)(?=(?:🎯|🔍|🛡|⚡|📌|\b\d+\.|\n##|\n###))", cleaned_text, flags=re.DOTALL)
+        intro_match = re.search(
+            r"##\s*Executive\s*Summary\s*\n(.*?)(?=\n##|\Z)",
+            cleaned_text,
+            flags=re.DOTALL | re.IGNORECASE,
+        )
         if intro_match:
             exec_summary = intro_match.group(1).strip()
-            rest = cleaned_text[intro_match.end():].strip()
         else:
-            exec_summary = cleaned_text[:200].strip()
-            rest = cleaned_text[200:].strip()
+            first_paragraph = cleaned_text.split("\n\n")[0].strip()
+            exec_summary = first_paragraph[:300] if first_paragraph else "Curriculum lesson summary."
 
         sections: list[LessonSectionModel] = []
+        raw_sections = re.split(r"(?m)^##\s+", cleaned_text)
 
-        step_pattern = re.compile(
-            r"(?:🎯|🔍|🛡|⚡|📌|\b)\s*(\d+)\.\s*([^:\n]+)[:\.\-]?\s*(.*?)(?=(?:🎯|🔍|🛡|⚡|📌|\b)\s*\d+\.|\Z)",
-            flags=re.DOTALL,
-        )
-        matches = list(step_pattern.finditer(rest))
+        for sec in raw_sections:
+            lines = [l.strip() for l in sec.splitlines() if l.strip()]
+            if not lines:
+                continue
 
-        if matches:
-            for m in matches:
-                sec_title = m.group(2).strip()
-                content = m.group(3).strip()
+            sec_title = lines[0]
+            if re.search(r"^(Executive Summary|Sources)\b", sec_title, re.IGNORECASE):
+                continue
 
-                code_snippets: list[dict[str, str]] = []
-                codes = re.findall(r"(curl\s+-[^\n]+|cat\s+[^\n]+|diff\s+<[^\n]+|jq\s+[^\n]+)", content)
-                for c in codes:
-                    code_clean = c.strip().rstrip("'\"")
-                    code_snippets.append({
-                        "language": "bash",
-                        "code": code_clean,
-                        "title": "Terminal Execution",
-                    })
+            content = "\n".join(lines[1:]).strip()
 
-                clean_content = content
-                for c in codes:
-                    clean_content = clean_content.replace(c, "").strip()
-                clean_content = re.sub(r"['\"]{2,}", "", clean_content).strip()
-
-                tags = []
-                if "api" in sec_title.lower():
-                    tags.extend(["API", "JSON"])
-                if "secret" in sec_title.lower() or "token" in sec_title.lower():
-                    tags.extend(["Security", "Regex"])
-                if "config" in sec_title.lower() or "diff" in sec_title.lower():
-                    tags.extend(["Diff", "DevOps"])
-
-                sections.append(
-                    LessonSectionModel(
-                        title=sec_title,
-                        summary_text=clean_content,
-                        code_blocks=code_snippets,
-                        tags=tags,
-                        bottom_line=bottom_line if not sections else "",
-                    )
-                )
-        else:
             code_snippets: list[dict[str, str]] = []
-            codes = re.findall(r"(curl\s+-[^\n]+|cat\s+[^\n]+|diff\s+<[^\n]+|jq\s+[^\n]+)", rest)
-            for c in codes:
+            code_matches = re.finditer(r"```([a-zA-Z0-9_-]*)\n(.*?)```", content, flags=re.DOTALL)
+            for cm in code_matches:
+                lang = cm.group(1).strip() or "text"
+                code_text = cm.group(2).strip()
                 code_snippets.append({
-                    "language": "bash",
-                    "code": c.strip(),
-                    "title": "Terminal Command",
+                    "language": lang,
+                    "code": code_text,
+                    "title": f"{sec_title} Code Example",
                 })
+
+            clean_content = re.sub(r"```[a-zA-Z0-9_-]*\n.*?```", "", content, flags=re.DOTALL).strip()
+
+            key_points = [
+                pt.strip()
+                for pt in re.findall(r"(?:^|\n)[-•*✦]\s*(.+?)(?=\n[-•*✦]|\n\n|\Z)", clean_content)
+                if len(pt.strip()) > 5
+            ]
+
+            words = re.findall(r"\b[A-Z][a-zA-Z0-9]{3,}\b", sec_title)
+            tags = list(dict.fromkeys(words))[:3]
 
             sections.append(
                 LessonSectionModel(
-                    title=title,
-                    summary_text=rest,
+                    title=sec_title,
+                    summary_text=clean_content[:1000],
+                    key_points=key_points[:5],
                     code_blocks=code_snippets,
+                    tags=tags,
+                    bottom_line=bottom_line if not sections else "",
+                )
+            )
+
+        if not sections:
+            sections.append(
+                LessonSectionModel(
+                    title=title,
+                    summary_text=cleaned_text[:1200],
+                    key_points=[],
+                    code_blocks=[],
                     bottom_line=bottom_line,
                 )
             )
 
         citation = SourceCitation(source_name=source_badge or title)
-        concepts = [
-            LearningConcept(
-                concept_id="concept_jq_filtering",
-                name="jq filtering",
-                category="CLI",
-                definition="A lightweight and flexible command-line JSON processor.",
-                why_it_matters="Enables reliable extraction without fragile regular expression parsing.",
-                difficulty="beginner",
-                citations=(citation,),
-            ),
-            LearningConcept(
-                concept_id="concept_api_intelligence",
-                name="API intelligence",
-                category="API",
-                definition="Extracting focused keys (id, email, roles) from response payloads.",
-                why_it_matters="Reduces context tokens and filters out noisy metadata.",
-                difficulty="intermediate",
-                citations=(citation,),
-            ),
-            LearningConcept(
-                concept_id="concept_regex_log_scanning",
-                name="Regex log scanning",
-                category="Security",
-                definition="Traversing nested JSON hierarchies to identify leaked tokens.",
-                why_it_matters="Allows security analysts to audit massive logs for high-entropy secrets.",
-                difficulty="advanced",
-                citations=(citation,),
-            ),
-        ]
+        concepts: list[LearningConcept] = []
+
+        concepts_match = re.search(
+            r"##\s*Core\s*Concepts\s*\n(.*?)(?=\n##|\Z)",
+            cleaned_text,
+            flags=re.DOTALL | re.IGNORECASE,
+        )
+        if concepts_match:
+            concept_lines = [
+                l.strip()
+                for l in concepts_match.group(1).splitlines()
+                if l.strip().startswith(("-", "*", "•"))
+            ]
+            for idx, line in enumerate(concept_lines[:5], start=1):
+                clean_line = re.sub(r"^[-*•]\s*", "", line)
+                parts = re.split(r"[:\-—]\s*", clean_line, maxsplit=1)
+                name = parts[0].strip().replace("**", "")
+                definition = parts[1].strip() if len(parts) > 1 else clean_line
+                concepts.append(
+                    LearningConcept(
+                        concept_id=f"concept_{re.sub(r'[^a-zA-Z0-9_]', '_', name.lower())[:30]}",
+                        name=name,
+                        category="Core Concept",
+                        definition=definition,
+                        why_it_matters="Foundational principle established in primary curriculum source.",
+                        difficulty="intermediate",
+                        citations=(citation,),
+                    )
+                )
+
+        if not concepts:
+            concepts.append(
+                LearningConcept(
+                    concept_id=f"concept_{re.sub(r'[^a-zA-Z0-9_]', '_', title.lower())[:30]}",
+                    name=title,
+                    category="Core Curriculum",
+                    definition="Primary subject matter documented in current lesson.",
+                    why_it_matters="Establishes essential domain competence.",
+                    difficulty="beginner",
+                    citations=(citation,),
+                )
+            )
 
         return cls(
             title=title,

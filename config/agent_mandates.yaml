@@ -1,40 +1,94 @@
-schema_version: "1.0.0"
-
+schema_version: 1.0.0
 mandates:
   SCHOOL-ADMIN-COMMERCIAL-REVIEW-V1:
-    principal_id: "SYNTHETIC-SCHOOL-ADMIN-01"
-    role: "school_administrator"
-
+    principal_id: SYNTHETIC-SCHOOL-ADMIN-01
+    role: school_administrator
     permitted_operations:
-      - "commercial_purchase_request"
-
+    - commercial_purchase_request
     permitted_decisions:
-      - "approve_review_queue"
-      - "deny_commercial_purchase"
-      - "approve_synthetic_mitigation"
-
+    - approve_review_queue
+    - deny_commercial_purchase
+    - approve_synthetic_mitigation
     synthetic: true
     legal_effect: false
-
-    active_from: "2026-01-01T00:00:00Z"
-    expires_at: "2027-01-01T00:00:00Z"
-
+    active_from: '2026-01-01T00:00:00Z'
+    expires_at: '2027-01-01T00:00:00Z'
   COMPLIANCE-POLICY-GAP-REVIEW-V1:
-    principal_id: "SYNTHETIC-COMPLIANCE-OFFICER-01"
-    role: "compliance_officer"
-
+    principal_id: SYNTHETIC-COMPLIANCE-OFFICER-01
+    role: compliance_officer
     permitted_operations:
-      - "commercial_purchase_request"
-      - "targeted_ad_dispatch"
-      - "policy_exploration_search"
-
+    - commercial_purchase_request
+    - targeted_ad_dispatch
+    - policy_exploration_search
     permitted_decisions:
-      - "approve_review_queue"
-      - "register_policy_gap"
-      - "approve_synthetic_mitigation"
-
+    - approve_review_queue
+    - register_policy_gap
+    - approve_synthetic_mitigation
     synthetic: true
     legal_effect: false
-
-    active_from: "2026-01-01T00:00:00Z"
-    expires_at: "2027-01-01T00:00:00Z"
+    active_from: '2026-01-01T00:00:00Z'
+    expires_at: '2027-01-01T00:00:00Z'
+  LEARNER-EDUCATIONAL-OPERATIONS-V1:
+    principal_id: SYNTHETIC-LEARNER-01
+    role: learner
+    permitted_operations:
+    - learning.tutor.retrieve
+    - learning.tutor.answer
+    - learning.summary.generate
+    - learning.notes.generate
+    - learning.flashcards.generate
+    - learning.quiz.generate
+    - learning.content.export
+    - learning.content.copy
+    permitted_decisions:
+    - request_learning_operation
+    synthetic: true
+    legal_effect: false
+    active_from: '2026-01-01T00:00:00Z'
+    expires_at: '2027-01-01T00:00:00Z'
+  TEACHER-EDUCATIONAL-OPERATIONS-V1:
+    principal_id: SYNTHETIC-TEACHER-01
+    role: teacher
+    permitted_operations:
+    - learning.tutor.retrieve
+    - learning.tutor.answer
+    - learning.summary.generate
+    - learning.notes.generate
+    - learning.flashcards.generate
+    - learning.quiz.generate
+    - learning.content.export
+    - learning.content.copy
+    - learning.document.ingest
+    - learning.document.index
+    - learning.document.replace
+    - learning.document.delete
+    - learning.review.decide
+    - learning.output.revoke
+    permitted_decisions:
+    - request_learning_operation
+    - approve_learning_review
+    - reject_learning_review
+    - revoke_learning_output
+    synthetic: true
+    legal_effect: false
+    active_from: '2026-01-01T00:00:00Z'
+    expires_at: '2027-01-01T00:00:00Z'
+  SCHOOL-ADMINISTRATOR-EDUCATIONAL-OPERATIONS-V1:
+    principal_id: SYNTHETIC-SCHOOL-ADMINISTRATOR-01
+    role: school_administrator
+    permitted_operations:
+    - learning.document.ingest
+    - learning.document.index
+    - learning.document.replace
+    - learning.document.delete
+    - learning.review.decide
+    - learning.output.revoke
+    permitted_decisions:
+    - request_learning_operation
+    - approve_learning_review
+    - reject_learning_review
+    - revoke_learning_output
+    synthetic: true
+    legal_effect: false
+    active_from: '2026-01-01T00:00:00Z'
+    expires_at: '2027-01-01T00:00:00Z'

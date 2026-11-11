@@ -16,6 +16,8 @@ from amba_ai.db.approval_repository import ApprovalRepository
 from amba_ai.db.audit_repository import AuditRepository
 from amba_ai.db.database import Database
 from amba_ai.db.document_store import DocumentStore
+from amba_ai.core.context_tracker import ContextTracker
+from amba_ai.core.memory_manager import MemoryManager
 from amba_ai.db.execution_repository import ExecutionRepository
 from amba_ai.db.governance_repository import GovernanceRepository
 from amba_ai.db.policy_record_repository import PolicyRecordRepository
@@ -48,7 +50,9 @@ from amba_ai.governance.operation_registry import (
 from amba_ai.governance.policy_engine import PolicyEngine
 from amba_ai.governance.principals import PrincipalRegistry, SystemClock
 from amba_ai.governance.record_registry import PolicyRecordRegistry
+from amba_ai.governance.runtime import RuntimeEducationGovernanceService
 from amba_ai.rag.engine import FaissRAGEngine
+from amba_ai.rag.corpus_revision import GovernedCorpusBuilder
 
 from amba_ai.governance.distribution import (
     DistributionBlockExecutor,
@@ -88,6 +92,12 @@ from amba_ai.services.audit_service import AuditService
 from amba_ai.services.content_delivery_service import ContentDeliveryService
 from amba_ai.services.execution_service import ExecutionService
 from amba_ai.services.governance_service import GovernanceService
+from amba_ai.services.governed_ingestion_service import GovernedIngestionService
+from amba_ai.services.governed_retrieval_service import GovernedRetrievalService
+from amba_ai.services.grounded_answer_service import GroundedAnswerService
+from amba_ai.services.governed_result_delivery import GovernedResultDeliveryService
+from amba_ai.services.governance_review_service import GovernanceReviewService
+from amba_ai.services.document_lifecycle_service import DocumentLifecycleService
 from amba_ai.services.job_service import JobService
 from amba_ai.services.job_governance import JobGovernanceCoordinator
 from amba_ai.services.model_service import ModelService
@@ -138,6 +148,16 @@ MANDATORY_PROVIDER_NAMES = (
 
 LAZY_PROVIDER_NAMES = (
     "rag_engine",
+    "runtime_governance",
+    "context_tracker",
+    "memory_service",
+    "corpus_service",
+    "governed_ingestion_service",
+    "governed_retrieval_service",
+    "grounded_answer_service",
+    "governed_result_delivery",
+    "governance_review_service",
+    "document_lifecycle_service",
     "model_service",
     "content_delivery_service",
     "job_governance_coordinator",
@@ -245,14 +265,36 @@ def _build_policy_record_repository(
 
 def _build_policy_record_registry(
     registry: ProviderRegistry,
+    settings: ApplicationSettings,
 ) -> PolicyRecordRegistry:
     repository = registry.get(
         "policy_record_repository",
         PolicyRecordRepository,
     )
+    safeguards_path = _required_file(
+        settings.configuration_root / "project_safeguards.yaml",
+        "project safeguards configuration",
+    )
+    configured = PolicyRecordRegistry.load_from_safeguards_yaml(
+        safeguards_path
+    )
+    for record in configured.list_all():
+        repository.register(record)
+
     runtime_registry = PolicyRecordRegistry()
     for record in repository.list_all():
         runtime_registry.register(record)
+    for record_id in (
+        "PROJECT-CONTROL-EDUCATIONAL-PROCESSING-V1",
+        "PROJECT-CONTROL-RESTRICTED-DESTINATIONS-V1",
+    ):
+        record = runtime_registry.require_active_by_record_id(record_id)
+        if not runtime_registry.eligible_for_project_enforcement(
+            record.identity
+        ):
+            raise GovernanceConfigurationError(
+                f"Required project control is not enforcement eligible: {record_id}"
+            )
     return runtime_registry
 
 
@@ -475,6 +517,7 @@ def _register_health_checks(
             settings.configuration_root / "operations.yaml",
             settings.configuration_root / "destinations.yaml",
             settings.configuration_root / "agent_mandates.yaml",
+            settings.configuration_root / "project_safeguards.yaml",
         )
         missing = tuple(path.name for path in required if not path.is_file())
         if missing:
@@ -511,6 +554,12 @@ def install_application_providers(
 
     providers.register("database", lambda _registry: _build_database(settings))
     providers.register("document_store", lambda _registry: DocumentStore())
+    providers.register(
+        "runtime_governance",
+        lambda _registry: RuntimeEducationGovernanceService(settings.database_path),
+    )
+    providers.register("context_tracker", lambda _registry: ContextTracker())
+    providers.register("memory_service", lambda _registry: MemoryManager())
 
     providers.register(
         "governance_repository",
@@ -535,7 +584,10 @@ def install_application_providers(
 
     providers.register(
         "policy_record_registry",
-        _build_policy_record_registry,
+        lambda registry: _build_policy_record_registry(
+            registry,
+            settings,
+        ),
     )
     providers.register(
         "operation_registry",
@@ -633,6 +685,69 @@ def install_application_providers(
         lambda registry: FaissRAGEngine(
             registry.get("database", Database),
             kb_dir=settings.knowledge_base_root,
+        ),
+    )
+    providers.register(
+        "corpus_service",
+        lambda registry: GovernedCorpusBuilder(
+            db=registry.get("database", Database),
+            rag_engine=registry.get("rag_engine", FaissRAGEngine),
+            runtime_governance=registry.get(
+                "runtime_governance",
+                RuntimeEducationGovernanceService,
+            ),
+            cache=registry.get("rag_engine", FaissRAGEngine).corpus_cache,
+        ),
+    )
+    providers.register(
+        "governed_ingestion_service",
+        lambda registry: GovernedIngestionService(
+            db=registry.get("database", Database),
+            rag_engine=registry.get("rag_engine", FaissRAGEngine),
+            runtime_governance=registry.get(
+                "runtime_governance",
+                RuntimeEducationGovernanceService,
+            ),
+        ),
+    )
+    providers.register(
+        "governed_retrieval_service",
+        lambda registry: GovernedRetrievalService(
+            rag_engine=registry.get("rag_engine", FaissRAGEngine),
+            runtime_governance=registry.get(
+                "runtime_governance", RuntimeEducationGovernanceService
+            ),
+            corpus_builder=registry.get("corpus_service", GovernedCorpusBuilder),
+        ),
+    )
+    providers.register(
+        "grounded_answer_service",
+        lambda registry: GroundedAnswerService(
+            model_service=registry.get("model_service", ModelService),
+        ),
+    )
+    providers.register(
+        "governed_result_delivery",
+        lambda registry: GovernedResultDeliveryService(),
+    )
+    providers.register(
+        "governance_review_service",
+        lambda registry: GovernanceReviewService(
+            runtime_governance=registry.get(
+                "runtime_governance", RuntimeEducationGovernanceService
+            ),
+            corpus_builder=registry.get("corpus_service", GovernedCorpusBuilder),
+            rag_engine=registry.get("rag_engine", FaissRAGEngine),
+        ),
+    )
+    providers.register(
+        "document_lifecycle_service",
+        lambda registry: DocumentLifecycleService(
+            db=registry.get("database", Database),
+            runtime_governance=registry.get("runtime_governance", RuntimeEducationGovernanceService),
+            corpus_builder=registry.get("corpus_service", GovernedCorpusBuilder),
+            rag_engine=registry.get("rag_engine", FaissRAGEngine),
+            governance_coordinator=registry.get("job_governance_coordinator", JobGovernanceCoordinator),
         ),
     )
     providers.register(
@@ -807,6 +922,27 @@ def install_application_providers(
             governance_coordinator=registry.get(
                 "job_governance_coordinator",
                 JobGovernanceCoordinator,
+            ),
+            runtime_governance=registry.get(
+                "runtime_governance",
+                RuntimeEducationGovernanceService,
+            ),
+            memory_manager=registry.get("memory_service", MemoryManager),
+            context_tracker=registry.get("context_tracker", ContextTracker),
+            governed_ingestion_service=registry.get(
+                "governed_ingestion_service", GovernedIngestionService
+            ),
+            governed_retrieval_service=registry.get(
+                "governed_retrieval_service", GovernedRetrievalService
+            ),
+            grounded_answer_service=registry.get(
+                "grounded_answer_service", GroundedAnswerService
+            ),
+            governed_result_delivery=registry.get(
+                "governed_result_delivery", GovernedResultDeliveryService
+            ),
+            document_lifecycle_service=registry.get(
+                "document_lifecycle_service", DocumentLifecycleService
             ),
         ),
     )

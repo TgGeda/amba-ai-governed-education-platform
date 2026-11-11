@@ -17,6 +17,8 @@ class LibraryManager(QObject):
     statusMessage = Signal(str, str)
     operationStarted = Signal(str)
     operationFinished = Signal(str)
+    documentDeletionFinished = Signal(dict)
+    documentDeletionFailed = Signal(dict)
 
     def __init__(self, job_service: JobService, parent: QObject | None = None) -> None:
         super().__init__(parent)
@@ -83,6 +85,45 @@ class LibraryManager(QObject):
         self.libraryRefreshFinished.emit([doc.to_dict() for doc in self.documents])
         self.statusMessage.emit(f"Library refreshed: {len(self.documents)} document(s).", "INFO")
         self.operationFinished.emit("Library refreshed.")
+
+    def delete_document(self, document_id: int, *, reviewer_role: str) -> None:
+        if self._is_operation_active:
+            self.statusMessage.emit("A library operation is already in progress.", "WARNING")
+            return
+        self._is_operation_active = True
+        self.operationStarted.emit("Deleting governed document...")
+        worker = FunctionWorker(
+            self.jobs.delete_document,
+            document_id,
+            reviewer_role=reviewer_role,
+            task_name="Governed Document Deletion",
+            max_retries=0,
+        )
+        worker.signals.finished.connect(self._on_delete_finished)
+        worker.signals.error.connect(self._on_delete_error)
+        self.thread_pool.start(worker)
+
+    @Slot(object)
+    def _on_delete_finished(self, raw_result: Any) -> None:
+        self._is_operation_active = False
+        result = unwrap_worker_result(raw_result, default_task_name="Governed Document Deletion")
+        if not result.success:
+            self._on_delete_error({"error_message": result.error_message or "Document deletion failed."})
+            return
+        receipt = result.result
+        payload = receipt.to_dict() if hasattr(receipt, "to_dict") else dict(receipt or {})
+        document_id = int(payload.get("document_id", 0))
+        self.documents = [item for item in self.documents if item.document_id != document_id]
+        self.documentDeletionFinished.emit(payload)
+        self.statusMessage.emit("Document deleted under governance controls.", "INFO")
+        self.operationFinished.emit("Governed document deletion completed.")
+
+    @Slot(dict)
+    def _on_delete_error(self, error_context: dict[str, Any]) -> None:
+        self._is_operation_active = False
+        self.documentDeletionFailed.emit(error_context)
+        self.statusMessage.emit(str(error_context.get("error_message") or "Document deletion failed."), "ERROR")
+        self.operationFinished.emit("Governed document deletion failed.")
 
     def document_by_id(self, document_id: int) -> LibraryDocument | None:
         return next((doc for doc in self.documents if doc.document_id == document_id), None)

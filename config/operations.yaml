@@ -84,3 +84,198 @@ operations:
     approval_required: false
     failure_behavior: abstain
     approval_role: null
+  learning.document.ingest:
+    protection_class: protected
+    pre_gate_required: true
+    post_gate_required: true
+    authorization_basis_required: true
+    allowed_authorization_basis_types: &id001
+    - project_fixture
+    required_evaluators: &id002
+    - EVAL-AUTHORIZATION-BASIS
+    - EVAL-DESTINATION
+    - EVAL-PROJECT-EDUCATIONAL-PROCESSING
+    required_policy_records: &id003
+    - PROJECT-CONTROL-EDUCATIONAL-PROCESSING-V1
+    - PROJECT-CONTROL-RESTRICTED-DESTINATIONS-V1
+    approval_required: false
+    approval_role: null
+    failure_behavior: hold_for_review
+  learning.document.index:
+    protection_class: protected
+    pre_gate_required: true
+    post_gate_required: true
+    authorization_basis_required: true
+    allowed_authorization_basis_types: *id001
+    required_evaluators: *id002
+    required_policy_records: *id003
+    approval_required: false
+    approval_role: null
+    failure_behavior: hold_for_review
+  learning.document.replace:
+    protection_class: protected
+    pre_gate_required: true
+    post_gate_required: true
+    authorization_basis_required: true
+    allowed_authorization_basis_types: *id001
+    required_evaluators: *id002
+    required_policy_records: *id003
+    approval_required: false
+    approval_role: null
+    failure_behavior: hold_for_review
+  learning.document.delete:
+    protection_class: protected
+    pre_gate_required: true
+    post_gate_required: true
+    authorization_basis_required: true
+    allowed_authorization_basis_types: *id001
+    required_evaluators: *id002
+    required_policy_records: *id003
+    approval_required: false
+    approval_role: null
+    failure_behavior: hold_for_review
+  learning.tutor.retrieve:
+    protection_class: protected
+    pre_gate_required: true
+    post_gate_required: true
+    authorization_basis_required: true
+    allowed_authorization_basis_types: *id001
+    required_evaluators: *id002
+    required_policy_records: *id003
+    approval_required: false
+    approval_role: null
+    failure_behavior: hold_for_review
+  learning.tutor.answer:
+    protection_class: protected
+    pre_gate_required: true
+    post_gate_required: true
+    authorization_basis_required: true
+    allowed_authorization_basis_types: *id001
+    required_evaluators:
+    - EVAL-AUTHORIZATION-BASIS
+    - EVAL-DESTINATION
+    - EVAL-PROJECT-EDUCATIONAL-PROCESSING
+    - EVAL-CITATION-INTEGRITY
+    - EVAL-CONTENT-SAFETY
+    required_policy_records: *id003
+    approval_required: false
+    approval_role: null
+    failure_behavior: hold_for_review
+  learning.summary.generate:
+    protection_class: protected
+    pre_gate_required: true
+    post_gate_required: true
+    authorization_basis_required: true
+    allowed_authorization_basis_types: *id001
+    required_evaluators:
+    - EVAL-AUTHORIZATION-BASIS
+    - EVAL-DESTINATION
+    - EVAL-PROJECT-EDUCATIONAL-PROCESSING
+    - EVAL-CITATION-INTEGRITY
+    - EVAL-CONTENT-SAFETY
+    required_policy_records: *id003
+    approval_required: false
+    approval_role: null
+    failure_behavior: hold_for_review
+  learning.notes.generate:
+    protection_class: protected
+    pre_gate_required: true
+    post_gate_required: true
+    authorization_basis_required: true
+    allowed_authorization_basis_types: *id001
+    required_evaluators:
+    - EVAL-AUTHORIZATION-BASIS
+    - EVAL-DESTINATION
+    - EVAL-PROJECT-EDUCATIONAL-PROCESSING
+    - EVAL-CITATION-INTEGRITY
+    - EVAL-CONTENT-SAFETY
+    required_policy_records: *id003
+    approval_required: false
+    approval_role: null
+    failure_behavior: hold_for_review
+  learning.flashcards.generate:
+    protection_class: protected
+    pre_gate_required: true
+    post_gate_required: true
+    authorization_basis_required: true
+    allowed_authorization_basis_types: *id001
+    required_evaluators:
+    - EVAL-AUTHORIZATION-BASIS
+    - EVAL-DESTINATION
+    - EVAL-PROJECT-EDUCATIONAL-PROCESSING
+    - EVAL-CITATION-INTEGRITY
+    - EVAL-CONTENT-SAFETY
+    required_policy_records: *id003
+    approval_required: false
+    approval_role: null
+    failure_behavior: hold_for_review
+  learning.quiz.generate:
+    protection_class: protected
+    pre_gate_required: true
+    post_gate_required: true
+    authorization_basis_required: true
+    allowed_authorization_basis_types: *id001
+    required_evaluators:
+    - EVAL-AUTHORIZATION-BASIS
+    - EVAL-DESTINATION
+    - EVAL-PROJECT-EDUCATIONAL-PROCESSING
+    - EVAL-CITATION-INTEGRITY
+    - EVAL-CONTENT-SAFETY
+    required_policy_records: *id003
+    approval_required: false
+    approval_role: null
+    failure_behavior: hold_for_review
+  learning.content.export:
+    protection_class: protected
+    pre_gate_required: true
+    post_gate_required: true
+    authorization_basis_required: true
+    allowed_authorization_basis_types: *id001
+    required_evaluators:
+    - EVAL-AUTHORIZATION-BASIS
+    - EVAL-DESTINATION
+    - EVAL-PROJECT-EDUCATIONAL-PROCESSING
+    - EVAL-CITATION-INTEGRITY
+    - EVAL-CONTENT-SAFETY
+    required_policy_records: *id003
+    approval_required: false
+    approval_role: null
+    failure_behavior: hold_for_review
+  learning.content.copy:
+    protection_class: protected
+    pre_gate_required: true
+    post_gate_required: true
+    authorization_basis_required: true
+    allowed_authorization_basis_types: *id001
+    required_evaluators:
+    - EVAL-AUTHORIZATION-BASIS
+    - EVAL-DESTINATION
+    - EVAL-PROJECT-EDUCATIONAL-PROCESSING
+    - EVAL-CITATION-INTEGRITY
+    - EVAL-CONTENT-SAFETY
+    required_policy_records: *id003
+    approval_required: false
+    approval_role: null
+    failure_behavior: hold_for_review
+  learning.review.decide:
+    protection_class: protected
+    pre_gate_required: true
+    post_gate_required: true
+    authorization_basis_required: true
+    allowed_authorization_basis_types: *id001
+    required_evaluators: *id002
+    required_policy_records: *id003
+    approval_required: false
+    approval_role: null
+    failure_behavior: hold_for_review
+  learning.output.revoke:
+    protection_class: protected
+    pre_gate_required: true
+    post_gate_required: true
+    authorization_basis_required: true
+    allowed_authorization_basis_types: *id001
+    required_evaluators: *id002
+    required_policy_records: *id003
+    approval_required: false
+    approval_role: null
+    failure_behavior: hold_for_review

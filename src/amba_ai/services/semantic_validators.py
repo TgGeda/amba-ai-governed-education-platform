@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import asdict, dataclass
 import re
 from typing import Sequence
 
@@ -7,7 +8,77 @@ from amba_ai.models.schemas import Flashcard, MCQ, SummaryResult
 
 
 class SemanticQualityGateError(ValueError):
-    pass
+    def __init__(self, message: str, details: dict[str, object] | None = None) -> None:
+        super().__init__(message)
+        self.details = details or {}
+
+
+@dataclass(frozen=True, slots=True)
+class SummaryValidationFailure:
+    missing_sections: tuple[str, ...]
+    degenerate_sections: tuple[str, ...]
+
+
+_REQUIRED_HEADING_ALIASES: dict[str, tuple[str, ...]] = {
+    "## Executive Summary": (
+        "executive summary",
+        "lesson summary",
+        "overview",
+        "summary",
+    ),
+    "## Core Concepts": (
+        "core concepts",
+        "key concepts",
+        "main concepts",
+        "primary concepts",
+    ),
+    "## Structured Study Notes": (
+        "structured study notes",
+        "study notes",
+        "lesson notes",
+        "detailed notes",
+        "notes",
+    ),
+    "## Sources": (
+        "sources",
+        "references",
+        "citations",
+        "source",
+    ),
+}
+
+
+def normalize_summary_structure(text_or_summary: str | SummaryResult) -> str | SummaryResult:
+    if isinstance(text_or_summary, SummaryResult):
+        raw_md = str(text_or_summary.markdown_notes or "")
+    else:
+        raw_md = str(text_or_summary or "")
+
+    md = raw_md.strip()
+    if not md:
+        return text_or_summary
+
+    if md.startswith("```"):
+        md = re.sub(r"^```[a-zA-Z]*\n?", "", md)
+        md = re.sub(r"\n?```$", "", md).strip()
+
+    for canonical, aliases in _REQUIRED_HEADING_ALIASES.items():
+        pattern = r"(?im)^#{1,4}\s*(?:" + "|".join(re.escape(a) for a in aliases) + r")\s*$"
+        md = re.sub(pattern, canonical, md)
+
+    for canonical, aliases in _REQUIRED_HEADING_ALIASES.items():
+        pattern = r"(?im)^(?:(?:" + "|".join(re.escape(a) for a in aliases) + r")):\s*$"
+        md = re.sub(pattern, canonical, md)
+
+    if isinstance(text_or_summary, SummaryResult):
+        return SummaryResult(
+            markdown_notes=md,
+            model_name=text_or_summary.model_name,
+            tokens_used=text_or_summary.tokens_used,
+            metadata=dict(text_or_summary.metadata or {}),
+        )
+
+    return md
 
 
 class FlashcardSemanticValidator:
@@ -124,23 +195,46 @@ class SummarySemanticValidator:
 
     @classmethod
     def validate(cls, summary: SummaryResult) -> SummaryResult:
+        normalized_summary = normalize_summary_structure(summary)
+        if isinstance(normalized_summary, SummaryResult):
+            summary = normalized_summary
+
         md = str(summary.markdown_notes or "").strip()
         if not md:
-            raise SemanticQualityGateError("Summary markdown output is completely empty")
+            raise SemanticQualityGateError(
+                "Summary markdown output is completely empty",
+                details={"missing_sections": ("ALL",), "degenerate_sections": ()},
+            )
 
         missing: list[str] = []
         for pattern in cls.REQUIRED_SECTIONS:
             if not re.search(pattern, md, flags=re.IGNORECASE):
                 missing.append(pattern)
 
-        if missing:
-            raise SemanticQualityGateError(f"Summary output missing mandatory structural sections: {missing}")
-
         sections = re.split(r"(?m)^##\s+", md)
+        degenerate: list[str] = []
         for s in sections:
             lines = [line.strip() for line in s.splitlines() if line.strip()]
-            if len(lines) > 1 and len(" ".join(lines[1:])) < 15:
-                raise SemanticQualityGateError("Summary contains empty or degenerate sections")
+            if lines:
+                heading = lines[0]
+                content = " ".join(lines[1:])
+                if len(lines) > 1 and len(content) < 15:
+                    degenerate.append(heading)
+
+        if missing or degenerate:
+            failure = SummaryValidationFailure(
+                missing_sections=tuple(missing),
+                degenerate_sections=tuple(degenerate),
+            )
+            msg_parts: list[str] = []
+            if missing:
+                msg_parts.append(f"missing mandatory sections: {missing}")
+            if degenerate:
+                msg_parts.append(f"degenerate sections: {degenerate}")
+            raise SemanticQualityGateError(
+                f"Summary structure invalid: {'; '.join(msg_parts)}",
+                details=asdict(failure),
+            )
 
         return summary
 

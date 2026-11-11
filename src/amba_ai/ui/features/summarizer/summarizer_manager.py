@@ -7,6 +7,7 @@ from PySide6.QtCore import QObject, QThreadPool, Signal, Slot
 from amba_ai.logger import logger
 from amba_ai.models.schemas import SummaryResult
 from amba_ai.services.job_service import JobService
+from amba_ai.ui.governance_context import desktop_governance_context
 from .data_classes import SummarizerRequest, SummaryViewModel
 from amba_ai.ui.workers import FunctionWorker, unwrap_worker_result
 
@@ -15,6 +16,7 @@ class SummarizerManager(QObject):
     summaryStarted = Signal(str)
     summaryFinished = Signal(dict)
     summaryFailed = Signal(dict)
+    summaryHeld = Signal(dict)
     summaryGenerated = Signal(int)
     statusMessage = Signal(str, str)
     operationStarted = Signal(str)
@@ -62,25 +64,23 @@ class SummarizerManager(QObject):
         )
         worker.signals.finished.connect(self._on_summary_finished)
         worker.signals.error.connect(self._on_worker_error)
+        worker.signals.held.connect(self._on_worker_held)
         worker.signals.status.connect(self._on_worker_status)
 
         self.thread_pool.start(worker)
 
     def _run_summary(self, request: SummarizerRequest) -> SummaryViewModel:
-        if hasattr(self.jobs, "summarize_document"):
-            result = self.jobs.summarize_document(
-                request.document_id,
-                force=request.force,
-            )
-        elif hasattr(self.jobs, "generate_notes"):
-            result = self.jobs.generate_notes(
-                request.document_id,
-                force=request.force,
-                model_name=request.preferred_model,
-            )
-        else:
-            raise AttributeError("JobService does not support document summarization.")
+        result = self.jobs.summarize_document(
+            request.document_id,
+            force=request.force,
+            model_name=request.preferred_model,
+            governance_context=desktop_governance_context(
+                "summarize_document",
+                document_id=request.document_id,
+            ),
+        )
 
+        result = self.jobs.require_governed_result(result)
         if not isinstance(result, SummaryResult):
             raise TypeError("Summarizer backend returned an invalid result.")
 
@@ -90,6 +90,16 @@ class SummarizerManager(QObject):
     def _on_worker_status(self, payload: dict[str, Any]) -> None:
         message = str(payload.get("message") or payload.get("stage") or "Processing lesson context...")
         self.statusMessage.emit(message, "INFO")
+
+    @Slot(dict)
+    def _on_worker_held(self, hold_context: dict[str, Any]) -> None:
+        self._is_operation_active = False
+        logger.info("Summarizer operation held for governance review", extra={"context": hold_context})
+        receipt = hold_context.get("review_queue_receipt") or hold_context.get("event_id") or "pending"
+        message = f"Lesson synthesis held for governance review (receipt: {receipt})."
+        self.summaryHeld.emit(hold_context)
+        self.statusMessage.emit(message, "WARNING")
+        self.operationFinished.emit("Lesson synthesis held for review.")
 
     @Slot(dict)
     def _on_worker_error(self, error_context: dict[str, Any]) -> None:

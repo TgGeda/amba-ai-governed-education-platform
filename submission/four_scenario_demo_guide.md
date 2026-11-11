@@ -488,3 +488,29 @@ Close with:
 [ ] Score withheld
 [ ] F5-M01 and D11-M01 pending
 ```
+## Learning-driven governance scenarios
+
+The learning-scenario runner accepts the shared `ApplicationServices` graph and does not construct a parallel database, RAG engine, runtime-governance repository, or delivery service.
+
+### Scenario A: approved lesson
+
+A teacher-governed lesson is ingested, indexed through the approved allowlist, retrieved for a learner question, used for grounded generation, validated, enveloped, and delivered through governed display, chat, and memory paths. The evidence artifact records approved, excluded, and retrieved chunk IDs plus matching sanitized digests.
+
+### Scenario B: protected assessment
+
+Answer-key material is rejected or quarantined. Excluded chunk IDs remain outside FAISS and BM25 and a privacy-safe refusal receipt records that ordinary delivery was prevented.
+
+### Scenario C: sensitive learner information
+
+Synthetic email, student identifier, and local-path values are injected into a model candidate. Runtime output governance redacts the values before display, chat, memory, clipboard, or audit processing. Sink receipts bind to the same sanitized SHA-256.
+
+### Scenario D: commercial influence
+
+A synthetic targeted-advertising candidate triggers the commercial-manipulation gate. No ordinary sink is called. Separate privacy-safe refusal and distribution-prevention receipts are retained.
+
+All generated scenario artifacts state:
+
+- Synthetic demonstration only.
+- No legal effect.
+- Y.3172-oriented project mapping.
+- Not formal ITU conformance or certification.

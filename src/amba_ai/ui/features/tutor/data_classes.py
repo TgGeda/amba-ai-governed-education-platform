@@ -23,6 +23,7 @@ class TutorPersona(str, Enum):
     SIMPLE = "Simple & Intuitive"
     TECHNICAL = "Code & Technical Deep Dive"
     EXAM_PREP = "Exam & Retention Coach"
+    ACADEMIC = "Academic Tutor"
 
     @classmethod
     def values(cls) -> list[str]:
@@ -33,7 +34,7 @@ class TutorPersona(str, Enum):
         if value is None:
             return cls.SIMPLE
         for item in cls:
-            if str(value).strip().lower() == item.value.lower():
+            if str(value).strip().lower() == item.value.lower() or str(value).strip().upper() == item.name:
                 return item
         return cls.SIMPLE
 
@@ -183,87 +184,50 @@ class TutorAnswerViewModel:
         doc_context: str = "",
         persona: TutorPersona = TutorPersona.SIMPLE,
     ) -> TutorAnswerViewModel:
-        q_lower = question.lower()
-        key_points = []
-        snippets = []
+        context_clean = str(doc_context or "").strip()
+        sentences = [
+            s.strip()
+            for s in re.split(r"(?<=[.!?])\s+", context_clean)
+            if len(s.strip()) > 25
+        ]
 
-        if any(w in q_lower for w in ("api", "intel", "user", "curl")):
+        if sentences:
             summary = (
-                "To extract clean data from an API response without manual grep filtering, "
-                "stream the output straight into `jq`. You construct a projection object "
-                "specifying only the exact attributes needed (such as `id`, `email`, and `is_admin`)."
+                f"Based on the active curriculum material for question '{question}':\n\n"
+                f"{sentences[0]}"
             )
+            if len(sentences) > 1:
+                summary += f" {sentences[1]}"
+
             key_points = [
-                "Keeps output compact and token-efficient.",
-                "Discards noisy payload overhead and metadata automatically.",
-                "Prevents parsing errors caused by multiline JSON values.",
+                s[:150] for s in sentences[1:5]
             ]
-            snippets.append(
-                TutorCodeSnippet(
-                    code="curl -s https://api.target.com/v1/users | jq '.[] | {id, email, admin: .is_admin}'",
-                    language="bash",
-                    title="API Field Extraction Pipeline",
-                )
-            )
-        elif any(w in q_lower for w in ("secret", "token", "key", "log", "search")):
-            summary = (
-                "When hunting for exposed secrets inside large log dumps, use recursive descent (`..`) "
-                "combined with `strings` and a regular expression test. This interrogates all nested structures "
-                "and extracts high-entropy token candidates."
-            )
-            key_points = [
-                "`..` traverses every nested JSON array and dictionary depth.",
-                "`strings` discards numbers, booleans, and nulls so only strings hit regex testing.",
-                "`select(test(...))` extracts matching tokens that meet your character set and length.",
-            ]
-            snippets.append(
-                TutorCodeSnippet(
-                    code="cat log.json | jq '.. | strings | select(test(\"[A-Za-z0-9_-]{20,}\"))'",
-                    language="bash",
-                    title="Recursive Secret Hunting Pattern",
-                )
-            )
-        elif any(w in q_lower for w in ("diff", "config", "compare", "hack", "tamper")):
-            summary = (
-                "Standard JSON keys are mathematically unordered, so a direct Unix `diff` produces false alarms. "
-                "By using `jq -S .`, both configuration files are normalized with keys sorted alphabetically "
-                "inside bash process substitution."
-            )
-            key_points = [
-                "`-S` strictly orders dictionary keys from A to Z across all nesting depths.",
-                "Process substitution `<(...)` avoids creating intermediate temporary files on disk.",
-                "Highlights only true functional additions, deletions, or altered configurations.",
-            ]
-            snippets.append(
-                TutorCodeSnippet(
-                    code="diff <(jq -S . config_old.json) <(jq -S . config_new.json)",
-                    language="bash",
-                    title="Normalized Config Comparison",
-                )
-            )
         else:
             summary = (
-                "Here is the core breakdown based on your learning material:\n\n"
-                "1. **API Filtering**: Query live endpoints and reconstruct objects with targeted fields.\n"
-                "2. **Log Auditing**: Recursively search nested payloads for security tokens and credentials.\n"
-                "3. **Config Normalization**: Sort JSON keys deterministically using `-S` before diffing to detect unauthorized modifications."
+                f"Regarding your inquiry '{question}', the local curriculum repository establishes "
+                "core principles documented in the active source text. Review the corresponding sections "
+                "or consult with your teacher for further detail."
             )
             key_points = [
-                "Replaces brittle grep and regex scripts with structural JSON understanding.",
-                "Ensures resilient CLI pipeline automation for security and administration.",
+                "Consult the primary course textbook.",
+                "Review foundational definitions in the summary module.",
             ]
+
+        snippets: list[TutorCodeSnippet] = []
+        code_matches = re.finditer(r"```([a-zA-Z0-9_-]*)\n(.*?)```", context_clean, flags=re.DOTALL)
+        for cm in code_matches:
             snippets.append(
                 TutorCodeSnippet(
-                    code="curl -s https://api.target.com/v1/users | jq '.[] | {id, email, admin: .is_admin}'",
-                    language="bash",
-                    title="Fast Field Extraction",
+                    code=cm.group(2).strip(),
+                    language=cm.group(1).strip() or "text",
+                    title="Source Example",
                 )
             )
 
         sources = [
             TutorSourceViewModel(
                 index=1,
-                source=f"Document #{document_id or 'Local'} :: Security & CLI Module",
+                source=f"Document #{document_id or 'Local'} :: Curriculum Repository",
                 relevance_score=0.98,
             )
         ]
@@ -277,7 +241,7 @@ class TutorAnswerViewModel:
             fallback=True,
             key_points=key_points,
             code_snippets=snippets,
-            metadata={"resilient_fallback": True},
+            metadata={"resilient_fallback": True, "dynamic": True},
         )
 
     @classmethod
@@ -291,32 +255,22 @@ class TutorAnswerViewModel:
         text = re.sub(r"\[Page\s*\d+\]\s*", "", text, flags=re.IGNORECASE)
 
         code_snippets: list[TutorCodeSnippet] = []
-        codes = re.findall(
-            r"(?:```(?:bash|sh|json)?\n(.*?)\n```|(curl\s+-[^\n]+|cat\s+[^\n]+|diff\s+<[^\n]+|jq\s+['\"][^\n]+['\"]|jq\s+[^\n]+))",
-            text,
-            flags=re.DOTALL,
-        )
-
-        for match_tuple in codes:
-            code_match = match_tuple[0] or match_tuple[1]
-            if code_match and code_match.strip():
-                clean_c = code_match.strip().rstrip("'\"")
-                lang = "bash" if any(k in clean_c for k in ("curl", "jq", "cat", "diff")) else "json"
-                code_snippets.append(
-                    TutorCodeSnippet(
-                        code=clean_c,
-                        language=lang,
-                        title="CLI Terminal Execution",
-                    )
+        code_matches = re.finditer(r"```([a-zA-Z0-9_-]*)\n(.*?)```", text, flags=re.DOTALL)
+        for cm in code_matches:
+            lang = cm.group(1).strip() or "text"
+            code_body = cm.group(2).strip()
+            code_snippets.append(
+                TutorCodeSnippet(
+                    code=code_body,
+                    language=lang,
+                    title="Code / Data Example",
                 )
+            )
 
-        clean_text = re.sub(r"```.*?```", "", text, flags=re.DOTALL).strip()
-        for s in code_snippets:
-            clean_text = clean_text.replace(s.code, "").strip()
-
+        clean_text = re.sub(r"```[a-zA-Z0-9_-]*\n.*?```", "", text, flags=re.DOTALL).strip()
         clean_text = re.sub(r"\n{3,}", "\n\n", clean_text)
         if not clean_text:
-            clean_text = "Here is the concise synthesis based on your grounded curriculum material."
+            clean_text = "Here is the concise explanation based on your grounded curriculum material."
 
         key_points: list[str] = []
         bullet_matches = re.findall(r"(?:^|\n)[-•*✦]\s*(.+?)(?=\n[-•*✦]|\n\n|\Z)", clean_text)

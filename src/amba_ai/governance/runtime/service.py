@@ -5,6 +5,7 @@ from typing import Any,Mapping
 from .guardrails import assess_content,assess_file,sha256_file
 from .models import ChunkGovernanceDecision,Decision,GenerationDecision,GovernedRetrievalResult,IngestionDecision,RiskFinding,RuntimeGovernanceGateError,RuntimeGovernanceReviewRequired
 from .repository import RuntimeGovernanceRepository
+from .review_models import GovernanceReviewDecision
 from .output_guardrails import GovernedOutputValidation,OutputDisposition,digest_material,inspect_output_text,sanitize_structure
 
 class RuntimeEducationGovernanceService:
@@ -74,3 +75,5 @@ class RuntimeEducationGovernanceService:
   returned_ids=[int(item.get('chunk_id') if isinstance(item,dict) else getattr(item,'chunk_id')) for item in kept]
   rid=self.repository.receipt('retrieval_filtered',{'document_id':document_id,'operation':operation,'returned_chunk_ids':returned_ids,'excluded_chunk_ids':excluded},document_id,operation)
   return GovernedRetrievalResult(tuple(kept),tuple(excluded),('chunk_allowlist','operation_filter'),(),(),rid)
+ def effective_review(self,subject_type:str,subject_id:str)->GovernanceReviewDecision|None:
+  return self.repository.effective_review(subject_type,subject_id)

@@ -58,8 +58,10 @@ def _matches_filters(chunk: Chunk, filters: dict[str, Any]) -> bool:
 
 
 class InMemoryBM25:
-    def __init__(self, chunks: Iterable[Chunk]) -> None:
+    def __init__(self, chunks: Iterable[Chunk], *, revision_id: str | None = None) -> None:
         self.chunks = list(chunks)
+        self.revision_id = revision_id
+        self.chunk_ids = frozenset(str(chunk.chunk_id) for chunk in self.chunks)
         self.doc_count = len(self.chunks)
         self.doc_tokens: list[list[str]] = [_tokenize(c.text) for c in self.chunks]
         self.doc_lengths = [len(tokens) for tokens in self.doc_tokens]

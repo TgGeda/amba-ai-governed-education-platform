@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from enum import Enum
 import inspect
 import time
 import traceback
@@ -8,7 +9,17 @@ from typing import Any, Callable, Iterable
 
 from PySide6.QtCore import QObject, QRunnable, Signal, Slot
 
+from amba_ai.governance.models import EnforcementAction
 from amba_ai.logger import logger
+from amba_ai.services.job_governance import JobGovernanceGateError
+
+
+class WorkerOutcome(str, Enum):
+    SUCCEEDED = "succeeded"
+    FAILED = "failed"
+    GOVERNANCE_BLOCKED = "governance_blocked"
+    HELD_FOR_REVIEW = "held_for_review"
+    CONFIGURATION_FAILURE = "configuration_failure"
 
 
 @dataclass(frozen=True)
@@ -24,6 +35,7 @@ class WorkerSignals(QObject):
     started = Signal(str)
     finished = Signal(object)
     error = Signal(dict)
+    held = Signal(dict)
     progress = Signal(str)
     status = Signal(dict)
 
@@ -138,9 +150,13 @@ class FunctionWorker(QRunnable):
         return result
 
     def _is_fatal(self, exc: BaseException) -> bool:
+        if isinstance(exc, JobGovernanceGateError):
+            return True
         return bool(self.fatal_exceptions) and isinstance(exc, self.fatal_exceptions)
 
     def _is_recoverable(self, exc: BaseException) -> bool:
+        if isinstance(exc, JobGovernanceGateError):
+            return False
         return bool(self.recoverable_exceptions) and isinstance(
             exc,
             self.recoverable_exceptions,
@@ -194,6 +210,7 @@ class FunctionWorker(QRunnable):
                         "attempts_allowed": attempts_allowed,
                         "elapsed_time": elapsed_time,
                         "result_type": type(result).__name__,
+                        "outcome": WorkerOutcome.SUCCEEDED.value,
                     },
                 )
 
@@ -219,6 +236,79 @@ class FunctionWorker(QRunnable):
                 self.signals.finished.emit(worker_result)
                 return
 
+            except JobGovernanceGateError as exc:
+                elapsed_time = round(time.perf_counter() - started_at, 4)
+                gov_payload = exc.to_dict()
+                gov_payload.update({
+                    "task_name": self.task_name,
+                    "elapsed_time": elapsed_time,
+                    "attempt": attempt,
+                    "attempts_allowed": attempts_allowed,
+                })
+
+                if exc.action is EnforcementAction.HOLD_FOR_REVIEW:
+                    gov_payload["outcome"] = WorkerOutcome.HELD_FOR_REVIEW.value
+                    gov_payload["error_message"] = (
+                        f"Task held for review: {self.task_name} (event {exc.event_id})"
+                    )
+
+                    logger.info(
+                        "Worker task held for governance review",
+                        extra={"context": gov_payload},
+                    )
+
+                    self._emit_status(
+                        stage="held_for_review",
+                        message=f"Task held for review: {self.task_name}",
+                        percent=None,
+                        elapsed_time=elapsed_time,
+                        level="WARNING",
+                        **gov_payload,
+                    )
+
+                    self.signals.held.emit(gov_payload)
+
+                    held_result = WorkerResult(
+                        task_name=self.task_name,
+                        result=None,
+                        success=False,
+                        error_message=gov_payload["error_message"],
+                        metadata=gov_payload,
+                    )
+                    self.signals.finished.emit(held_result)
+                    return
+
+                gov_payload["outcome"] = WorkerOutcome.GOVERNANCE_BLOCKED.value
+                gov_payload["error_message"] = (
+                    f"Task blocked by governance: {self.task_name} (action={exc.action.value})"
+                )
+
+                logger.warning(
+                    "Worker task blocked by governance pre-gate",
+                    extra={"context": gov_payload},
+                )
+
+                self._emit_status(
+                    stage="governance_blocked",
+                    message=f"Task blocked by governance: {self.task_name}",
+                    percent=None,
+                    elapsed_time=elapsed_time,
+                    level="ERROR",
+                    **gov_payload,
+                )
+
+                self.signals.error.emit(gov_payload)
+
+                blocked_result = WorkerResult(
+                    task_name=self.task_name,
+                    result=None,
+                    success=False,
+                    error_message=gov_payload["error_message"],
+                    metadata=gov_payload,
+                )
+                self.signals.finished.emit(blocked_result)
+                return
+
             except BaseException as exc:
                 last_error = exc
                 elapsed_time = round(time.perf_counter() - started_at, 4)
@@ -232,6 +322,7 @@ class FunctionWorker(QRunnable):
                     "traceback": tb,
                     "fatal": self._is_fatal(exc),
                     "recoverable": self._is_recoverable(exc),
+                    "outcome": WorkerOutcome.FAILED.value,
                 }
 
                 logger.exception(
@@ -292,6 +383,7 @@ class FunctionWorker(QRunnable):
                 "elapsed_time": elapsed_time,
                 "error_type": type(last_error).__name__ if last_error else None,
                 "traceback": traceback.format_exc() if last_error else None,
+                "outcome": WorkerOutcome.FAILED.value,
             },
         )
 

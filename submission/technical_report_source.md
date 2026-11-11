@@ -241,3 +241,14 @@ AMBA-GOV demonstrates a governance architecture in which evidence, institutional
 [ ] Exactly five pages verified
 [ ] Selectable text and accessibility checked
 ```
+
+## End-to-end governed learning evidence
+
+The release evidence uses a single `ApplicationServices` graph and one `GovernanceExecutionContext`. Each event is digest-linked to the preceding event. The report records only evidence supported by operation identifiers, document identifiers, source and output digests, revision identifiers, trace identifiers, decisions, dispositions, and receipts.
+
+Claim boundaries:
+
+- Synthetic demonstration only.
+- No legal effect.
+- Y.3172-oriented project mapping.
+- Not formal ITU conformance or certification.

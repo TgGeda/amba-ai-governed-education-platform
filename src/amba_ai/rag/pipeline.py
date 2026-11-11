@@ -1,10 +1,8 @@
 from __future__ import annotations
 
-from collections.abc import Callable
-
 from .context import ContextAssembler
 from .hybrid import HybridRetriever
-from .models import GroundedAnswer, RetrievalHit, RetrievalQuery
+from .models import RetrievalHit, RetrievalQuery
 from .reranking import LexicalSemanticReranker
 
 
@@ -14,52 +12,19 @@ class ProductionRAGPipeline:
         retriever: HybridRetriever,
         reranker: LexicalSemanticReranker,
         assembler: ContextAssembler,
-        generator: Callable[[str], str],
         minimum_confidence: float = 0.18,
     ) -> None:
         self.retriever = retriever
         self.reranker = reranker
         self.assembler = assembler
-        self.generator = generator
         self.minimum_confidence = minimum_confidence
 
-    def answer(self, request: RetrievalQuery) -> GroundedAnswer:
+    def retrieve(self, request: RetrievalQuery) -> tuple[list[RetrievalHit], float, bool]:
+        """Retrieve and rerank only; generation belongs to GroundedAnswerService."""
         candidates = self.retriever.retrieve(request)
         hits = self.reranker.rerank(request.text, candidates, request.final_k)
         confidence = self._compute_epistemic_confidence(hits, request.text)
-
-        if not hits or confidence < self.minimum_confidence:
-            available_topics = self._extract_available_breadcrumbs(candidates[:4])
-            fallback_text = (
-                "Insufficient evidence was found in the active learning materials to answer this reliably."
-            )
-            if available_topics:
-                fallback_text += f" Related topics found: {', '.join(available_topics)}."
-
-            return GroundedAnswer(
-                answer=fallback_text,
-                citations=[],
-                confidence=confidence,
-                evidence_sufficient=False,
-                retrieved_hits=hits,
-                pedagogical_notes="Confidence fell below the epistemic safety threshold.",
-            )
-
-        context, citations = self.assembler.assemble(hits)
-        prompt = self._build_prompt(request, context)
-        raw_output = self.generator(prompt).strip()
-
-        followups = self._generate_study_followups(hits)
-
-        return GroundedAnswer(
-            answer=raw_output,
-            citations=citations,
-            confidence=confidence,
-            evidence_sufficient=True,
-            retrieved_hits=hits,
-            pedagogical_notes=f"Answer grounded in {len(citations)} verified passages.",
-            suggested_followups=followups,
-        )
+        return hits, confidence, bool(hits and confidence >= self.minimum_confidence)
 
     def _compute_epistemic_confidence(self, hits: list[RetrievalHit], query: str) -> float:
         if not hits:

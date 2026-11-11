@@ -13,11 +13,13 @@ from amba_ai.governance.approvals import (
 from amba_ai.governance.execution import (
     ExecutionResult,
 )
+from amba_ai.governance.learning_operations import LEARNING_METHOD_OPERATION_MAP
 from amba_ai.governance.models import (
     AuthorizationBasis,
     EnforcementAction,
     GovernanceConfigurationError,
     PipelineEvent,
+    PolicyFinding,
     PolicyRecommendation,
     to_canonical_json,
 )
@@ -28,27 +30,7 @@ _SHA256_PATTERN = re.compile(
 )
 
 
-JOB_OPERATION_MAP: Mapping[str, str] = (
-    MappingProxyType(
-        {
-            "tutor_answer": (
-                "classroom_instruction_delivery"
-            ),
-            "tutor_answer_stream": (
-                "classroom_instruction_delivery"
-            ),
-            "generate_notes": (
-                "classroom_instruction_delivery"
-            ),
-            "generate_study_assets": (
-                "classroom_instruction_delivery"
-            ),
-            "record_feedback_event": (
-                "classroom_exercise_telemetry"
-            ),
-        }
-    )
-)
+JOB_OPERATION_MAP: Mapping[str, str] = LEARNING_METHOD_OPERATION_MAP
 
 
 _SAFE_INPUT_FIELDS = frozenset(
@@ -187,6 +169,9 @@ class JobGovernanceGateError(
         operation_id: str,
         event_id: str,
         action: EnforcementAction,
+        recommendation_id: str | None = None,
+        findings: tuple[object, ...] = (),
+        review_queue_receipt: str | None = None,
     ) -> None:
         normalized_method = _require_text(
             method_name,
@@ -214,14 +199,56 @@ class JobGovernanceGateError(
         self.operation_id = normalized_operation
         self.event_id = normalized_event
         self.action = action
+        self.recommendation_id = str(recommendation_id).strip() if recommendation_id else None
+        self.findings = tuple(findings)
+        self.review_queue_receipt = str(review_queue_receipt).strip() if review_queue_receipt else None
+
+        finding_codes = tuple(
+            getattr(finding, "code", getattr(finding, "finding_id", str(finding)))
+            for finding in self.findings
+        )
 
         super().__init__(
-            "Job governance pre-gate prevented "
-            "processing: "
+            "Job governance pre-gate prevented processing: "
             f"method={normalized_method}, "
             f"operation={normalized_operation}, "
-            f"action={action.value}"
+            f"action={action.value}, "
+            f"findings={finding_codes or ('UNKNOWN',)}, "
+            f"event_id={normalized_event}"
         )
+
+    def to_dict(self) -> dict[str, Any]:
+        serialized_findings: list[dict[str, Any]] = []
+        for finding in self.findings:
+            if isinstance(finding, PolicyFinding):
+                serialized_findings.append({
+                    "finding_id": finding.finding_id,
+                    "evaluator_id": finding.evaluator_id,
+                    "code": finding.code,
+                    "severity": getattr(finding.severity, "value", str(finding.severity)),
+                    "verdict": getattr(finding.verdict, "value", str(finding.verdict)),
+                    "rationale": finding.rationale,
+                    "evidence_sufficiency": getattr(finding.evidence_sufficiency, "value", str(finding.evidence_sufficiency)),
+                })
+            elif isinstance(finding, dict):
+                serialized_findings.append(dict(finding))
+            else:
+                serialized_findings.append({
+                    "code": getattr(finding, "code", str(finding)),
+                    "finding_id": getattr(finding, "finding_id", str(finding)),
+                    "rationale": getattr(finding, "rationale", ""),
+                })
+
+        return {
+            "error_type": type(self).__name__,
+            "method_name": self.method_name,
+            "operation_id": self.operation_id,
+            "event_id": self.event_id,
+            "action": self.action.value,
+            "recommendation_id": self.recommendation_id,
+            "review_queue_receipt": self.review_queue_receipt,
+            "findings": serialized_findings,
+        }
 
 
 class JobGovernanceDeliveryError(
@@ -234,6 +261,7 @@ class JobGovernanceDeliveryError(
         operation_id: str,
         event_id: str,
         queued_for_review: bool,
+        reason: str | None = None,
     ) -> None:
         normalized_method = _require_text(
             method_name,
@@ -250,16 +278,14 @@ class JobGovernanceDeliveryError(
 
         if type(queued_for_review) is not bool:
             raise TypeError(
-                "queued_for_review must be a "
-                "strict Boolean"
+                "queued_for_review must be a strict Boolean"
             )
 
         self.method_name = normalized_method
         self.operation_id = normalized_operation
         self.event_id = normalized_event
-        self.queued_for_review = (
-            queued_for_review
-        )
+        self.queued_for_review = queued_for_review
+        self.reason = str(reason).strip() if reason else None
 
         disposition = (
             "queued_for_review"
@@ -267,13 +293,16 @@ class JobGovernanceDeliveryError(
             else "not_acknowledged"
         )
 
-        super().__init__(
-            "Governed job output is not authorized "
-            "for delivery or persistence: "
+        message = (
+            "Governed job output is not authorized for delivery or persistence: "
             f"method={normalized_method}, "
             f"operation={normalized_operation}, "
             f"disposition={disposition}"
         )
+        if self.reason:
+            message += f", reason={self.reason}"
+
+        super().__init__(message)
 
 
 @dataclass(frozen=True, slots=True)
@@ -731,6 +760,7 @@ class JobGovernanceCoordinator:
                 "job_operation": (
                     normalized_method
                 ),
+                "governance_phase": "pre_generation",
                 **safe_input,
             },
             authorization_basis=(
@@ -794,6 +824,21 @@ class JobGovernanceCoordinator:
                 action=(
                     recommendation
                     .recommended_action
+                ),
+                recommendation_id=getattr(
+                    recommendation,
+                    "recommendation_id",
+                    None,
+                ),
+                findings=getattr(
+                    evaluation,
+                    "findings",
+                    (),
+                ),
+                review_queue_receipt=getattr(
+                    evaluation,
+                    "review_queue_receipt",
+                    None,
                 ),
             )
 
@@ -861,6 +906,7 @@ class JobGovernanceCoordinator:
                 "output_sha256": (
                     output_sha256
                 ),
+                "governance_phase": "post_generation",
                 **safe_result,
             },
             authorization_basis=(

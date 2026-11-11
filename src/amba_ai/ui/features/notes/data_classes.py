@@ -67,8 +67,8 @@ class NotesGenerationRequest:
 @dataclass
 class InteractiveCodeBlockModel:
     code: str
-    language: str = "bash"
-    title: str = "Execution Command"
+    language: str = "text"
+    title: str = "Example / Code"
     description: str = ""
 
 
@@ -106,19 +106,15 @@ class ParsedStudyNotesBundle:
             source_badge = f"Page {page_match.group(1)}"
             raw = re.sub(r"\[Page\s*\d+\]\s*", "", raw, flags=re.IGNORECASE).strip()
 
-        title = str(meta.get("title") or "")
+        title = str(meta.get("title") or "").strip()
         if not title:
-            first_line = raw.split("\n")[0].strip()
+            first_line = raw.split("\n")[0].strip() if raw else ""
             if first_line.startswith("#"):
                 title = first_line.lstrip("#").strip()
             else:
-                title_match = re.search(r"^(.*?)(?:The\s+jq\s+utility|is\s+not\s+just|\.|\n|$)", raw, flags=re.IGNORECASE)
-                if title_match:
-                    title = title_match.group(1).strip()
-        if not title:
-            title = "Structured Study Notes"
+                title = "Study Notes & Reference"
 
-        title = re.sub(r"^(?:Executive Summary|Structured Study Notes)\s*", "", title, flags=re.IGNORECASE).strip()
+        title = re.sub(r"^(?:Executive Summary|Structured Study Notes)\s*[:\-—]?\s*", "", title, flags=re.IGNORECASE).strip()
         if not title:
             title = "Study Notes & Reference"
 
@@ -140,91 +136,78 @@ class ParsedStudyNotesBundle:
             key_takeaway = bl_match.group(1).strip()
             working_content = working_content[:bl_match.start()] + working_content[bl_match.end():]
 
-        overview = ""
-        intro_match = re.search(r"^(.*?)(?=(?:🎯|🔍|🛡|⚡|📌|\b\d+\.))", working_content, flags=re.DOTALL)
-        if intro_match:
-            overview = intro_match.group(1).strip()
-            rest = working_content[intro_match.end():].strip()
+        overview_match = re.search(
+            r"##\s*Executive\s*Summary\s*\n(.*?)(?=\n##|\Z)",
+            content,
+            flags=re.DOTALL | re.IGNORECASE,
+        )
+        if overview_match:
+            overview = overview_match.group(1).strip()
         else:
-            overview = working_content[:180].strip()
-            rest = working_content[180:].strip()
+            first_p = working_content.split("\n\n")[0].strip() if working_content else ""
+            overview = first_p[:200] if first_p else "Core structured curriculum study notes."
 
         cards: list[StudyNoteCardModel] = []
-        step_pattern = re.compile(
-            r"(?:🎯|🔍|🛡|⚡|📌|\b)\s*(\d+)\.\s*([^:\n]+)[:\.\-]?\s*(.*?)(?=(?:🎯|🔍|🛡|⚡|📌|\b)\s*\d+\.|\Z)",
-            flags=re.DOTALL,
-        )
-        matches = list(step_pattern.finditer(rest))
+        raw_sections = re.split(r"(?m)^###?\s+", working_content)
 
-        if matches:
-            for i, m in enumerate(matches, 1):
-                sec_title = m.group(2).strip()
-                sec_text = m.group(3).strip()
+        for i, sec in enumerate(raw_sections, 1):
+            lines = [l.strip() for l in sec.splitlines() if l.strip()]
+            if not lines:
+                continue
 
-                code_snippets: list[InteractiveCodeBlockModel] = []
-                codes = re.findall(
-                    r"(curl\s+-[^\n]+|cat\s+[^\n]+|diff\s+<[^\n]+|jq\s+['\"][^\n]+['\"]|jq\s+[^\n]+)",
-                    sec_text,
-                )
-                for c in codes:
-                    clean_code = c.strip().rstrip("'\"")
-                    code_snippets.append(
-                        InteractiveCodeBlockModel(
-                            code=clean_code,
-                            language="bash",
-                            title=f"Terminal Pipeline",
-                        )
-                    )
+            sec_title = lines[0]
+            if re.search(r"^(Executive Summary|Sources)\b", sec_title, re.IGNORECASE):
+                continue
 
-                clean_text = sec_text
-                for c in codes:
-                    clean_text = clean_text.replace(c, "").strip()
-                clean_text = re.sub(r"['\"]{2,}", "", clean_text).strip()
+            sec_body = "\n".join(lines[1:]).strip()
 
-                tags = []
-                low_title = sec_title.lower()
-                if "api" in low_title:
-                    tags.extend(["API", "Payload Parsing"])
-                if "secret" in low_title or "log" in low_title or "token" in low_title:
-                    tags.extend(["Security", "Regex Auditing"])
-                if "config" in low_title or "diff" in low_title:
-                    tags.extend(["Integrity Check", "Diff Analysis"])
-
-                cue = f"How do you implement {sec_title.lower()} effectively in a security workflow?"
-
-                cards.append(
-                    StudyNoteCardModel(
-                        section_id=f"note_sec_{i}",
-                        title=sec_title,
-                        cue_question=cue,
-                        summary_text=clean_text,
-                        code_blocks=code_snippets,
-                        tags=tags,
-                        bottom_line=key_takeaway if i == len(matches) else "",
-                    )
-                )
-        else:
             code_snippets: list[InteractiveCodeBlockModel] = []
-            codes = re.findall(
-                r"(curl\s+-[^\n]+|cat\s+[^\n]+|diff\s+<[^\n]+|jq\s+[^\n]+)",
-                rest,
-            )
-            for c in codes:
+            code_matches = re.finditer(r"```([a-zA-Z0-9_-]*)\n(.*?)```", sec_body, flags=re.DOTALL)
+            for cm in code_matches:
+                lang = cm.group(1).strip() or "text"
                 code_snippets.append(
                     InteractiveCodeBlockModel(
-                        code=c.strip(),
-                        language="bash",
-                        title="Command Execution",
+                        code=cm.group(2).strip(),
+                        language=lang,
+                        title=f"{sec_title} Code / Formula",
                     )
                 )
 
+            clean_text = re.sub(r"```[a-zA-Z0-9_-]*\n.*?```", "", sec_body, flags=re.DOTALL).strip()
+
+            key_points = [
+                pt.strip()
+                for pt in re.findall(r"(?:^|\n)[-•*✦]\s*(.+?)(?=\n[-•*✦]|\n\n|\Z)", clean_text)
+                if len(pt.strip()) > 5
+            ]
+
+            words = re.findall(r"\b[A-Z][a-zA-Z0-9]{3,}\b", sec_title)
+            tags = list(dict.fromkeys(words))[:3]
+
+            cue = f"What key principle is established in '{sec_title}'?"
+
+            cards.append(
+                StudyNoteCardModel(
+                    section_id=f"note_sec_{i}",
+                    title=sec_title,
+                    cue_question=cue,
+                    summary_text=clean_text[:1000],
+                    key_points=key_points[:5],
+                    code_blocks=code_snippets,
+                    tags=tags,
+                    bottom_line=key_takeaway if not cards else "",
+                )
+            )
+
+        if not cards:
             cards.append(
                 StudyNoteCardModel(
                     section_id="note_sec_1",
                     title=title,
-                    cue_question="What are the essential concepts and commands covered here?",
-                    summary_text=rest,
-                    code_blocks=code_snippets,
+                    cue_question=f"What are the core concepts covered in {title}?",
+                    summary_text=working_content[:1200],
+                    key_points=[],
+                    code_blocks=[],
                     bottom_line=key_takeaway,
                 )
             )

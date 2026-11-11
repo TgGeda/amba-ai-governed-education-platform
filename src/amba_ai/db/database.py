@@ -446,6 +446,124 @@ class Database:
             context=context,
         )
 
+    def insert_governed_document_with_chunker(
+        self,
+        doc: IngestedDocument,
+        *,
+        text: str,
+        chunker: Any,
+    ) -> tuple[int, tuple[int, ...]]:
+        """Allocate the document ID, construct valid chunks, and persist atomically."""
+        title = str(doc.title or "Untitled")
+        source_path = str(doc.source_path or "")
+        kind = str(doc.kind or "unknown")
+        raw_text = str(text or doc.raw_text or "")
+        metadata = dict(doc.metadata or {})
+        if not raw_text.strip():
+            raise ValueError("Governed ingestion requires non-empty extracted text.")
+        if not callable(chunker):
+            raise TypeError("chunker must be callable")
+
+        with self.connect(operation="insert_governed_document_with_chunker") as conn:
+            cursor = conn.execute(
+                "INSERT INTO documents(title,source_path,kind,raw_text,metadata_json) VALUES(?,?,?,?,?);",
+                (title, source_path, kind, raw_text, self._json_dumps(metadata)),
+            )
+            document_id = int(cursor.lastrowid)
+            if document_id <= 0:
+                raise DatabaseError("Database did not allocate a positive document ID.")
+
+            chunks = list(chunker(document_id=document_id, text=raw_text))
+            if not chunks:
+                raise ValueError("Governed ingestion requires at least one chunk.")
+
+            chunk_ids: list[int] = []
+            for index, chunk in enumerate(chunks):
+                raw_chunk_document_id = getattr(chunk, "doc_id", None)
+                if raw_chunk_document_id is None:
+                    raw_chunk_document_id = getattr(chunk, "document_id", None)
+                if (
+                    raw_chunk_document_id is not None
+                    and int(raw_chunk_document_id) != document_id
+                ):
+                    raise ValueError(
+                        f"Chunk {index} document ID does not match allocated document ID."
+                    )
+                chunk_text = str(getattr(chunk, "text", "") or "").strip()
+                if not chunk_text:
+                    raise ValueError(f"Chunk {index} has no text.")
+                chunk_index = int(getattr(chunk, "chunk_index", index))
+                source_ref = getattr(chunk, "source_ref", None)
+                page_start = getattr(chunk, "page_start", None)
+                page_end = getattr(chunk, "page_end", None)
+                heading_path = getattr(chunk, "heading_path", ())
+                chunk_metadata = getattr(chunk, "metadata", {}) or {}
+                row = conn.execute(
+                    """
+                    INSERT INTO chunks(
+                        document_id,chunk_index,text,source_ref,page_start,page_end,
+                        heading_path,metadata_json
+                    ) VALUES(?,?,?,?,?,?,?,?);
+                    """,
+                    (
+                        document_id,
+                        chunk_index,
+                        chunk_text,
+                        source_ref,
+                        int(page_start) if page_start is not None else None,
+                        int(page_end) if page_end is not None else None,
+                        self._json_dumps(
+                            list(heading_path)
+                            if isinstance(heading_path, (list, tuple))
+                            else []
+                        ),
+                        self._json_dumps(
+                            dict(chunk_metadata)
+                            if isinstance(chunk_metadata, Mapping)
+                            else {}
+                        ),
+                    ),
+                )
+                chunk_ids.append(int(row.lastrowid))
+
+        return document_id, tuple(chunk_ids)
+
+    def insert_governed_document(
+        self,
+        doc: IngestedDocument,
+        chunks: Sequence[Any],
+    ) -> tuple[int, tuple[int, ...]]:
+        """Persist a document and all chunks in one SQLite transaction."""
+        title = str(doc.title or "Untitled")
+        source_path = str(doc.source_path or "")
+        kind = str(doc.kind or "unknown")
+        raw_text = str(doc.raw_text or "")
+        metadata = dict(doc.metadata or {})
+        if not raw_text.strip():
+            raise ValueError("Governed ingestion requires non-empty extracted text.")
+        rows = list(chunks)
+        if not rows:
+            raise ValueError("Governed ingestion requires at least one chunk.")
+        with self.connect(operation="insert_governed_document") as conn:
+            cursor = conn.execute(
+                "INSERT INTO documents(title,source_path,kind,raw_text,metadata_json) VALUES(?,?,?,?,?);",
+                (title, source_path, kind, raw_text, self._json_dumps(metadata)),
+            )
+            document_id = int(cursor.lastrowid)
+            chunk_ids: list[int] = []
+            for index, chunk in enumerate(rows):
+                text = str(getattr(chunk, "text", "") or "").strip()
+                if not text:
+                    raise ValueError(f"Chunk {index} has no text.")
+                chunk_index = int(getattr(chunk, "chunk_index", index))
+                source_ref = getattr(chunk, "source_ref", None)
+                row = conn.execute(
+                    "INSERT INTO chunks(document_id,chunk_index,text,source_ref,metadata_json) VALUES(?,?,?,?,?);",
+                    (document_id, chunk_index, text, source_ref, self._json_dumps({})),
+                )
+                chunk_ids.append(int(row.lastrowid))
+        return document_id, tuple(chunk_ids)
+
     def insert_document(self, doc: IngestedDocument | None = None, **kwargs: Any) -> int:
         if doc is None:
             doc = IngestedDocument(
@@ -618,6 +736,28 @@ class Database:
             extra={"context": {**context, "deleted": deleted}},
         )
         return deleted
+
+    def delete_governed_document_data(self, document_id: int) -> dict[str, int]:
+        normalized_id = int(document_id)
+        if normalized_id <= 0:
+            raise ValueError("document_id must be a positive integer")
+        with self.connect(operation="delete_governed_document_data", context={"document_id": normalized_id}) as conn:
+            exists = conn.execute("SELECT 1 FROM documents WHERE id=?", (normalized_id,)).fetchone()
+            if exists is None:
+                raise LookupError(f"Document {normalized_id} does not exist.")
+            counts = {
+                "chunks": int(conn.execute("SELECT COUNT(*) FROM chunks WHERE document_id=?", (normalized_id,)).fetchone()[0]),
+                "summaries": int(conn.execute("SELECT COUNT(*) FROM summaries WHERE document_id=?", (normalized_id,)).fetchone()[0]),
+                "flashcards": int(conn.execute("SELECT COUNT(*) FROM flashcards WHERE document_id=?", (normalized_id,)).fetchone()[0]),
+                "mcqs": int(conn.execute("SELECT COUNT(*) FROM mcqs WHERE document_id=?", (normalized_id,)).fetchone()[0]),
+            }
+            # Chat rows are deleted only when governed context explicitly links them to the document.
+            pattern = f'%"document_id": {normalized_id}%'
+            linked = int(conn.execute("SELECT COUNT(*) FROM chat_logs WHERE context_json LIKE ?", (pattern,)).fetchone()[0])
+            conn.execute("DELETE FROM chat_logs WHERE context_json LIKE ?", (pattern,))
+            counts["chat_logs"] = linked
+            conn.execute("DELETE FROM documents WHERE id=?", (normalized_id,))
+        return counts
 
     @overload
     def insert_chunks(self, chunks: Sequence[Any]) -> None: ...

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Mapping
 from contextlib import contextmanager
 from dataclasses import asdict, is_dataclass
 from datetime import datetime, timezone
@@ -42,8 +43,15 @@ from amba_ai.models.schemas import (
     TextChunk,
 )
 from amba_ai.rag.engine import FaissRAGEngine
+from amba_ai.rag.index_policy import IndexRebuildPolicy, IndexRebuildResult
+from amba_ai.governance.learning_operations import runtime_learning_operation
 from amba_ai.services.content_delivery_service import ContentDeliveryService
 from amba_ai.services.model_service import ModelService
+from amba_ai.services.governed_ingestion_service import GovernedIngestionService
+from amba_ai.services.governed_retrieval_service import GovernedRetrievalService
+from amba_ai.services.grounded_answer_service import GroundedAnswerService
+from amba_ai.services.governed_result_delivery import GovernedResultDeliveryService
+from amba_ai.services.document_lifecycle_service import DocumentLifecycleService, DocumentDeletionReceipt
 from amba_ai.governance.runtime import RuntimeEducationGovernanceService, RuntimeGovernanceGateError, RuntimeGovernanceReviewRequired
 from amba_ai.services.job_governance import (
     JobGovernanceContext,
@@ -68,6 +76,11 @@ class JobService:
         content_delivery_service: ContentDeliveryService | None = None,
         governance_coordinator: JobGovernanceCoordinator | None = None,
         runtime_governance: RuntimeEducationGovernanceService | None = None,
+        governed_ingestion_service: GovernedIngestionService | None = None,
+        governed_retrieval_service: GovernedRetrievalService | None = None,
+        grounded_answer_service: GroundedAnswerService | None = None,
+        governed_result_delivery: GovernedResultDeliveryService | None = None,
+        document_lifecycle_service: DocumentLifecycleService | None = None,
     ) -> None:
         self.db = db or Database()
         database_path = getattr(self.db, "path", None)
@@ -86,10 +99,14 @@ class JobService:
             governance_coordinator, JobGovernanceCoordinator
         ):
             raise TypeError(
-                "governance_coordinator must be a "
-                "JobGovernanceCoordinator or None"
+                "governance_coordinator must be a JobGovernanceCoordinator or None"
             )
         self.governance_coordinator = governance_coordinator
+        self.governed_ingestion = governed_ingestion_service
+        self.governed_retrieval = governed_retrieval_service
+        self.grounded_answer = grounded_answer_service
+        self.result_delivery = governed_result_delivery
+        self.document_lifecycle = document_lifecycle_service
 
     @staticmethod
     def _now_iso() -> str:
@@ -128,7 +145,15 @@ class JobService:
     @property
     def rag(self) -> FaissRAGEngine:
         if self._rag_engine is None:
-            self._rag_engine = FaissRAGEngine(self.db)
+            provider = (
+                lambda: self._build_index_rebuild_policy("tutor_answer")
+                if self.runtime_governance is not None
+                else None
+            )
+            self._rag_engine = FaissRAGEngine(
+                self.db,
+                rebuild_policy_provider=provider,
+            )
         return self._rag_engine
 
     def _get_rag_pipeline(self, document_id: int | None = None) -> Any | None:
@@ -138,6 +163,8 @@ class JobService:
                 rag_engine=self.rag,
                 llm=self.llm,
                 document_id=document_id,
+                runtime_governance=self.runtime_governance,
+                operation="learning.tutor.retrieve",
             )
 
         try:
@@ -147,6 +174,8 @@ class JobService:
                 rag_engine=self.rag,
                 llm=self.llm,
                 document_id=document_id,
+                runtime_governance=self.runtime_governance,
+                operation="learning.tutor.retrieve",
             )
         except (ImportError, AttributeError):
             return None
@@ -376,15 +405,15 @@ class JobService:
 
         markdown = (
             f"# {doc.title}\n\n"
-            "## Offline Study Notes\n\n"
+            "## Executive Summary\n\n"
             "AmbaAI created these offline study notes from the uploaded learning material.\n\n"
-            "## Key Points From the Source Material\n\n"
+            "## Core Concepts\n\n"
             f"{bullet_text}\n\n"
-            "## Suggested Study Actions\n\n"
+            "## Structured Study Notes\n\n"
             "- Review the key points carefully.\n"
             "- Ask AmbaAI focused questions about unclear concepts.\n"
             "- Generate flashcards and quizzes for exam practice.\n\n"
-            f"## Sources\n- {doc.title}"
+            f"## Sources\n- {doc.title}, local document ID {document_id}"
         )
 
         return SummaryResult(
@@ -393,6 +422,14 @@ class JobService:
             tokens_used=None,
             metadata={
                 "document_id": document_id,
+                "source_document_ids": [document_id],
+                "citations": [
+                    {
+                        "document_id": document_id,
+                        "source_name": doc.title,
+                        "source_type": "local_document",
+                    }
+                ],
                 "fallback": True,
                 "fallback_reason": reason,
                 "text_length": len(doc.raw_text or ""),
@@ -499,166 +536,12 @@ class JobService:
         )
 
     def ingest_file(self, path: str | Path) -> IngestedDocumentResult:
-        context = self._context(
-            operation="ingest_file",
-            path=path,
-            model_name=WHISPER_MODEL,
-        )
-
-        stage = "start"
-        document_id: int | None = None
-        rag_indexed = False
-        index_status = "not_indexed"
-        index_error: str | None = None
-
-        logger.info("File ingestion started", extra={"context": context})
-
-        try:
-            stage = "extract"
-            if self.runtime_governance is None:
-                raise IngestionError("Runtime education governance is not configured for ingestion.", context=context)
-            self.runtime_governance.preflight_file(path)
-            doc = ingest_path(path, whisper_model=WHISPER_MODEL)
-            raw_text = doc.raw_text or ""
-            stage = "govern_ingestion"
-            runtime_decision = self.runtime_governance.assess_ingestion(path, raw_text)
-            if not runtime_decision.permits_persistence:
-                raise IngestionError("Runtime education governance refused persistence.", context={**context, "decision": runtime_decision.to_dict()})
-
-            stage = "insert_document"
-            document_id = self._insert_document(doc)
-            self.runtime_governance.record_document(document_id, runtime_decision)
-            self.db.update_document_metadata(document_id, {"runtime_governance": runtime_decision.to_dict()})
-
-            stage = "chunk_text"
-            chunks = chunk_text(
-                document_id=document_id,
-                text=raw_text,
-            )
-
-            stage = "insert_chunks"
-            self._insert_chunks(
-                document_id=document_id,
-                chunks=chunks,
-            )
-            stage = "govern_chunks"
-            persisted_chunks = list(self.db.get_chunks(document_id)) if chunks else []
-            chunk_decisions = self.runtime_governance.assess_chunks(document_id, persisted_chunks) if persisted_chunks else ()
-            permitted_chunk_ids = frozenset(
-                decision.chunk_id for decision in chunk_decisions if decision.indexing_permitted
-            )
-
-            if chunks and runtime_decision.permits_indexing:
-                stage = "index_document"
-                try:
-                    self.rag.index_document(document_id, permitted_chunk_ids=permitted_chunk_ids)
-                    rag_indexed = True
-                    index_status = "indexed"
-                except Exception as exc:
-                    rag_indexed = False
-                    index_status = "failed"
-                    index_error = str(exc)[:500]
-                    logger.warning(
-                        "Document chunking succeeded but RAG indexing failed; continuing",
-                        extra={
-                            "context": {
-                                **context,
-                                "document_id": document_id,
-                                "chunk_count": len(chunks),
-                                "stage": stage,
-                                "error_type": type(exc).__name__,
-                                "error_message": str(exc),
-                            }
-                        },
-                        exc_info=True,
-                    )
-            else:
-                index_status = "not_indexed"
-
-            metadata_updates: dict[str, Any] = {
-                "chunk_count": len(chunks),
-                "text_length": len(raw_text),
-                "rag_indexed": rag_indexed,
-                "index_status": index_status,
-            }
-            if index_error:
-                metadata_updates["index_error"] = index_error
-            else:
-                metadata_updates.pop("index_error", None)
-
-            persisted_metadata: dict[str, Any] = {}
-            if hasattr(self.db, "update_document_metadata"):
-                persisted_metadata = self.db.update_document_metadata(
-                    document_id,
-                    metadata_updates,
-                )
-
-            metadata = {
-                **(getattr(doc, "metadata", {}) or {}),
-                **persisted_metadata,
-                "document_id": document_id,
-                "chunk_count": len(chunks),
-                "text_length": len(raw_text),
-                "kind": doc.kind,
-                "created_at": self._now_iso(),
-                "rag_indexed": rag_indexed,
-                "index_status": index_status,
-                "rag_error": index_error,
-            }
-
-            result = IngestedDocumentResult(
-                document=doc,
-                document_id=document_id,
-                metadata=metadata,
-            )
-
-            logger.info(
-                "File ingestion completed",
-                extra={
-                    "context": {
-                        **context,
-                        "document_id": document_id,
-                        "chunk_count": len(chunks),
-                        "text_length": len(raw_text),
-                        "rag_indexed": rag_indexed,
-                        "index_status": index_status,
-                        "rag_error": index_error,
-                    }
-                },
-            )
-
-            return result
-
-        except IngestionError:
-            raise
-
-        except DatabaseError as exc:
-            error_context = {
-                **context,
-                "stage": stage,
-                "document_id": document_id,
-                "error_type": type(exc).__name__,
-                "error_message": str(exc),
-            }
-            logger.exception(
-                "File ingestion failed during database persistence",
-                extra={"context": error_context},
-            )
+        if self.governed_ingestion is None:
             raise IngestionError(
-                "File ingestion failed during database persistence.",
-                context=error_context,
-            ) from exc
-
-        except Exception as exc:
-            error_context = {
-                **context,
-                "stage": stage,
-                "document_id": document_id,
-                "error_type": type(exc).__name__,
-                "error_message": str(exc),
-            }
-            logger.exception("File ingestion failed", extra={"context": error_context})
-            raise IngestionError("File ingestion failed.", context=error_context) from exc
+                "Governed ingestion service is not configured.",
+                context=self._context(operation="ingest_file", path=path),
+            )
+        return self.governed_ingestion.ingest(path)
 
     def _begin_job_governance(
         self,
@@ -701,32 +584,68 @@ class JobService:
             )
             governed_material = dict(validation.sanitized_material)
             result_metadata["runtime_output_governance"] = validation.evidence()
+            if self.result_delivery is None:
+                raise JobServiceError("Governed result delivery is not configured.")
+            envelope = self.result_delivery.envelope_from_validation(
+                validation,
+                operation_id=str(getattr(invocation, "operation_id", operation)),
+            )
+            governed_metadata = dict(governed_material.get("metadata") or {})
+            governed_metadata["governed_result_envelope"] = envelope.to_dict()
+            governed_material["metadata"] = governed_metadata
         if invocation is None:
             return governed_material
         completion = self.governance_coordinator.complete(
             invocation=invocation,
-            result_material=result_material,
+            result_material=governed_material,
             result_metadata=result_metadata,
         )
         completion.require_delivery_acknowledged()
         return governed_material
 
-    @staticmethod
-    def _summary_from_material(original: SummaryResult, material: dict[str, Any]) -> SummaryResult:
-        metadata = {**dict(original.metadata), **dict(material.get("metadata") or {})}
-        return SummaryResult(markdown_notes=str(material.get("markdown_notes") or original.markdown_notes),model_name=original.model_name,tokens_used=original.tokens_used,metadata=metadata)
+    def require_governed_result(self, result: Any) -> Any:
+        if self.result_delivery is None:
+            raise JobServiceError("Governed result delivery is not configured.")
+        metadata = dict(getattr(result, "metadata", {}) or {})
+        envelope_data = metadata.get("governed_result_envelope")
+        if not isinstance(envelope_data, dict):
+            raise JobServiceError("Result has no governed delivery envelope.")
+        envelope = self.result_delivery.envelope_from_dict(envelope_data)
+        self.result_delivery.verify(envelope)
+        return result
 
     @staticmethod
-    def _answer_from_material(original: AnswerResult, material: dict[str, Any]) -> AnswerResult:
-        metadata = {**dict(original.metadata), **dict(material.get("metadata") or {})}
-        return AnswerResult(answer_text=str(material.get("answer_text") or original.answer_text),sources=list(material.get("sources") or original.sources),model_name=original.model_name,metadata=metadata)
+    def _summary_from_material(original: SummaryResult, material: Mapping[str, Any]) -> SummaryResult:
+        governed_metadata = dict(material.get("metadata") or {})
+        original_metadata = dict(original.metadata or {})
+        merged_metadata = {**original_metadata, **governed_metadata}
+        return SummaryResult(
+            markdown_notes=str(material.get("markdown_notes", original.markdown_notes)),
+            model_name=str(material.get("model_name", original.model_name)),
+            tokens_used=material.get("tokens_used", original.tokens_used),
+            metadata=merged_metadata,
+        )
 
     @staticmethod
-    def _assets_from_material(original: StudyAssetsResult, material: dict[str, Any]) -> StudyAssetsResult:
-        cards=[Flashcard(**item) if isinstance(item,dict) else item for item in material.get("flashcards",[])]
-        mcqs=[MCQ(**item) if isinstance(item,dict) else item for item in material.get("mcqs",[])]
-        metadata={**dict(original.metadata), **dict(material.get("metadata") or {})}
-        return StudyAssetsResult(flashcards=cards,mcqs=mcqs,metadata=metadata)
+    def _answer_from_material(original: AnswerResult, material: Mapping[str, Any]) -> AnswerResult:
+        governed_metadata = dict(material.get("metadata") or {})
+        original_metadata = dict(original.metadata or {})
+        merged_metadata = {**original_metadata, **governed_metadata}
+        return AnswerResult(
+            answer_text=str(material.get("answer_text", original.answer_text)),
+            sources=list(material.get("sources", original.sources)),
+            model_name=str(material.get("model_name", original.model_name)),
+            metadata=merged_metadata,
+        )
+
+    @staticmethod
+    def _assets_from_material(original: StudyAssetsResult, material: Mapping[str, Any]) -> StudyAssetsResult:
+        cards = [Flashcard(**item) if isinstance(item, dict) else item for item in material.get("flashcards", [])]
+        mcqs = [MCQ(**item) if isinstance(item, dict) else item for item in material.get("mcqs", [])]
+        governed_metadata = dict(material.get("metadata") or {})
+        original_metadata = dict(original.metadata or {})
+        merged_metadata = {**original_metadata, **governed_metadata}
+        return StudyAssetsResult(flashcards=cards, mcqs=mcqs, metadata=merged_metadata)
 
     @staticmethod
     def _answer_material(answer: AnswerResult) -> dict[str, Any]:
@@ -785,6 +704,14 @@ class JobService:
                         tokens_used=None,
                         metadata={
                             "document_id": document_id,
+                            "source_document_ids": [document_id],
+                            "citations": [
+                                {
+                                    "document_id": document_id,
+                                    "source_name": doc.title,
+                                    "source_type": "local_document",
+                                }
+                            ],
                             "cached": True,
                             "summary_id": data.get("id"),
                             "created_at": data.get("created_at"),
@@ -800,12 +727,27 @@ class JobService:
                             "model_name": result.model_name,
                             "tokens_used": result.tokens_used,
                             "document_id": document_id,
+                            "citations": list(result.metadata.get("citations", ())),
+                            "source_document_ids": [document_id],
                         },
                     )
-                    return self._summary_from_material(result, governed_material)
+                    candidate = self._summary_from_material(result, governed_material)
+                    envelope = candidate.metadata.get("governed_result_envelope")
+                    if not isinstance(envelope, dict):
+                        raise JobGovernanceDeliveryError(
+                            method_name="generate_notes",
+                            operation_id="learning.notes.generate",
+                            event_id=getattr(invocation.event, "event_id", "cached"),
+                            queued_for_review=False,
+                            reason="Governed result envelope was lost during SummaryResult reconstruction.",
+                        )
+                    return candidate
             try:
                 summary = self.content_delivery.generate_study_notes(
-                    raw_text=doc.raw_text, title=doc.title
+                    raw_text=doc.raw_text,
+                    title=doc.title,
+                    document_id=document_id,
+                    source_name=doc.title,
                 )
             except Exception as service_exc:
                 logger.warning(
@@ -833,6 +775,17 @@ class JobService:
                 metadata={
                     **(summary.metadata or {}),
                     "document_id": document_id,
+                    "source_document_ids": [document_id],
+                    "citations": list(
+                        summary.metadata.get("citations")
+                        or [
+                            {
+                                "document_id": document_id,
+                                "source_name": doc.title,
+                                "source_type": "local_document",
+                            }
+                        ]
+                    ),
                     "cached": False,
                     "created_at": self._now_iso(),
                 },
@@ -846,16 +799,27 @@ class JobService:
                     "model_name": candidate.model_name,
                     "tokens_used": candidate.tokens_used,
                     "document_id": document_id,
+                    "citations": list(candidate.metadata.get("citations", ())),
+                    "source_document_ids": [document_id],
+                    "fallback": bool(candidate.metadata.get("fallback", False)),
                 },
             )
             candidate = self._summary_from_material(candidate, governed_material)
+            envelope_data = candidate.metadata.get("governed_result_envelope")
+            if not isinstance(envelope_data, dict):
+                raise JobGovernanceDeliveryError(
+                    method_name="generate_notes",
+                    operation_id="learning.notes.generate",
+                    event_id=getattr(invocation.event, "event_id", "generate_notes"),
+                    queued_for_review=False,
+                    reason="Governed result envelope was lost during SummaryResult reconstruction.",
+                )
             if force:
                 self._delete_existing_summaries(document_id)
-            summary_id = self.db.insert_summary(
-                document_id=document_id,
-                summary_markdown=candidate.markdown_notes,
-                model_name=candidate.model_name,
-            )
+            envelope = self.result_delivery.envelope_from_result(candidate)
+            summary_id = self.result_delivery.deliver(
+                envelope, "notes_persistence", db=self.db
+            ).value
             result = SummaryResult(
                 markdown_notes=candidate.markdown_notes,
                 model_name=candidate.model_name,
@@ -878,12 +842,162 @@ class JobService:
         model_name: str | None = None,
         governance_context: JobGovernanceContext | None = None,
     ) -> SummaryResult:
-        return self.generate_notes(
+        resolved_model = model_name or get_model_for_task("summary")
+        context = self._context(
+            operation="summarize_document",
             document_id=document_id,
-            force=force,
-            model_name=model_name,
+            model_name=resolved_model,
+        )
+        invocation = self._begin_job_governance(
+            method_name="summarize_document",
+            input_metadata={"document_id": document_id, "force": force},
             governance_context=governance_context,
         )
+        try:
+            doc = self._get_document_or_raise(document_id)
+            if not force:
+                cached = self.db.latest_summary(document_id)
+                if cached is not None:
+                    data = dict(cached)
+                    result = SummaryResult(
+                        markdown_notes=str(data["summary_markdown"]),
+                        model_name=str(data["model_name"]),
+                        tokens_used=None,
+                        metadata={
+                            "document_id": document_id,
+                            "source_document_ids": [document_id],
+                            "citations": [
+                                {
+                                    "document_id": document_id,
+                                    "source_name": doc.title,
+                                    "source_type": "local_document",
+                                }
+                            ],
+                            "cached": True,
+                            "summary_id": data.get("id"),
+                            "created_at": data.get("created_at"),
+                            "text_length": len(doc.raw_text or ""),
+                        },
+                    )
+                    governed_material = self._complete_job_governance(
+                        invocation=invocation,
+                        result_material=self._summary_material(result),
+                        result_metadata={
+                            "output_type": "summary_result",
+                            "markdown_length": len(result.markdown_notes),
+                            "model_name": result.model_name,
+                            "tokens_used": result.tokens_used,
+                            "document_id": document_id,
+                            "citations": list(result.metadata.get("citations", ())),
+                            "source_document_ids": [document_id],
+                        },
+                    )
+                    candidate = self._summary_from_material(result, governed_material)
+                    envelope = candidate.metadata.get("governed_result_envelope")
+                    if not isinstance(envelope, dict):
+                        raise JobGovernanceDeliveryError(
+                            method_name="summarize_document",
+                            operation_id="learning.summary.generate",
+                            event_id=getattr(invocation.event, "event_id", "cached"),
+                            queued_for_review=False,
+                            reason="Governed result envelope was lost during SummaryResult reconstruction.",
+                        )
+                    return candidate
+
+            try:
+                summary = self.content_delivery.summarize_document(
+                    raw_text=doc.raw_text,
+                    title=doc.title,
+                    document_id=document_id,
+                    source_name=doc.title,
+                )
+            except Exception as service_exc:
+                logger.warning(
+                    "ContentDeliveryService summarize_document failed; attempting fallback",
+                    extra={"context": {**context, "error": str(service_exc)}},
+                    exc_info=True,
+                )
+                try:
+                    summary = summarize_document_text(
+                        text=doc.raw_text,
+                        title=doc.title,
+                        metadata=doc.metadata,
+                        model_name=resolved_model,
+                    )
+                except Exception as exc:
+                    summary = self._fallback_summary(
+                        document_id=document_id,
+                        doc=doc,
+                        reason=f"{type(exc).__name__}: {exc}",
+                    )
+
+            candidate = SummaryResult(
+                markdown_notes=summary.markdown_notes,
+                model_name=summary.model_name,
+                tokens_used=summary.tokens_used,
+                metadata={
+                    **(summary.metadata or {}),
+                    "document_id": document_id,
+                    "source_document_ids": [document_id],
+                    "citations": list(
+                        summary.metadata.get("citations")
+                        or [
+                            {
+                                "document_id": document_id,
+                                "source_name": doc.title,
+                                "source_type": "local_document",
+                            }
+                        ]
+                    ),
+                    "cached": False,
+                    "created_at": self._now_iso(),
+                },
+            )
+
+            governed_material = self._complete_job_governance(
+                invocation=invocation,
+                result_material=self._summary_material(candidate),
+                result_metadata={
+                    "output_type": "summary_result",
+                    "markdown_length": len(candidate.markdown_notes),
+                    "model_name": candidate.model_name,
+                    "tokens_used": candidate.tokens_used,
+                    "document_id": document_id,
+                    "citations": list(candidate.metadata.get("citations", ())),
+                    "source_document_ids": [document_id],
+                    "fallback": bool(candidate.metadata.get("fallback", False)),
+                },
+            )
+            candidate = self._summary_from_material(candidate, governed_material)
+            envelope_data = candidate.metadata.get("governed_result_envelope")
+            if not isinstance(envelope_data, dict):
+                raise JobGovernanceDeliveryError(
+                    method_name="summarize_document",
+                    operation_id="learning.summary.generate",
+                    event_id=getattr(invocation.event, "event_id", "summarize_document"),
+                    queued_for_review=False,
+                    reason="Governed result envelope was lost during SummaryResult reconstruction.",
+                )
+
+            if force:
+                self._delete_existing_summaries(document_id)
+            envelope = self.result_delivery.envelope_from_result(candidate)
+            summary_id = self.result_delivery.deliver(
+                envelope, "notes_persistence", db=self.db
+            ).value
+            result = SummaryResult(
+                markdown_notes=candidate.markdown_notes,
+                model_name=candidate.model_name,
+                tokens_used=candidate.tokens_used,
+                metadata={**candidate.metadata, "summary_id": summary_id},
+            )
+            logger.info("Summarize document completed", extra={"context": context})
+            return result
+        except (JobGovernanceGateError, JobGovernanceDeliveryError):
+            raise
+        except Exception as exc:
+            logger.exception("Summarize document failed", extra={"context": context})
+            raise JobServiceError("Summarize document failed.", context=context) from exc
 
     def generate_study_assets(
         self,
@@ -940,7 +1054,17 @@ class JobService:
                         "document_id": document_id,
                     },
                 )
-                return self._assets_from_material(result, governed_material)
+                candidate = self._assets_from_material(result, governed_material)
+                envelope = candidate.metadata.get("governed_result_envelope")
+                if not isinstance(envelope, dict):
+                    raise JobGovernanceDeliveryError(
+                        method_name="generate_study_assets",
+                        operation_id="learning.flashcards.generate",
+                        event_id=getattr(invocation.event, "event_id", "cached"),
+                        queued_for_review=False,
+                        reason="Governed result envelope was lost during StudyAssetsResult reconstruction.",
+                    )
+                return candidate
             try:
                 result = self.content_delivery.generate_study_assets(
                     raw_text=doc.raw_text,
@@ -994,10 +1118,19 @@ class JobService:
                 },
             )
             result = self._assets_from_material(result, governed_material)
+            envelope_data = result.metadata.get("governed_result_envelope")
+            if not isinstance(envelope_data, dict):
+                raise JobGovernanceDeliveryError(
+                    method_name="generate_study_assets",
+                    operation_id="learning.flashcards.generate",
+                    event_id=getattr(invocation.event, "event_id", "generate_study_assets"),
+                    queued_for_review=False,
+                    reason="Governed result envelope was lost during StudyAssetsResult reconstruction.",
+                )
             if force:
                 self._delete_existing_study_assets(document_id)
-            self.db.insert_flashcards(document_id, result.flashcards)
-            self.db.insert_mcqs(document_id, result.mcqs)
+            envelope = self.result_delivery.envelope_from_result(result)
+            self.result_delivery.deliver(envelope, "study_assets_persistence", db=self.db)
             logger.info("Study asset generation completed", extra={"context": context})
             return result
         except (JobGovernanceGateError, JobGovernanceDeliveryError):
@@ -1027,41 +1160,24 @@ class JobService:
         return self._answer_from_material(answer, governed_material)
 
     def tutor_answer(
-        self,
-        question: str,
-        *,
-        top_k: int = 5,
-        max_tokens: int = 1200,
-        document_id: int | None = None,
-        active_tab: str = "Student Tutor",
-        active_document_title: str | None = None,
-        due_flashcards: int | None = None,
-        session_id: str | None = None,
-        remember: bool = True,
+        self, question: str, *, top_k: int = 5, max_tokens: int = 1200,
+        document_id: int | None = None, active_tab: str = "Student Tutor",
+        active_document_title: str | None = None, due_flashcards: int | None = None,
+        session_id: str | None = None, remember: bool = True,
         governance_context: JobGovernanceContext | None = None,
     ) -> AnswerResult:
-        model_name = get_model_for_task("tutor_chat")
-        clean_question = question.strip() if isinstance(question, str) else ""
-
-        context = self._context(
-            operation="tutor_answer",
-            document_id=document_id,
-            question=clean_question,
-            model_name=model_name,
-            top_k=top_k,
-            max_tokens=max_tokens,
-            active_tab=active_tab,
-            session_id=session_id,
-        )
-
-        if not clean_question:
+        clean = str(question).strip()
+        if not clean:
             raise ValueError("Question must be a non-empty string.")
-
+        if document_id is None:
+            raise RuntimeGovernanceGateError("Governed tutor answers require an explicit document_id.")
+        if self.governed_retrieval is None or self.grounded_answer is None:
+            raise JobServiceError("Governed retrieval and grounded answer services are required.")
         invocation = self._begin_job_governance(
             method_name="tutor_answer",
             input_metadata={
                 "document_id": document_id,
-                "question_length": len(clean_question),
+                "question_length": len(clean),
                 "top_k": top_k,
                 "max_tokens": max_tokens,
                 "active_tab": active_tab,
@@ -1070,173 +1186,33 @@ class JobService:
             governance_context=governance_context,
         )
         session = session_id or self._session_id_for(document_id)
-
-        try:
-            self._prepare_rag_index(context)
-
-            pipeline = self._get_rag_pipeline(document_id=document_id)
-            if self.runtime_governance is None and pipeline is not None and hasattr(pipeline, "answer"):
-                try:
-                    from amba_ai.rag.models import RetrievalQuery
-                    query = RetrievalQuery(
-                        text=clean_question,
-                        filters={"document_id": str(document_id)} if document_id else {},
-                        vector_k=max(20, top_k * 4),
-                        keyword_k=max(20, top_k * 4),
-                        final_k=top_k,
-                    )
-                    grounded = pipeline.answer(query)
-                    answer = AnswerResult(
-                        answer_text=grounded.answer,
-                        model_name=model_name,
-                        sources=[c.get("label", str(c)) for c in getattr(grounded, "citations", [])],
-                        metadata={
-                            "document_id": document_id,
-                            "session_id": session,
-                            "confidence": getattr(grounded, "confidence", 1.0),
-                            "evidence_sufficient": getattr(grounded, "evidence_sufficient", True),
-                            "citations": getattr(grounded, "citations", []),
-                        },
-                    )
-                    answer = self._authorize_answer_delivery(
-                        invocation=invocation,
-                        answer=answer,
-                        document_id=document_id,
-                    )
-                    self._persist_and_log_answer(clean_question, answer, session, document_id, active_tab, remember)
-                    return answer
-                except (JobGovernanceGateError, JobGovernanceDeliveryError):
-                    raise
-                except Exception as pipeline_exc:
-                    logger.warning(
-                        "Grounded production pipeline failed; falling back to direct RAG workflow",
-                        extra={"context": {**context, "error": str(pipeline_exc)}},
-                    )
-
-            retrieved_hits = self._rag_search(clean_question, top_k=top_k, document_id=document_id, operation="tutor_answer")
-            retrieved_context_text = self._format_rag_hits(retrieved_hits)
-            relevant_memory = self.memory.get_relevant_history_text(
-                clean_question,
-                k=3,
-                session_id=session,
+        retrieval = self.governed_retrieval.retrieve(clean, document_id=document_id, operation="learning.tutor.retrieve", top_k=top_k)
+        memory = self.memory.get_relevant_history_text(clean, k=3, session_id=session)
+        candidate = self.grounded_answer.generate(clean, retrieval, max_tokens=max_tokens, relevant_memory=memory)
+        metadata = {
+            "output_type": "answer_result",
+            "answer_length": len(candidate.answer_text),
+            "citation_count": len(candidate.sources),
+            "document_id": document_id,
+            "model_name": candidate.model_name,
+            "retrieved_chunk_ids": retrieval.retrieved_chunk_ids,
+            "excluded_chunk_ids": retrieval.excluded_chunk_ids,
+        }
+        governed = self._complete_job_governance(invocation=invocation, result_material=self._answer_material(candidate), result_metadata=metadata)
+        answer = self._answer_from_material(candidate, governed)
+        envelope_data = answer.metadata.get("governed_result_envelope")
+        if not isinstance(envelope_data, dict):
+            raise JobGovernanceDeliveryError(
+                method_name="tutor_answer",
+                operation_id="learning.tutor.answer",
+                event_id=getattr(invocation.event, "event_id", "tutor_answer"),
+                queued_for_review=False,
+                reason="Governed result envelope was lost during AnswerResult reconstruction.",
             )
-
-            self._update_context_tracker(
-                active_tab=active_tab,
-                document_id=document_id,
-                active_document_title=active_document_title,
-                due_flashcards=due_flashcards,
-            )
-
-            system_prompt = self._build_tutor_system_prompt()
-            full_prompt = self._build_tutor_prompt(
-                question=clean_question,
-                retrieved_context=retrieved_context_text,
-                relevant_memory=relevant_memory,
-            )
-
-            try:
-                llm = self.model_service.get_client_for_task("tutor_chat")
-                generation = llm.generate(
-                    prompt=full_prompt,
-                    system=system_prompt,
-                    model=model_name,
-                    max_tokens=max_tokens,
-                    temperature=0.15,
-                )
-            except Exception as exc:
-                logger.warning(
-                    "Tutor LLM generation failed; returning retrieved fallback answer",
-                    extra={
-                        "context": {
-                            **context,
-                            "error_type": type(exc).__name__,
-                            "error_message": str(exc),
-                        }
-                    },
-                    exc_info=True,
-                )
-
-                answer = self._fallback_answer(
-                    question=clean_question,
-                    document_id=document_id,
-                    retrieved_hits=retrieved_hits,
-                    reason=f"{type(exc).__name__}: {exc}",
-                    model_name=model_name,
-                )
-                answer = self._authorize_answer_delivery(
-                    invocation=invocation,
-                    answer=answer,
-                    document_id=document_id,
-                )
-                return answer
-
-            raw_answer = getattr(generation, "response_text", getattr(generation, "text", str(generation)))
-            formatted = self.pedagogy.format_response(
-                raw_llm_answer=raw_answer,
-                retrieved_context=self._documents_for_pedagogy(retrieved_hits),
-            )
-
-            answer = self._make_answer_result(
-                answer_text=formatted.formatted_answer,
-                raw_answer=raw_answer,
-                model_name=getattr(generation, "model_name", model_name),
-                sources=self._sources_from_hits(retrieved_hits),
-                metadata={
-                    "document_id": document_id,
-                    "session_id": session,
-                    "hits_count": len(retrieved_hits),
-                    "memory_injected": bool(relevant_memory),
-                    "context_injected": True,
-                    "is_low_confidence": formatted.is_low_confidence,
-                    "citations": formatted.citations,
-                    "tokens_used": getattr(generation, "tokens_used", None),
-                    "generation": getattr(generation, "metadata", {}),
-                },
-            )
-
-            answer = self._authorize_answer_delivery(
-                invocation=invocation,
-                answer=answer,
-                document_id=document_id,
-            )
-            self._persist_and_log_answer(
-                user_text=clean_question,
-                answer=answer,
-                session_id=session,
-                document_id=document_id,
-                active_tab=active_tab,
-                remember=remember,
-                active_document_title=active_document_title,
-            )
-
-            logger.info(
-                "Tutor answer completed",
-                extra={
-                    "context": {
-                        **context,
-                        "answer_length": len(answer.answer_text),
-                        "sources_count": len(answer.sources),
-                        "hits_count": answer.metadata.get("hits_count"),
-                        "model_name": answer.model_name,
-                        "memory_injected": answer.metadata.get("memory_injected"),
-                    }
-                },
-            )
-
-            return answer
-
-        except (JobGovernanceGateError, JobGovernanceDeliveryError):
-            raise
-        except ModelUnavailableError:
-            raise
-
-        except RAGError:
-            raise
-
-        except Exception as exc:
-            logger.exception("Tutor answer failed", extra={"context": context})
-            raise JobServiceError("Tutor answer failed.", context=context) from exc
+        answer.metadata["candidate"] = False
+        answer.metadata["delivery_authorized"] = True
+        self._persist_and_log_answer(clean, answer, session, document_id, active_tab, remember, active_document_title)
+        return answer
 
     def _persist_and_log_answer(
         self,
@@ -1248,19 +1224,21 @@ class JobService:
         remember: bool,
         active_document_title: str | None = None,
     ) -> None:
-        self._log_chat_to_database(
+        if self.result_delivery is None:
+            raise JobServiceError("Governed result delivery is not configured.")
+        envelope = self.result_delivery.envelope_from_result(answer)
+        self.result_delivery.deliver(
+            envelope,
+            "chat_log",
+            db=self.db,
             user_text=user_text,
-            assistant_text=answer.answer_text,
-            context_payload={
-                "sources": answer.sources,
-                "metadata": answer.metadata,
-            },
         )
-
         if remember:
-            self.memory.save_exchange(
+            self.result_delivery.deliver(
+                envelope,
+                "learning_memory",
+                memory=self.memory,
                 user_text=user_text,
-                assistant_text=answer.answer_text,
                 session_id=session_id,
                 metadata={
                     "operation": "tutor_answer",
@@ -1273,109 +1251,97 @@ class JobService:
             )
 
     def tutor_answer_stream(
-        self,
-        question: str,
-        *,
-        top_k: int = 5,
-        max_tokens: int = 1200,
-        document_id: int | None = None,
-        active_tab: str = "Student Tutor",
-        active_document_title: str | None = None,
-        due_flashcards: int | None = None,
-        session_id: str | None = None,
-        remember: bool = True,
+        self, question: str, *, top_k: int = 5, max_tokens: int = 1200,
+        document_id: int | None = None, active_tab: str = "Student Tutor",
+        active_document_title: str | None = None, due_flashcards: int | None = None,
+        session_id: str | None = None, remember: bool = True,
         governance_context: JobGovernanceContext | None = None,
     ) -> Iterator[str]:
-        clean_question = question.strip() if isinstance(question, str) else ""
-        if not clean_question:
-            raise ValueError("Question must be a non-empty string.")
-        invocation = self._begin_job_governance(
-            method_name="tutor_answer_stream",
-            input_metadata={
-                "document_id": document_id,
-                "question_length": len(clean_question),
-                "top_k": top_k,
-                "max_tokens": max_tokens,
-                "active_tab": active_tab,
-                "remember": remember,
-            },
-            governance_context=governance_context,
-        )
-        session = session_id or self._session_id_for(document_id)
-        context = self._context(
-            operation="tutor_answer_stream",
+        answer = self.tutor_answer(
+            question,
+            top_k=top_k,
+            max_tokens=max_tokens,
             document_id=document_id,
-            question=clean_question,
-        )
-        self._prepare_rag_index(context)
-        hits = self._rag_search(clean_question, top_k=top_k, document_id=document_id, operation="tutor_answer_stream")
-        relevant_memory = self.memory.get_relevant_history_text(
-            clean_question, k=3, session_id=session
-        )
-        self._update_context_tracker(
             active_tab=active_tab,
-            document_id=document_id,
             active_document_title=active_document_title,
             due_flashcards=due_flashcards,
+            session_id=session_id,
+            remember=remember,
+            governance_context=governance_context,
         )
-        prompt = self._build_tutor_prompt(
-            question=clean_question,
-            retrieved_context=self._format_rag_hits(hits),
-            relevant_memory=relevant_memory,
+        yield answer.answer_text
+
+    def _source_document_ids(self) -> tuple[int, ...]:
+        rows = (
+            self.db.list_documents_typed(limit=100_000, offset=0)
+            if hasattr(self.db, "list_documents_typed")
+            else self.db.list_documents()
         )
-        try:
-            tokens = list(
-                self.model_service.generate_stream(
-                    prompt=prompt,
-                    system=self._build_tutor_system_prompt(),
-                    task="tutor_chat",
-                    max_tokens=max_tokens,
-                    temperature=0.15,
+        identifiers: list[int] = []
+        for row in rows:
+            value = (
+                row.get("id")
+                if isinstance(row, dict) or hasattr(row, "keys")
+                else getattr(row, "id", None)
+            )
+            if value is not None:
+                identifiers.append(int(value))
+        return tuple(sorted(set(identifiers)))
+
+    def _build_index_rebuild_policy(self, operation: str) -> IndexRebuildPolicy:
+        if self.runtime_governance is None:
+            raise RuntimeGovernanceGateError(
+                "Governed index rebuild requires runtime education governance."
+            )
+        canonical_operation = runtime_learning_operation(operation)
+        allowlists = {
+            document_id: self.runtime_governance.permitted_chunk_ids(
+                document_id,
+                canonical_operation,
+            )
+            for document_id in self._source_document_ids()
+        }
+        return IndexRebuildPolicy.from_allowlists(
+            operation=canonical_operation,
+            allowlists=allowlists,
+            require_complete_allowlists=True,
+        )
+
+    def _rebuild_rag_index(self, operation: str) -> IndexRebuildResult | None:
+        if not hasattr(self.rag, "rebuild_from_source_documents"):
+            if self.runtime_governance is not None:
+                raise RAGError(
+                    "Governed RAG engine does not expose governed reconstruction.",
+                    context={"operation": operation},
                 )
+            if hasattr(self.rag, "rebuild_from_database"):
+                self.rag.rebuild_from_database()
+                return None
+            raise RAGError(
+                "RAG engine does not expose a rebuild operation.",
+                context={"operation": operation},
             )
-            full_answer = "".join(tokens).strip()
-        except Exception as exc:
-            answer = self._fallback_answer(
-                question=clean_question,
-                document_id=document_id,
-                retrieved_hits=hits,
-                reason=f"{type(exc).__name__}: {exc}",
-                model_name=get_model_for_task("tutor_chat"),
+        policy = (
+            self._build_index_rebuild_policy(operation)
+            if self.runtime_governance is not None
+            else None
+        )
+        return self.rag.rebuild_from_source_documents(policy=policy)
+
+    def _index_document_governed(self, document_id: int, operation: str) -> None:
+        canonical_operation = runtime_learning_operation(operation)
+        permitted = (
+            self.runtime_governance.permitted_chunk_ids(
+                int(document_id),
+                canonical_operation,
             )
-            tokens = [answer.answer_text]
-            full_answer = answer.answer_text
-        answer = AnswerResult(
-            answer_text=full_answer,
-            sources=self._sources_from_hits(hits),
-            model_name=get_model_for_task("tutor_chat"),
-            metadata={"document_id": document_id, "streamed": True},
+            if self.runtime_governance is not None
+            else None
         )
-        answer = self._authorize_answer_delivery(
-            invocation=invocation,
-            answer=answer,
-            document_id=document_id,
+        self.rag.index_document(
+            int(document_id),
+            permitted_chunk_ids=permitted,
         )
-        self._log_chat_to_database(
-            user_text=clean_question,
-            assistant_text=full_answer,
-            context_payload={"sources": answer.sources, "streamed": True},
-        )
-        if remember and full_answer:
-            self.memory.save_exchange(
-                user_text=clean_question,
-                assistant_text=full_answer,
-                session_id=session,
-                metadata={
-                    "operation": "tutor_answer_stream",
-                    "document_id": document_id,
-                    "active_tab": active_tab,
-                    "sources_count": len(answer.sources),
-                },
-            )
-        if answer.answer_text == full_answer:
-            yield from tokens
-        else:
-            yield answer.answer_text
 
     def _prepare_rag_index(self, context: dict[str, Any]) -> None:
         rag_index = getattr(self.rag, "index", None)
@@ -1389,10 +1355,10 @@ class JobService:
             extra={"context": {**context, "index_size": index_size}},
         )
 
-        if hasattr(self.rag, "rebuild_from_database"):
-            self.rag.rebuild_from_database()
-        elif hasattr(self.rag, "rebuild_from_source_documents"):
-            self.rag.rebuild_from_source_documents()
+        operation = runtime_learning_operation(
+            str(context.get("operation") or "tutor_answer")
+        )
+        self._rebuild_rag_index(operation)
 
     def _rag_search(
         self,
@@ -1415,7 +1381,11 @@ class JobService:
             return hits
         if document_id is None:
             raise RuntimeGovernanceGateError("Governed retrieval requires an explicit document_id.")
-        governed = self.runtime_governance.filter_retrieval(int(document_id), operation, hits)
+        governed = self.runtime_governance.filter_retrieval(
+            int(document_id),
+            runtime_learning_operation(operation),
+            hits,
+        )
         return list(governed.hits)
 
     def _format_rag_hits(self, hits: list[Any]) -> str:
@@ -1804,38 +1774,20 @@ Rules:
             )
             return None
 
-    def delete_document(self, document_id: int) -> None:
-        context = self._context(operation="delete_document", document_id=document_id)
-
-        if not isinstance(document_id, int) or document_id <= 0:
-            raise ValueError("document_id must be a positive integer")
-
-        try:
-            if hasattr(self.db, "delete_document"):
-                self.db.delete_document(document_id)
-            else:
-                with self._db_connect(operation="delete_document_sql", context=context) as conn:
-                    conn.execute("DELETE FROM summaries WHERE document_id=?", (document_id,))
-                    conn.execute("DELETE FROM flashcards WHERE document_id=?", (document_id,))
-                    conn.execute("DELETE FROM mcqs WHERE document_id=?", (document_id,))
-                    conn.execute("DELETE FROM chunks WHERE document_id=?", (document_id,))
-                    conn.execute("DELETE FROM documents WHERE id=?", (document_id,))
-
-            try:
-                if self._rag_engine is not None:
-                    if hasattr(self._rag_engine, "remove_document"):
-                        self._rag_engine.remove_document(document_id)
-                    elif hasattr(self._rag_engine, "rebuild_from_database"):
-                        self._rag_engine.rebuild_from_database()
-            except Exception as rag_exc:
-                logger.warning(
-                    "RAG synchronization failed after deletion",
-                    extra={"context": {**context, "error": str(rag_exc)}},
-                )
-
-        except Exception as exc:
-            logger.exception("Failed to delete document", extra={"context": context})
-            raise JobServiceError("Failed to delete document.", context=context) from exc
+    def delete_document(
+        self,
+        document_id: int,
+        *,
+        reviewer_role: str,
+        governance_context: JobGovernanceContext | None = None,
+    ) -> DocumentDeletionReceipt:
+        if self.document_lifecycle is None:
+            raise JobServiceError("Governed document lifecycle service is not configured.")
+        return self.document_lifecycle.delete_document(
+            document_id=document_id,
+            reviewer_role=reviewer_role,
+            governance_context=governance_context,
+        )
 
     def get_notes(self, document_id: int) -> str:
         context = self._context(operation="get_notes", document_id=document_id)
@@ -1936,14 +1888,14 @@ Rules:
 
                 if hasattr(self.rag, "has_document"):
                     if not self.rag.has_document(document_id):
-                        self.rag.index_document(document_id)
+                        self._index_document_governed(document_id, "tutor_answer")
                 elif hasattr(self.rag, "meta"):
                     is_indexed = any(
                         int(m.get("document_id", -1)) == document_id
                         for m in getattr(self.rag, "meta", [])
                     )
                     if not is_indexed:
-                        self.rag.index_document(document_id)
+                        self._index_document_governed(document_id, "tutor_answer")
 
             return self.tutor_answer(
                 question=question,
@@ -1995,14 +1947,14 @@ Rules:
 
                 if hasattr(self.rag, "has_document"):
                     if not self.rag.has_document(document_id):
-                        self.rag.index_document(document_id)
+                        self._index_document_governed(document_id, "tutor_answer")
                 elif hasattr(self.rag, "meta"):
                     is_indexed = any(
                         int(m.get("document_id", -1)) == document_id
                         for m in getattr(self.rag, "meta", [])
                     )
                     if not is_indexed:
-                        self.rag.index_document(document_id)
+                        self._index_document_governed(document_id, "tutor_answer")
             except Exception:
                 pass
 
@@ -2018,54 +1970,30 @@ Rules:
             remember=True,
         )
 
-    def export_notes(
-        self,
-        document_id: int,
-        path: str | Path,
-        fmt: str = "md",
-    ) -> None:
-        context = self._context(
-            operation="export_notes",
-            document_id=document_id,
-            path=path,
+    def export_notes(self, document_id: int, path: str | Path, fmt: str = "md") -> None:
+        if self.result_delivery is None:
+            raise JobServiceError("Governed result delivery is not configured.")
+        row = self.db.latest_summary(document_id)
+        if row is None:
+            result = self.generate_notes(document_id)
+        else:
+            data = dict(row)
+            result = SummaryResult(
+                markdown_notes=str(data["summary_markdown"]),
+                model_name=str(data["model_name"]),
+                tokens_used=None,
+                metadata={"document_id": document_id},
+            )
+            raise JobServiceError(
+                "Existing summaries require a governed delivery envelope before export."
+            )
+        envelope = self.result_delivery.envelope_from_result(result)
+        self.result_delivery.deliver(
+            envelope,
+            "export",
+            path=Path(path).expanduser().resolve(),
+            fmt=fmt,
         )
-
-        try:
-            notes = self.get_notes(document_id)
-            if not notes:
-                notes = self.generate_notes_markdown(document_id)
-
-            output_path = Path(path).expanduser().resolve()
-            output_path.parent.mkdir(parents=True, exist_ok=True)
-
-            fmt_clean = fmt.lower().strip(".")
-            if fmt_clean in {"md", "markdown", "txt"}:
-                output_path.write_text(notes, encoding="utf-8")
-                return
-
-            from amba_ai.core import export as export_module
-
-            fn_map = {
-                "pdf": ["export_pdf", "export_markdown_to_pdf", "export_notes_to_pdf"],
-                "docx": ["export_markdown_to_docx", "export_notes_to_docx"],
-                "pptx": ["export_markdown_to_pptx", "export_notes_to_pptx"],
-            }
-
-            for fn_name in fn_map.get(fmt_clean, []):
-                fn = getattr(export_module, fn_name, None)
-                if callable(fn):
-                    try:
-                        doc = self._get_document_or_raise(document_id)
-                        fn(str(output_path), doc.title, notes)
-                    except TypeError:
-                        fn(notes, output_path)
-                    return
-
-            raise ValueError(f"Unsupported export format: {fmt}")
-
-        except Exception as exc:
-            logger.exception("Failed to export notes", extra={"context": context})
-            raise JobServiceError("Failed to export notes.", context=context) from exc
 
     def record_feedback_event(
         self,

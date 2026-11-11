@@ -187,7 +187,7 @@ def test_unknown_method_and_missing_context_fail_closed() -> None:
 
     with pytest.raises(GovernanceConfigurationError, match="not mapped"):
         value.begin(
-            method_name="delete_document",
+            method_name="unsupported_learning_method",
             input_metadata={},
             context=context(),
         )
