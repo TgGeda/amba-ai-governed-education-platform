@@ -391,7 +391,7 @@ Do not use truncated example hashes as final evidence. Export the complete value
 
 ---
 
-## 16. Public Submission Safety Check
+## 16. Public  Safety Check
 
 Before publishing or resubmitting, run:
 
