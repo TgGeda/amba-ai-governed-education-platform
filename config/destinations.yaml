@@ -25,6 +25,14 @@ destinations:
     synthetic: true
     allowed_operations:
     - commercial_purchase_request
+    - learning.summary.generate
+    - learning.notes.generate
+    - learning.flashcards.generate
+    - learning.quiz.generate
+    - learning.tutor.retrieve
+    - learning.tutor.answer
+    - learning.content.export
+    - learning.content.copy
   SYNTHETIC-VENDOR-REVIEW:
     destination_class: administrative_review
     registered: true

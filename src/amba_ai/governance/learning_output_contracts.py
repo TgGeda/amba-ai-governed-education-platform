@@ -32,7 +32,7 @@ class ResultMetadataContract:
 
 _COMMON_FIELDS: Final = frozenset({
     "output_type", "document_id", "model_name", "tokens_used", "fallback",
-    "citations", "source_document_ids",
+    "citations", "source_document_ids", "runtime_output_governance",
 })
 
 RESULT_METADATA_CONTRACTS: Final = {

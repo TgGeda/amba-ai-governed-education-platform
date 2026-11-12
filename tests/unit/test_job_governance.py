@@ -324,3 +324,38 @@ def test_post_metadata_rejects_content_fields() -> None:
             result_material={"markdown_notes": "private notes"},
             result_metadata={"markdown_notes": "private notes"},
         )
+def test_gate_error_serializes_finding_without_code():
+    finding = SimpleNamespace(
+        finding_id="find_cit_probe",
+        evaluator_id="citation_integrity",
+        severity="warning",
+        verdict="potential_gap",
+        rationale="Educator review required.",
+        evidence_sufficiency="partial",
+    )
+
+    error = JobGovernanceGateError(
+        method_name="summarize_document",
+        operation_id=(
+            "learning.summary.generate"
+        ),
+        event_id="jobevt_probe",
+        action=(
+            EnforcementAction
+            .HOLD_FOR_REVIEW
+        ),
+        findings=(finding,),
+        review_queue_receipt="qrcpt_probe",
+    )
+
+    payload = error.to_dict()
+
+    assert payload["findings"][0][
+        "finding_id"
+    ] == "find_cit_probe"
+    assert payload["findings"][0][
+        "code"
+    ] == "find_cit_probe"
+    assert payload[
+        "review_queue_receipt"
+    ] == "qrcpt_probe"

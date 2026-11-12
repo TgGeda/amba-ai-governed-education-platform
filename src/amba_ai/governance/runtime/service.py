@@ -4,7 +4,10 @@ from pathlib import Path
 from typing import Any,Mapping
 from .guardrails import assess_content,assess_file,sha256_file
 from .models import ChunkGovernanceDecision,Decision,GenerationDecision,GovernedRetrievalResult,IngestionDecision,RiskFinding,RuntimeGovernanceGateError,RuntimeGovernanceReviewRequired
-from .repository import RuntimeGovernanceRepository
+from .repository import (
+    RuntimeGovernanceRepository,
+    _canonical_operation_identifier,
+)
 from .review_models import GovernanceReviewDecision
 from .output_guardrails import GovernedOutputValidation,OutputDisposition,digest_material,inspect_output_text,sanitize_structure
 
@@ -21,16 +24,20 @@ class RuntimeEducationGovernanceService:
   return IngestionDecision(decision.decision,decision.source_sha256,decision.findings,decision.permitted_operations,decision.restricted_operations,decision.controls,decision.permits_persistence,decision.permits_indexing,rid)
  def record_document(self,document_id:int,decision:IngestionDecision):self.repository.save_document(document_id,decision.to_dict())
  def authorize_generation(self,document_id:int,operation:str,source_path:str|None=None)->GenerationDecision:
+  canonical_operation=_canonical_operation_identifier(operation)
   record=self.repository.get_document(document_id)
   if not record:raise RuntimeGovernanceGateError(f'Document {document_id} has no runtime governance record.')
-  if operation in set(record['restricted']):raise RuntimeGovernanceGateError(f'{operation} is restricted for document {document_id}.')
-  if operation not in set(record['permitted']):raise RuntimeGovernanceReviewRequired(f'{operation} requires authorized review for document {document_id}.')
+  restricted={_canonical_operation_identifier(value) for value in record['restricted']}
+  permitted={_canonical_operation_identifier(value) for value in record['permitted']}
+  if canonical_operation in restricted:raise RuntimeGovernanceGateError(f'{canonical_operation} is restricted for document {document_id}.')
+  lifecycle_operations={'delete_document'}
+  if canonical_operation not in permitted and canonical_operation not in lifecycle_operations:raise RuntimeGovernanceReviewRequired(f'{canonical_operation} requires authorized review for document {document_id}.')
   digest_ok=True
   if source_path and Path(source_path).is_file():digest_ok=sha256_file(Path(source_path))==record['source_sha256']
   if not digest_ok:raise RuntimeGovernanceGateError(f'Source digest changed for document {document_id}.')
-  request_id='EDU-REQ-'+uuid.uuid4().hex[:20].upper(); rid=self.repository.receipt('generation_authorized',{'request_id':request_id,'document_id':document_id,'operation':operation,'controls':record['controls']},document_id,operation)
-  decision=GenerationDecision(Decision.RESTRICTED,document_id,operation,record['source_sha256'],True,tuple(record['controls']),(),rid)
-  self.repository.record_generation(request_id,document_id,operation,decision.decision.value,decision.source_sha256,decision.to_dict())
+  request_id='EDU-REQ-'+uuid.uuid4().hex[:20].upper(); rid=self.repository.receipt('generation_authorized',{'request_id':request_id,'document_id':document_id,'operation':canonical_operation,'controls':record['controls']},document_id,canonical_operation)
+  decision=GenerationDecision(Decision.RESTRICTED,document_id,canonical_operation,record['source_sha256'],True,tuple(record['controls']),(),rid)
+  self.repository.record_generation(request_id,document_id,canonical_operation,decision.decision.value,decision.source_sha256,decision.to_dict())
   return decision
  def validate_output(self,document_id:int,operation:str,result_material:Mapping[str,Any],*,source_digest_verified:bool=True,retrieved_chunk_ids:tuple[int,...]=(),excluded_chunk_ids:tuple[int,...]=())->GovernedOutputValidation:
   raw=dict(result_material);raw_digest=digest_material(raw);sanitized,redactions=sanitize_structure(raw);text=json.dumps(sanitized,ensure_ascii=False,sort_keys=True,default=str)

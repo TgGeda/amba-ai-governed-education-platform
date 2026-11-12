@@ -1,9 +1,9 @@
 from __future__ import annotations
-from amba_ai.governance.learning_output_contracts import learning_result_allowed_fields, normalize_learning_result_metadata
 
 from collections.abc import Mapping
 from dataclasses import dataclass
 import hashlib
+import json
 import re
 from types import MappingProxyType
 from typing import Any, Protocol, runtime_checkable
@@ -15,6 +15,10 @@ from amba_ai.governance.execution import (
     ExecutionResult,
 )
 from amba_ai.governance.learning_operations import LEARNING_METHOD_OPERATION_MAP
+from amba_ai.governance.learning_output_contracts import (
+    learning_result_allowed_fields,
+    normalize_learning_result_metadata,
+)
 from amba_ai.governance.models import (
     AuthorizationBasis,
     EnforcementAction,
@@ -160,6 +164,80 @@ class ClockProtocol(
         ...
 
 
+def _finding_to_dict(
+    finding: object,
+) -> dict[str, object]:
+    finding_id = str(
+        getattr(
+            finding,
+            "finding_id",
+            getattr(
+                finding,
+                "code",
+                "UNKNOWN",
+            ),
+        )
+    ).strip()
+
+    code = str(
+        getattr(
+            finding,
+            "code",
+            finding_id,
+        )
+    ).strip()
+
+    evaluator_id = str(
+        getattr(
+            finding,
+            "evaluator_id",
+            "UNKNOWN",
+        )
+    ).strip()
+
+    verdict = getattr(
+        finding,
+        "verdict",
+        "unknown",
+    )
+    severity = getattr(
+        finding,
+        "severity",
+        "unknown",
+    )
+    evidence_sufficiency = getattr(
+        finding,
+        "evidence_sufficiency",
+        "unknown",
+    )
+
+    return {
+        "finding_id": finding_id,
+        "code": code,
+        "evaluator_id": evaluator_id,
+        "verdict": str(
+            getattr(verdict, "value", verdict)
+        ),
+        "severity": str(
+            getattr(severity, "value", severity)
+        ),
+        "rationale": str(
+            getattr(
+                finding,
+                "rationale",
+                "",
+            )
+        ).strip(),
+        "evidence_sufficiency": str(
+            getattr(
+                evidence_sufficiency,
+                "value",
+                evidence_sufficiency,
+            )
+        ),
+    }
+
+
 class JobGovernanceGateError(
     RuntimeError
 ):
@@ -205,12 +283,20 @@ class JobGovernanceGateError(
         self.review_queue_receipt = str(review_queue_receipt).strip() if review_queue_receipt else None
 
         finding_codes = tuple(
-            getattr(finding, "code", getattr(finding, "finding_id", str(finding)))
+            getattr(
+                finding,
+                "finding_id",
+                getattr(
+                    finding,
+                    "code",
+                    "UNKNOWN",
+                ),
+            )
             for finding in self.findings
         )
 
         super().__init__(
-            "Job governance pre-gate prevented processing: "
+            "Job governance prevented delivery: "
             f"method={normalized_method}, "
             f"operation={normalized_operation}, "
             f"action={action.value}, "
@@ -218,37 +304,25 @@ class JobGovernanceGateError(
             f"event_id={normalized_event}"
         )
 
-    def to_dict(self) -> dict[str, Any]:
-        serialized_findings: list[dict[str, Any]] = []
-        for finding in self.findings:
-            if isinstance(finding, PolicyFinding):
-                serialized_findings.append({
-                    "finding_id": finding.finding_id,
-                    "evaluator_id": finding.evaluator_id,
-                    "code": finding.code,
-                    "severity": getattr(finding.severity, "value", str(finding.severity)),
-                    "verdict": getattr(finding.verdict, "value", str(finding.verdict)),
-                    "rationale": finding.rationale,
-                    "evidence_sufficiency": getattr(finding.evidence_sufficiency, "value", str(finding.evidence_sufficiency)),
-                })
-            elif isinstance(finding, dict):
-                serialized_findings.append(dict(finding))
-            else:
-                serialized_findings.append({
-                    "code": getattr(finding, "code", str(finding)),
-                    "finding_id": getattr(finding, "finding_id", str(finding)),
-                    "rationale": getattr(finding, "rationale", ""),
-                })
-
+    def to_dict(
+        self,
+    ) -> dict[str, Any]:
         return {
             "error_type": type(self).__name__,
             "method_name": self.method_name,
             "operation_id": self.operation_id,
             "event_id": self.event_id,
             "action": self.action.value,
-            "recommendation_id": self.recommendation_id,
-            "review_queue_receipt": self.review_queue_receipt,
-            "findings": serialized_findings,
+            "recommendation_id": (
+                self.recommendation_id
+            ),
+            "review_queue_receipt": (
+                self.review_queue_receipt
+            ),
+            "findings": [
+                _finding_to_dict(finding)
+                for finding in self.findings
+            ],
         }
 
 
@@ -1519,8 +1593,6 @@ def _decode_canonical_mapping(
     value: str,
     field_name: str,
 ) -> dict[str, Any]:
-    import json
-
     try:
         decoded = json.loads(value)
     except (TypeError, ValueError) as error:

@@ -8,8 +8,6 @@ from amba_ai.rag.models import Chunk
 
 
 class ChunkAdapter:
-    """Convert external chunk records into the canonical RAG Chunk model."""
-
     @staticmethod
     def to_chunk(
         data: Any,
@@ -19,9 +17,18 @@ class ChunkAdapter:
             return data
 
         values: dict[str, Any]
+        use_repository_id = False
 
         if isinstance(data, Mapping):
             values = dict(data)
+        elif callable(getattr(data, "keys", None)):
+            try:
+                values = {str(key): data[key] for key in data.keys()}
+            except (KeyError, IndexError, TypeError, ValueError) as error:
+                raise TypeError(
+                    "Row-like chunk data could not be converted to a mapping."
+                ) from error
+            use_repository_id = True
         elif is_dataclass(data):
             values = asdict(data)
         else:
@@ -93,9 +100,10 @@ class ChunkAdapter:
         heading_path = ChunkAdapter._parse_heading_path(
             values.get("heading_path", ())
         )
-        metadata = ChunkAdapter._parse_metadata(
-            values.get("metadata", {})
-        )
+        raw_metadata = values.get("metadata")
+        if raw_metadata is None:
+            raw_metadata = values.get("metadata_json", {})
+        metadata = ChunkAdapter._parse_metadata(raw_metadata)
 
         score = values.get("score")
         if score is not None and "score" not in metadata:
@@ -106,6 +114,9 @@ class ChunkAdapter:
             metadata["source_ref"] = source_ref
 
         raw_chunk_id = values.get("chunk_id")
+        if raw_chunk_id is None and use_repository_id:
+            raw_chunk_id = values.get("id")
+
         chunk_id = (
             str(raw_chunk_id)
             if raw_chunk_id is not None

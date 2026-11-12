@@ -23,15 +23,40 @@ def _sha256(value: Any) -> str:
     return hashlib.sha256(encoded).hexdigest()
 
 
-def _field(value: Any, *names: str, default: Any = None) -> Any:
+def _field(
+    value: Any,
+    *names: str,
+    default: Any = None,
+) -> Any:
     if isinstance(value, Mapping):
         for name in names:
             if name in value and value[name] is not None:
                 return value[name]
+
+    keys_method = getattr(value, "keys", None)
+    if callable(keys_method):
+        try:
+            keys = set(keys_method())
+        except (TypeError, ValueError):
+            keys = set()
+
+        for name in names:
+            if name not in keys:
+                continue
+
+            try:
+                candidate = value[name]
+            except (KeyError, IndexError, TypeError):
+                continue
+
+            if candidate is not None:
+                return candidate
+
     for name in names:
         candidate = getattr(value, name, None)
         if candidate is not None:
             return candidate
+
     return default
 
 
@@ -139,7 +164,34 @@ class GovernedCorpusBuilder:
             decision_by_id = {int(item["chunk_id"]): item for item in decisions}
 
             for row in self._chunks(document_id):
-                chunk = ChunkAdapter.to_chunk(row, fallback_document_id=document_id)
+                chunk = ChunkAdapter.to_chunk(
+                    row,
+                    fallback_document_id=document_id,
+                )
+                raw_chunk_id = _field(
+                    row,
+                    "chunk_id",
+                    "id",
+                    default=None,
+                )
+                if raw_chunk_id is None:
+                    raw_chunk_id = chunk.chunk_id
+
+                if isinstance(raw_chunk_id, bool) or raw_chunk_id is None:
+                    raise RuntimeError(
+                        "Corpus snapshot contains a chunk without an authoritative identifier."
+                    )
+                try:
+                    chunk_id = int(raw_chunk_id)
+                except (TypeError, ValueError) as error:
+                    raise RuntimeError(
+                        f"Corpus snapshot contains an invalid authoritative chunk identifier: {raw_chunk_id!r}."
+                    ) from error
+                if chunk_id <= 0:
+                    raise RuntimeError(
+                        f"Corpus snapshot contains a non-positive authoritative chunk identifier: {chunk_id}."
+                    )
+
                 effective_text_resolver = getattr(
                     self.runtime_governance.repository,
                     "effective_chunk_text",
@@ -147,10 +199,10 @@ class GovernedCorpusBuilder:
                 )
                 if callable(effective_text_resolver):
                     chunk.text = effective_text_resolver(
-                        chunk_id=int(_field(row, "id", "chunk_id")),
+                        chunk_id=chunk_id,
                         original_text=chunk.text,
                     )
-                chunk_id = int(_field(row, "id", "chunk_id"))
+
                 all_chunk_ids.add(chunk_id)
                 decision = decision_by_id.get(chunk_id)
                 chunk_sha = hashlib.sha256(chunk.text.encode("utf-8")).hexdigest()

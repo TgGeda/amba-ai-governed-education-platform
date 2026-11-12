@@ -213,12 +213,16 @@ class SummarySemanticValidator:
 
         sections = re.split(r"(?m)^##\s+", md)
         degenerate: list[str] = []
-        for s in sections:
+        for s in sections[1:]:
             lines = [line.strip() for line in s.splitlines() if line.strip()]
             if lines:
                 heading = lines[0]
+                if re.match(r"(?i)^sources?\b", heading):
+                    if len(lines) <= 1:
+                        degenerate.append(heading)
+                    continue
                 content = " ".join(lines[1:])
-                if len(lines) > 1 and len(content) < 15:
+                if len(lines) <= 1 or len(content) < 15:
                     degenerate.append(heading)
 
         if missing or degenerate:

@@ -5,6 +5,7 @@ import logging
 import json
 import gzip
 import sys
+import traceback
 from datetime import datetime, timedelta
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
@@ -14,10 +15,10 @@ from amba_ai.exceptions import AmbaAIError
 
 
 class JsonFormatter(logging.Formatter):
-    """Format log records as JSON with contextual metadata."""
+    """Format log records as JSON with contextual metadata and exception tracebacks."""
 
     def format(self, record: logging.LogRecord) -> str:
-        log_entry = {
+        log_entry: dict[str, object] = {
             "timestamp": datetime.utcnow().isoformat(),
             "level": record.levelname,
             "logger": record.name,
@@ -27,7 +28,19 @@ class JsonFormatter(logging.Formatter):
             "message": record.getMessage(),
         }
 
-        # If the message is an AmbaAIError, include context
+        if record.exc_info:
+            log_entry["exception_type"] = (
+                record.exc_info[0].__name__ if record.exc_info[0] else "Exception"
+            )
+            log_entry["exception_message"] = str(record.exc_info[1])
+            log_entry["traceback"] = self.formatException(record.exc_info)
+        elif record.exc_text:
+            log_entry["traceback"] = record.exc_text
+
+        extra_context = getattr(record, "context", None)
+        if isinstance(extra_context, dict):
+            log_entry["context"] = extra_context
+
         if isinstance(record.msg, AmbaAIError):
             log_entry["error_type"] = type(record.msg).__name__
             log_entry["error_context"] = getattr(record.msg, "context", {})
@@ -57,12 +70,14 @@ def configure_logging(json_format: bool = True, min_level: str = "INFO") -> logg
     if logger.handlers:
         return logger
 
-    # Formatter
-    formatter = JsonFormatter() if json_format else logging.Formatter(
-        "%(asctime)s | %(levelname)s | %(name)s | %(module)s:%(lineno)d | %(message)s"
+    formatter = (
+        JsonFormatter()
+        if json_format
+        else logging.Formatter(
+            "%(asctime)s | %(levelname)s | %(name)s | %(module)s:%(lineno)d | %(message)s"
+        )
     )
 
-    # File handler with rotation
     file_handler = RotatingFileHandler(
         LOG_PATH,
         maxBytes=5_000_000,
@@ -71,18 +86,15 @@ def configure_logging(json_format: bool = True, min_level: str = "INFO") -> logg
     )
     file_handler.setFormatter(formatter)
 
-    # Console handler
     console_handler = logging.StreamHandler(sys.stdout)
     console_handler.setFormatter(formatter)
 
     logger.addHandler(file_handler)
     logger.addHandler(console_handler)
 
-    # Compress yesterday’s log
     compress_old_log(LOG_PATH)
 
     return logger
 
 
-# Global logger instance
 logger = configure_logging()

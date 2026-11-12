@@ -23,3 +23,19 @@ def test_tutor_chunk_contract():
 def test_raw_query_is_not_permitted():
     with pytest.raises(GovernanceConfigurationError, match="non-permitted"):
         normalize_learning_result_metadata({"output_type":"answer_result","answer_length":10,"citation_count":0,"query":"sensitive"})
+
+def test_summary_contract_accepts_internal_runtime_governance_evidence():
+    metadata = normalize_learning_result_metadata({
+        "output_type": "summary_result",
+        "document_id": 1,
+        "markdown_length": 50,
+        "citations": [local_document_citation(1, "Doc")],
+        "source_document_ids": [1],
+        "fallback": True,
+        "runtime_output_governance": {
+            "output_id": "OUT-PROBE",
+            "decision": "proceed",
+            "sanitized_output_sha256": "a" * 64,
+        },
+    })
+    assert metadata["runtime_output_governance"]["output_id"] == "OUT-PROBE"

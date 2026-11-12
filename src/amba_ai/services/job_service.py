@@ -45,6 +45,7 @@ from amba_ai.models.schemas import (
 from amba_ai.rag.engine import FaissRAGEngine
 from amba_ai.rag.index_policy import IndexRebuildPolicy, IndexRebuildResult
 from amba_ai.governance.learning_operations import runtime_learning_operation
+from amba_ai.governance.models import EnforcementAction
 from amba_ai.services.content_delivery_service import ContentDeliveryService
 from amba_ai.services.model_service import ModelService
 from amba_ai.services.governed_ingestion_service import GovernedIngestionService
@@ -425,9 +426,8 @@ class JobService:
                 "source_document_ids": [document_id],
                 "citations": [
                     {
-                        "document_id": document_id,
-                        "source_name": doc.title,
-                        "source_type": "local_document",
+                        "source_id": f"local-document:{document_id}",
+                        "locator": f"document:{document_id}",
                     }
                 ],
                 "fallback": True,
@@ -595,11 +595,92 @@ class JobService:
             governed_material["metadata"] = governed_metadata
         if invocation is None:
             return governed_material
+
         completion = self.governance_coordinator.complete(
             invocation=invocation,
             result_material=governed_material,
             result_metadata=result_metadata,
         )
+
+        post_evaluation = getattr(completion, "post_evaluation", None)
+        execution_result = getattr(completion, "execution_result", None)
+
+        if post_evaluation is None or execution_result is None:
+            require_acknowledgment = getattr(
+                completion,
+                "require_delivery_acknowledged",
+                None,
+            )
+            if not callable(require_acknowledgment):
+                raise JobServiceError(
+                    "Governance completion does not provide a post-gate "
+                    "evaluation or delivery acknowledgment invariant."
+                )
+            require_acknowledgment()
+            return governed_material
+
+        recommendation = post_evaluation.recommendation
+        recommended_action = recommendation.recommended_action
+        findings = tuple(getattr(post_evaluation, "findings", ()))
+
+        review_receipt = execution_result.review_queue_receipt
+        execution_receipt = execution_result.execution_receipt
+
+        review_receipt_id = (
+            getattr(review_receipt, "receipt_id", str(review_receipt))
+            if review_receipt is not None
+            else None
+        )
+
+        logger.info(
+            "Job governance delivery disposition",
+            extra={
+                "context": {
+                    "method_name": completion.invocation.method_name,
+                    "operation_id": completion.invocation.operation_id,
+                    "event_id": completion.post_event.event_id,
+                    "recommended_action": recommended_action.value,
+                    "delivery_acknowledged": completion.delivery_acknowledged,
+                    "queued_for_review": completion.queued_for_review,
+                    "execution_recorded": completion.execution_recorded,
+                    "execution_action": (
+                        execution_receipt.action_executed.value
+                        if execution_receipt is not None
+                        else None
+                    ),
+                    "execution_status": (
+                        execution_receipt.status.value
+                        if execution_receipt is not None
+                        else None
+                    ),
+                    "finding_codes": [
+                        getattr(
+                            finding,
+                            "code",
+                            getattr(finding, "finding_id", "UNKNOWN"),
+                        )
+                        for finding in findings
+                    ],
+                    "review_queue_receipt_id": review_receipt_id,
+                    "has_distribution_acknowledgment": (
+                        completion.execution_result.distribution_acknowledgment
+                        is not None
+                    ),
+                }
+            },
+        )
+
+        if recommended_action is not EnforcementAction.PROCEED:
+            raise JobGovernanceGateError(
+                method_name=completion.invocation.method_name,
+                operation_id=completion.invocation.operation_id,
+                event_id=completion.post_event.event_id,
+                action=recommended_action,
+                recommendation_id=getattr(recommendation, "recommendation_id", None),
+                findings=findings,
+                review_queue_receipt=review_receipt_id,
+            )
+
         completion.require_delivery_acknowledged()
         return governed_material
 
@@ -707,9 +788,8 @@ class JobService:
                             "source_document_ids": [document_id],
                             "citations": [
                                 {
-                                    "document_id": document_id,
-                                    "source_name": doc.title,
-                                    "source_type": "local_document",
+                                    "source_id": f"local-document:{document_id}",
+                                    "locator": f"document:{document_id}",
                                 }
                             ],
                             "cached": True,
@@ -751,23 +831,15 @@ class JobService:
                 )
             except Exception as service_exc:
                 logger.warning(
-                    "ContentDeliveryService note generation failed; attempting fallback",
-                    extra={"context": {**context, "error": str(service_exc)}},
+                    "ContentDeliveryService note generation failed; using deterministic fallback",
+                    extra={"context": {**context, "cause_type": type(service_exc).__name__, "cause_message": str(service_exc)}},
                     exc_info=True,
                 )
-                try:
-                    summary = summarize_document_text(
-                        text=doc.raw_text,
-                        title=doc.title,
-                        metadata=doc.metadata,
-                        model_name=resolved_model,
-                    )
-                except Exception as exc:
-                    summary = self._fallback_summary(
-                        document_id=document_id,
-                        doc=doc,
-                        reason=f"{type(exc).__name__}: {exc}",
-                    )
+                summary = self._fallback_summary(
+                    document_id=document_id,
+                    doc=doc,
+                    reason=f"{type(service_exc).__name__}: {service_exc}",
+                )
             candidate = SummaryResult(
                 markdown_notes=summary.markdown_notes,
                 model_name=summary.model_name,
@@ -780,9 +852,8 @@ class JobService:
                         summary.metadata.get("citations")
                         or [
                             {
-                                "document_id": document_id,
-                                "source_name": doc.title,
-                                "source_type": "local_document",
+                                "source_id": f"local-document:{document_id}",
+                                "locator": f"document:{document_id}",
                             }
                         ]
                     ),
@@ -831,8 +902,14 @@ class JobService:
         except (JobGovernanceGateError, JobGovernanceDeliveryError):
             raise
         except Exception as exc:
-            logger.exception("Notes generation failed", extra={"context": context})
-            raise JobServiceError("Notes generation failed.", context=context) from exc
+            failure_context = {
+                **context,
+                "cause_type": type(exc).__name__,
+                "cause_message": str(exc),
+                "failure_stage": "notes_governed_delivery",
+            }
+            logger.exception("Notes generation failed", extra={"context": failure_context})
+            raise JobServiceError(f"Notes generation failed: {type(exc).__name__}: {exc}", context=failure_context) from exc
 
     def summarize_document(
         self,
@@ -868,9 +945,8 @@ class JobService:
                             "source_document_ids": [document_id],
                             "citations": [
                                 {
-                                    "document_id": document_id,
-                                    "source_name": doc.title,
-                                    "source_type": "local_document",
+                                    "source_id": f"local-document:{document_id}",
+                                    "locator": f"document:{document_id}",
                                 }
                             ],
                             "cached": True,
@@ -913,23 +989,15 @@ class JobService:
                 )
             except Exception as service_exc:
                 logger.warning(
-                    "ContentDeliveryService summarize_document failed; attempting fallback",
-                    extra={"context": {**context, "error": str(service_exc)}},
+                    "ContentDeliveryService summarize_document failed; using deterministic fallback",
+                    extra={"context": {**context, "cause_type": type(service_exc).__name__, "cause_message": str(service_exc)}},
                     exc_info=True,
                 )
-                try:
-                    summary = summarize_document_text(
-                        text=doc.raw_text,
-                        title=doc.title,
-                        metadata=doc.metadata,
-                        model_name=resolved_model,
-                    )
-                except Exception as exc:
-                    summary = self._fallback_summary(
-                        document_id=document_id,
-                        doc=doc,
-                        reason=f"{type(exc).__name__}: {exc}",
-                    )
+                summary = self._fallback_summary(
+                    document_id=document_id,
+                    doc=doc,
+                    reason=f"{type(service_exc).__name__}: {service_exc}",
+                )
 
             candidate = SummaryResult(
                 markdown_notes=summary.markdown_notes,
@@ -943,9 +1011,8 @@ class JobService:
                         summary.metadata.get("citations")
                         or [
                             {
-                                "document_id": document_id,
-                                "source_name": doc.title,
-                                "source_type": "local_document",
+                                "source_id": f"local-document:{document_id}",
+                                "locator": f"document:{document_id}",
                             }
                         ]
                     ),
@@ -996,8 +1063,14 @@ class JobService:
         except (JobGovernanceGateError, JobGovernanceDeliveryError):
             raise
         except Exception as exc:
-            logger.exception("Summarize document failed", extra={"context": context})
-            raise JobServiceError("Summarize document failed.", context=context) from exc
+            failure_context = {
+                **context,
+                "cause_type": type(exc).__name__,
+                "cause_message": str(exc),
+                "failure_stage": "summary_governance_completion",
+            }
+            logger.exception("Summarize document failed", extra={"context": failure_context})
+            raise JobServiceError(f"Summarize document failed: {type(exc).__name__}: {exc}", context=failure_context) from exc
 
     def generate_study_assets(
         self,
@@ -1074,38 +1147,17 @@ class JobService:
                 )
             except Exception as service_exc:
                 logger.warning(
-                    "ContentDeliveryService asset generation failed; attempting fallback",
-                    extra={"context": {**context, "error": str(service_exc)}},
+                    "ContentDeliveryService asset generation failed; using deterministic fallback",
+                    extra={"context": {**context, "cause_type": type(service_exc).__name__, "cause_message": str(service_exc)}},
                     exc_info=True,
                 )
-                try:
-                    llm = self.model_service.get_client_for_task("flashcards")
-                    result = StudyAssetsResult(
-                        flashcards=generate_flashcards(
-                            source_text=doc.raw_text,
-                            count=target_flashcards,
-                            llm=llm,
-                        ),
-                        mcqs=generate_mcqs(
-                            source_text=doc.raw_text,
-                            count=mcq_count,
-                            llm=llm,
-                        ),
-                        metadata={
-                            "document_id": document_id,
-                            "cached": False,
-                            "fallback": False,
-                            "model_name": structured_model,
-                        },
-                    )
-                except Exception as exc:
-                    result = self._fallback_study_assets(
-                        document_id=document_id,
-                        doc=doc,
-                        flashcard_count=target_flashcards,
-                        mcq_count=mcq_count,
-                        reason=f"{type(exc).__name__}: {exc}",
-                    )
+                result = self._fallback_study_assets(
+                    document_id=document_id,
+                    doc=doc,
+                    flashcard_count=target_flashcards,
+                    mcq_count=mcq_count,
+                    reason=f"{type(service_exc).__name__}: {service_exc}",
+                )
             governed_material = self._complete_job_governance(
                 invocation=invocation,
                 result_material=self._assets_material(result),
@@ -1136,8 +1188,14 @@ class JobService:
         except (JobGovernanceGateError, JobGovernanceDeliveryError):
             raise
         except Exception as exc:
-            logger.exception("Study asset generation failed", extra={"context": context})
-            raise JobServiceError("Study asset generation failed.", context=context) from exc
+            failure_context = {
+                **context,
+                "cause_type": type(exc).__name__,
+                "cause_message": str(exc),
+                "failure_stage": "study_assets_governed_delivery",
+            }
+            logger.exception("Study asset generation failed", extra={"context": failure_context})
+            raise JobServiceError(f"Study asset generation failed: {type(exc).__name__}: {exc}", context=failure_context) from exc
 
     def _authorize_answer_delivery(
         self,
